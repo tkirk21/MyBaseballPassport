@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "My Hockey Passport",
-    "slug": "MyHockeyPassport",
-    "scheme": "myhockeypassport",
-    "version": "3.3.1",
+    "name": "My Baseball Passport",
+    "slug": "mybaseballpassport",
+    "scheme": "mybaseballpassport",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logo_with_font.png",
     "userInterfaceStyle": "automatic",
@@ -21,7 +21,7 @@
         "googleMapsApiKey": "AIzaSyDIryxlJBIgl_ebC6PHu_RfrFfzzotya5Y"
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.tkirk21.MyHockeyPassport",
+      "bundleIdentifier": "com.tkirk21.MyBaseballPassport",
       "infoPlist": {
         "SKAdNetworkItems": [
           {
@@ -48,7 +48,7 @@
         "backgroundColor": "#ffffff"
       },
       "userInterfaceStyle": "automatic",
-      "package": "com.tkirk21.MyHockeyPassport",
+      "package": "com.tkirk21.MyBaseballPassport",
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleSignIn": {
@@ -91,7 +91,7 @@
         {
           "appID": "763545830068611",
           "clientToken": "e4204e738403a32bdc1f05829a641788",
-          "displayName": "My Hockey Passport",
+          "displayName": "My Baseball Passport",
           "isAutoInitEnabled": true,
           "autoLogAppEventsEnabled": false,
           "advertiserIDCollectionEnabled": false
