@@ -1,0 +1,639 @@
+// app/userprofile/[userId].tsx
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View,  } from 'react-native';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
+import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, getFirestore, limit, orderBy, query, setDoc, startAfter } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import firebaseApp from '@/firebaseConfig';
+import {  Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import arenasData from '@/assets/data/arenas.json';
+import historicalTeamsData from '@/assets/data/historicalTeams.json';
+import arenaHistoryData from '@/assets/data/arenaHistory.json';
+import { logCheer } from "@/utils/activityLogger";
+import CheerButton from '@/components/friends/cheerButton';
+import ChirpBox from '@/components/friends/chirpBox';
+import TeamPin from '@/components/TeamPin';
+import * as Location from 'expo-location';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import LoadingPuck from "../../components/loadingPuck";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+
+const handleCheer = async (checkinId: string, ownerId: string) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    let userName = "Anonymous";
+    try {
+      const profileSnap = await getDoc(doc(db, "profiles", user.uid));
+      if (profileSnap.exists() && profileSnap.data().name) {
+        userName = profileSnap.data().name;
+      } else if (user.displayName) {
+        userName = user.displayName;
+      }
+    } catch (error: any) {
+      if (error?.code === 'permission-denied') {
+        alert('You do not have permission to cheer this check-in.');
+      } else if (error?.code === 'unavailable') {
+        alert('Network error. Please try again.');
+      } else {
+        alert('Failed to cheer this check-in.');
+      }
+    }
+
+    await logCheer(checkinId, ownerId);
+    alert(`${userName} cheered this 🎉`);
+  } catch (error: any) {
+    if (error?.code === 'permission-denied') {
+      alert('Permission denied while fetching profile.');
+    } else if (error?.code === 'unavailable') {
+      alert('Network error while fetching profile.');
+    }
+  }
+};
+
+export default function UserProfileScreen() {
+  const { userId } = useLocalSearchParams();
+  const [profile, setProfile] = useState<any | null>(null);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [blocked, setBlocked] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [mostVisitedArena, setMostVisitedArena] = useState<any | null>(null);
+  const [allCheckins, setAllCheckins] = useState<any[]>([]);
+  const arenasVisited = new Set(
+    allCheckins
+      .map(c => c.arenaId)
+      .filter(id => typeof id === 'string' && id.trim() !== '')
+  ).size;
+  const teamsWatched = new Set(allCheckins.flatMap(c => [c.teamName, c.opponent].filter(Boolean))).size;
+  const currentUser = auth.currentUser;
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
+  if (!currentUser) return null;
+
+  const styles = StyleSheet.create({
+    arenaText: { fontSize: 16, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 4, },
+    backButton: { position: 'absolute', top: insets.top + 10, left: -5, zIndex: 10, padding: 12 },
+    backIcon: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
+    background: { flex: 1, width: '100%', height: '100%' },
+    blockedMessage: { marginTop: 50, textAlign: 'center', fontSize: 18, color: '#000', fontWeight: '600', },
+    cardText: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center' },
+    cardTextBold: { fontSize: 26, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', },
+    checkinCard: { padding: 14, borderRadius: 10, marginBottom: 12, borderLeftWidth: 6, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 1 }, shadowRadius: 3, elevation: 2, },
+    checkinRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6, },
+    container: { padding: 20, flexGrow: 1, },
+    dateText: { fontSize: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'right', },
+    error: { marginTop: 50, textAlign: 'center', fontSize: 18, color: 'red', },
+    fullScreenLoading: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF', zIndex: 9999 },
+    keyboardContainer: { flex: 1, },
+    leagueBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginBottom: 6, borderWidth: 1.5, backgroundColor: 'transparent', },
+    leagueBadgeText: { fontSize: 12, fontWeight: '600', },
+    loadMoreButton: { alignSelf: "center", backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30, borderWidth: 2, borderColor: '#2F4F68' },
+    loadMoreText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: "bold", fontSize: 14 },
+    markerContainer: { alignItems: 'center', },
+    markerInner: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center', position: 'relative', },
+    markerImage: { width: 36, height: 36, },
+    markerText: { position: 'absolute', color: 'white', fontWeight: 'bold', fontSize: 8, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
+    miniMap: { width: '100%', height: 280, borderRadius: 12, overflow: 'hidden', marginTop: 8, },
+    placeholder: { fontSize: 16, color: '#374151', textAlign: 'center' },
+    profileImage: { width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
+    section: { marginBottom: 20, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, padding: 12, borderWidth: 4, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
+    sectionTitle: { fontSize: 20, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1E3A8A', marginBottom: 8, textAlign: 'center', },
+    statsRow: { flexDirection: 'row', gap: 8, marginBottom: 20, },
+    statSection: { flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, paddingVertical: 20, justifyContent: 'center', alignItems: 'center', borderWidth: 4, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
+    teamsText: {fontSize: 14, fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 6, },
+    text: { fontSize: 16, textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 4, },
+    title: { fontSize: 34, fontWeight: 'bold', textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginBottom: 16, marginTop: 30, textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
+    visitBadge: { backgroundColor: '#D32F2F', width: 10, height: 10, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 18, right: 26, zIndex: 2, borderWidth: 1, borderColor: 'white', },
+    visitBadgeText: { color: 'white', fontWeight: '900', fontSize: 4, includeFontPadding: false, },
+
+    favouriteTeamsChipsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      justifyContent: 'center',
+      marginTop: 8,
+    },
+    favouriteTeamsChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF',
+      borderRadius: 20,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    favouriteTeamsChipText: {
+      color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940',
+      fontWeight: '600',
+    },
+    favouriteTeamsLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940',
+      marginTop: 12,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    favouriteTeamsEmpty: {
+      fontSize: 14,
+      color: colorScheme === 'dark' ? '#888888' : '#666666',
+      fontStyle: 'italic',
+      textAlign: 'center',
+    },
+  });
+
+  useEffect(() => {
+    const loadProfileAndCheckins = async () => {
+      try {
+        if (!userId || !currentUser) {
+          setLoading(false);
+          return;
+        }
+
+        // Check blocked
+        const blockedRef = doc(db, 'profiles', userId as string, 'blocked', currentUser.uid);
+        const blockedSnap = await getDoc(blockedRef);
+        if (blockedSnap.exists()) {
+          setBlocked(true);
+          setLoading(false);
+          return;
+        }
+
+        // Load profile
+        const profileRef = doc(db, 'profiles', userId as string);
+        const profileSnap = await getDoc(profileRef);
+        if (profileSnap.exists()) {
+          setProfile(profileSnap.data());
+        }
+
+        // Load ALL check-ins for stats
+        const allQuery = query(
+          collection(db, 'profiles', userId as string, 'checkins'),
+          orderBy('gameDate', 'desc')
+        );
+        const allSnap = await getDocs(allQuery);
+        const allData = allSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setAllCheckins(allData);
+
+        // Load only first 5 for display
+        const displayQuery = query(
+          collection(db, 'profiles', userId as string, 'checkins'),
+          orderBy('gameDate', 'desc'),
+          limit(5)
+        );
+        const displaySnap = await getDocs(displayQuery);
+        const displayData = displaySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setCheckins(displayData);
+
+        // Most visited arena from ALL check-ins
+        const arenaCounts: Record<string, number> = {};
+        allData.forEach(c => {
+          const name = c.arenaName || c.arena;
+          if (name) arenaCounts[name] = (arenaCounts[name] || 0) + 1;
+        });
+        const sorted = Object.entries(arenaCounts).sort((a, b) => b[1] - a[1]);
+        if (sorted.length > 0) {
+          setMostVisitedArena({ arena: sorted[0][0], count: sorted[0][1] });
+        }
+
+      } catch (error: any) {
+        if (error?.code === 'permission-denied') {
+          setErrorMsg('You do not have permission to view this profile.');
+        } else if (error?.code === 'unavailable') {
+          setErrorMsg('Network error. Please check your connection.');
+        } else {
+          setErrorMsg('Failed to load profile.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfileAndCheckins();
+  }, [userId, currentUser]);
+
+
+
+  if (blocked) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.blockedMessage}>
+          This profile is not available.
+        </Text>
+      </View>
+    );
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.fullScreenLoading}>
+        <LoadingPuck size={240} />
+      </View>
+    );
+  }
+
+
+  if (errorMsg) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.error}>{errorMsg}</Text>
+      </View>
+    );
+  }
+
+  if (!profile) {
+    return <Text style={styles.error}>Profile not found.</Text>;
+  }
+
+  return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        >
+          <ImageBackground
+            source={colorScheme === 'dark' ? require('../../assets/images/background_dark.jpg') : require('../../assets/images/background.jpg')}
+            style={styles.background}
+            resizeMode="cover"
+          >
+            <ScrollView contentContainerStyle={styles.container}>
+            {/* Custom back button */}
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Ionicons name="arrow-back" size={28} color={styles.backIcon.color} />
+              </TouchableOpacity>
+
+              <Text style={styles.title}>{profile.name}</Text>
+
+              <Image
+                source={
+                  profile.imageUrl
+                    ? { uri: profile.imageUrl }
+                    : require('@/assets/images/icon.png')
+                }
+                style={styles.profileImage}
+              />
+
+              {/* Location + Favorite Team in one box */}
+              <View style={styles.section}>
+                <Text style={styles.cardText}>
+                  Location: {profile.location || 'Not set'}
+                </Text>
+
+                <Text style={styles.favouriteTeamsLabel}>
+                  Favourite Teams
+                </Text>
+
+                {profile.favouriteTeams && Array.isArray(profile.favouriteTeams) && profile.favouriteTeams.length > 0 ? (
+                  <View style={styles.favouriteTeamsChipsContainer}>
+                    {profile.favouriteTeams.map((team: string) => (
+                      <View key={team} style={styles.favouriteTeamsChip}>
+                        <Text style={styles.favouriteTeamsChipText}>
+                          {team}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : profile.favouriteTeam ? (
+                  <View style={styles.favouriteTeamsChipsContainer}>
+                    <View style={styles.favouriteTeamsChip}>
+                      <Text style={styles.favouriteTeamsChipText}>
+                        {profile.favouriteTeam}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <Text style={styles.favouriteTeamsEmpty}>
+                    No favourite teams set
+                  </Text>
+                )}
+              </View>
+
+              <View style={styles.statsRow}>
+                <View style={styles.statSection}>
+                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
+                  <Text style={styles.cardTextBold}>{arenasVisited}</Text>
+                </View>
+                <View style={styles.statSection}>
+                  <Text style={styles.sectionTitle}>Teams Watched</Text>
+                  <Text style={styles.cardTextBold}>{teamsWatched}</Text>
+                </View>
+              </View>
+
+              {/* Most Watched Teams */}
+              {allCheckins.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Most Watched Teams</Text>
+                  {Object.entries(
+                    allCheckins
+                      .flatMap((c) => [c.teamName, c.opponent].filter(Boolean))
+                      .reduce((acc: any, team: string) => {
+                        acc[team] = (acc[team] || 0) + 1;
+                        return acc;
+                      }, {})
+                  )
+                    .sort((a: any, b: any) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(([team, count]: any) => (
+                      <Text key={team} style={styles.cardText}>
+                        {team}: {count} {count === 1 ? 'time' : 'times'}
+                      </Text>
+                    ))}
+                </View>
+              )}
+
+              {/* Most Visited Arena */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Most Visited Arena</Text>
+                {mostVisitedArena ? (
+                  <Text style={styles.cardText}>
+                    {mostVisitedArena.arena}: {mostVisitedArena.count}{' '}
+                    {mostVisitedArena.count === 1 ? 'visit' : 'visits'}
+                  </Text>
+                ) : (
+                  <Text style={styles.placeholder}>No arenas yet.</Text>
+                )}
+              </View>
+
+              {/* MINI MAP – ALL ARENAS VISITED */}
+              {allCheckins.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
+                  <MapView
+                    key="userprofile-map"
+                    style={styles.miniMap}
+                    initialRegion={{
+                      latitude: 39.8283,
+                      longitude: -98.5795,
+                      latitudeDelta: 60,
+                      longitudeDelta: 70,
+                    }}
+                    mapType="standard"
+                    scrollEnabled={true}
+                    zoomEnabled={true}
+                    rotateEnabled={true}
+                    pitchEnabled={true}
+                    showsUserLocation={false}
+                  >
+
+                    {allCheckins.map((checkin, index) => {
+
+                      const originalArenaName = checkin.arenaName || checkin.arena || '';
+                      let resolvedArenaName = originalArenaName;
+
+                      // 🔥 Resolve historical names
+                      const historyEntry = (arenaHistoryData as any[]).find(
+                        (h: any) =>
+                          h.league === checkin.league &&
+                          h.history.some(
+                            (entry: any) =>
+                              entry.name.toLowerCase().trim() === originalArenaName.toLowerCase().trim()
+                          )
+                      );
+
+                      if (historyEntry) {
+                        resolvedArenaName = historyEntry.currentArena;
+                      }
+
+                      let latitude = checkin.latitude;
+                      let longitude = checkin.longitude;
+
+                      // Use strict null check (not falsy check)
+                      if (latitude == null || longitude == null) {
+
+                        const arenaMatch =
+                          (arenasData as any[]).find(
+                            (a: any) =>
+                              a.league === checkin.league &&
+                              a.arena?.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                          ) ||
+                          (historicalTeamsData as any[]).find(
+                            (a: any) =>
+                              a.league === checkin.league &&
+                              a.arena?.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                          );
+
+                        if (!arenaMatch) return null;
+
+                        latitude = arenaMatch.latitude;
+                        longitude = arenaMatch.longitude;
+                      }
+
+                      if (latitude == null || longitude == null) return null;
+
+                      const arenaEntry =
+                        (arenasData as any[]).find(
+                          (a: any) =>
+                            a.league === checkin.league &&
+                            a.arena?.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                        ) ||
+                        (historicalTeamsData as any[]).find(
+                          (a: any) =>
+                            a.league === checkin.league &&
+                            a.arena?.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                        );
+
+                      const teamCode = arenaEntry?.teamCode || '';
+                      const colorCode = arenaEntry?.colorCode || '#0D2C42';
+                      const dynamicMarkerTint = { tintColor: colorCode };
+
+                      const visitCount = allCheckins.filter(
+                        c => (c.arenaName || c.arena) === originalArenaName
+                      ).length;
+
+                      return (
+                        <Marker
+                          key={`visited-${index}`}
+                          coordinate={{
+                            latitude: Number(latitude),
+                            longitude: Number(longitude),
+                          }}
+                          title={originalArenaName}
+                          anchor={{ x: 0.5, y: 0.5 }}
+                          centerOffset={{ x: 0, y: -20 }}
+                        >
+                          <View style={styles.markerContainer}>
+                            {visitCount >= 1 && (
+                              <View style={styles.visitBadge}>
+                                <Text style={styles.visitBadgeText}>{visitCount}x</Text>
+                              </View>
+                            )}
+
+                            <View style={styles.markerInner}>
+                              <Image
+                                source={require('@/assets/images/pin_template.png')}
+                                style={[styles.markerImage, dynamicMarkerTint]}
+                                resizeMode="contain"
+                              />
+                              <Text style={styles.markerText}>
+                                {teamCode}
+                              </Text>
+                            </View>
+                          </View>
+                        </Marker>
+                      );
+                    })}
+                  </MapView>
+                </View>
+              )}
+
+              {/* Recent Check-ins */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Check-ins</Text>
+                {checkins.map((item) => {
+                const arenaName = item.arenaName || item.arena || '';
+
+                let resolvedArenaName = arenaName;
+
+                // 🔥 Resolve historical arena names
+                const historyEntry = require('@/assets/data/arenaHistory.json').find(
+                  (h: any) =>
+                    h.league === item.league &&
+                    h.history.some(
+                      (entry: any) =>
+                        entry.name.toLowerCase().trim() === arenaName.toLowerCase().trim()
+                    )
+                );
+
+                if (historyEntry) {
+                  resolvedArenaName = historyEntry.currentArena;
+                }
+
+                // 🔥 Now match using resolved name
+                let arena =
+                  (arenasData as any[]).find(
+                    (a: any) =>
+                      a.league === item.league &&
+                      a.arena.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                  ) ||
+                  (historicalTeamsData as any[]).find(
+                    (a: any) =>
+                      a.league === item.league &&
+                      a.arena.toLowerCase().trim() === resolvedArenaName.toLowerCase().trim()
+                  );
+
+                  if (!arena) {
+                    const historicalArena = (historicalTeamsData as any[]).find(
+                      (a: any) =>
+                        a.league === item.league &&
+                        (a.arena === item.arenaName || a.arena === item.arena)
+                    );
+
+                    if (historicalArena) {
+                      arena = (arenasData as any[]).find(
+                        (a: any) =>
+                          a.league === historicalArena.league &&
+                          a.teamCode === historicalArena.teamCode
+                      );
+                    }
+                  }
+                  const bgColor = arena?.colorCode ? arena.colorCode + '22' : '#ffffff';
+                  const dynamicCardStyle = { borderLeftColor: arena?.colorCode || '#6B7280', backgroundColor: bgColor };
+                  const dynamicLeagueBorder = { borderColor: arena?.colorCode || '#0A2940' };
+                  const dynamicLeagueText = { color: arena?.colorCode || '#0A2940' };
+
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[styles.checkinCard, dynamicCardStyle]}
+                      onPress={() =>
+                        router.push({
+                          pathname: '/checkin/[checkinId]',
+                          params: { checkinId: item.id, userId: String(userId) },
+                        })
+                      }
+                    >
+                      <View
+                        style={[styles.leagueBadge, dynamicLeagueBorder]}
+                      >
+                        <Text
+                          style={[styles.leagueBadgeText, dynamicLeagueText]}
+                        >
+                          {item.league}
+                        </Text>
+                      </View>
+
+                      <Text style={styles.arenaText}>
+                        {item.arenaName || item.arena}
+                      </Text>
+                      <Text style={styles.teamsText}>
+                        {item.teamName} vs {item.opponent}
+                      </Text>
+                      <View style={styles.checkinRow}>
+                        <Text style={styles.dateText}>
+                          {item.gameDate
+                            ? new Date(item.gameDate).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })
+                            : 'No date'}
+                        </Text>
+
+                        <CheerButton friendId={String(userId)} checkinId={item.id} />
+                      </View>
+
+                      <ChirpBox friendId={String(userId)} checkinId={item.id} />
+                    </TouchableOpacity>
+                  );
+                })}
+
+                {/* Load more */}
+                {checkins.length > 0 && checkins.length % 5 === 0 && (
+                  <TouchableOpacity
+                    style={styles.loadMoreButton}
+                    onPress={async () => {
+                      try {
+                        const lastDoc = checkins[checkins.length - 1];
+                        if (!lastDoc?.gameDate) return;
+
+                        const q = query(
+                          collection(db, 'profiles', userId as string, 'checkins'),
+                          orderBy('gameDate', 'desc'),
+                          startAfter(lastDoc.gameDate),
+                          limit(5)
+                        );
+
+                        const snapshot = await getDocs(q);
+
+                        if (snapshot.empty) {
+                          return;
+                        }
+
+                        const moreCheckins = snapshot.docs.map(doc => ({
+                          id: doc.id,
+                          ...doc.data()
+                        }));
+
+                        setCheckins(prev => [...prev, ...moreCheckins]);
+                      } catch (error: any) {
+                        if (error?.code === 'permission-denied') {
+                          setErrorMsg('You do not have permission to load more check-ins.');
+                        } else if (error?.code === 'unavailable') {
+                          setErrorMsg('Network error while loading more check-ins.');
+                        } else {
+                          setErrorMsg('Failed to load more check-ins.');
+                        }
+                      }
+                    }}
+                  >
+                    <Text style={styles.loadMoreText}>Load more</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </ScrollView>
+          </ImageBackground>
+        </KeyboardAvoidingView>
+      </>
+    );
+}

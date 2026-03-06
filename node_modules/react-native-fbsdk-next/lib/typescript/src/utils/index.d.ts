@@ -1,0 +1,2 @@
+export type PropsOf<T> = T extends React.Component<infer P> ? P : never;
+//# sourceMappingURL=index.d.ts.map

@@ -1,0 +1,102 @@
+{
+  "expo": {
+    "name": "My Hockey Passport",
+    "slug": "MyHockeyPassport",
+    "scheme": "myhockeypassport",
+    "version": "3.3.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo_with_font.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "usesAppleSignIn": true,
+      "buildNumber": "1",
+      "config": {
+        "googleMapsApiKey": "AIzaSyDIryxlJBIgl_ebC6PHu_RfrFfzzotya5Y"
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.tkirk21.MyHockeyPassport",
+      "infoPlist": {
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "versionCode": 13,
+      "edgeToEdgeEnabled": false,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon_logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "userInterfaceStyle": "automatic",
+      "package": "com.tkirk21.MyHockeyPassport",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "853703034223-101527k79a64l7aupv9ru8h0ph5sb2lf.apps.googleusercontent.com"
+        },
+        "googleMaps": {
+          "apiKey": "AIzaSyDIryxlJBIgl_ebC6PHu_RfrFfzzotya5Y"
+        }
+      },
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
+    },
+    "updates": {
+      "enabled": false,
+      "fallbackToCacheTimeout": 0
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a164aec3-4dc0-4576-b32e-273e889b6ada"
+      },
+      "EXPO_PUBLIC_FACEBOOK_APP_ID": "763545830068611"
+    },
+    "plugins": [
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#000000"
+        }
+      ],
+      "expo-dev-client",
+      "expo-router",
+      "@react-native-google-signin/google-signin",
+      "expo-asset",
+      "expo-font",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "763545830068611",
+          "clientToken": "e4204e738403a32bdc1f05829a641788",
+          "displayName": "My Hockey Passport",
+          "isAutoInitEnabled": true,
+          "autoLogAppEventsEnabled": false,
+          "advertiserIDCollectionEnabled": false
+        }
+      ]
+    ]
+  }
+}
