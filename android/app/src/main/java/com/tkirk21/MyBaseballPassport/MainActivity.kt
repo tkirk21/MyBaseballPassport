@@ -1,4 +1,4 @@
-package com.tkirk21.MyHockeyPassport
+package com.tkirk21.MyBaseballPassport
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

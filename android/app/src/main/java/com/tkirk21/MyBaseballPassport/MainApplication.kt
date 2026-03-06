@@ -1,4 +1,4 @@
-package com.tkirk21.MyHockeyPassport
+package com.tkirk21.MyBaseballPassport
 
 import android.app.Application
 import android.content.res.Configuration
