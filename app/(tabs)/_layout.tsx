@@ -200,19 +200,19 @@ function CustomTabs() {
   }, [currentUser?.uid]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#0A2940', paddingBottom: insets.bottom }}>
+    <View style={{ flex: 1, backgroundColor: '#F5F1E6', paddingBottom: insets.bottom }}>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: '#0A2940',
-            borderTopColor: '#D1D5DB',
+            backgroundColor: '#0D131F',
+            borderTopColor: '#B22222',
             height: 70,
             paddingBottom: 10,
             paddingTop: 6,
           },
-          tabBarActiveTintColor: '#FFFFFF',
-          tabBarInactiveTintColor: '#657B8D',
+          tabBarActiveTintColor: '#B22222',
+          tabBarInactiveTintColor: '#F5F1E6',
         }}
       >
         <Tabs.Screen name="index" options={{ href: null }} />

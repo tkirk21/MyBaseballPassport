@@ -15,7 +15,7 @@ import { useColorScheme } from '../../hooks/useColorScheme'
 import arenaData from '@/assets/data/arenas.json';
 
 const db = getFirestore(firebaseApp);
-const storage = getStorage(firebaseApp, 'gs://myhockeypassport.firebasestorage.app');
+const storage = getStorage(firebaseApp, 'gs://mybaseballpassport.firebasestorage.app');
 const toStr = (v: any) => Array.isArray(v) ? (v[0] ?? '') : (v ?? '');
 
 export default function LiveCheckInScreen() {
@@ -95,30 +95,25 @@ useEffect(() => {
   }, []);
 
   // --- SAME CATEGORIES AS manual.tsx ---
-  const merchCategories: Record<string, string[]> = {
-    'Jerseys': ['Home Jersey', 'Away Jersey', 'Third Jersey', 'Retro Jersey', 'Custom Jersey', 'Special Occasion Jersey'],
-    'Apparel & Headwear': [
-      'T-shirt','Hoodie','Sweatshirt','Long sleeve shirt','Jacket','Windbreaker',
-      'Beanie','Knit cap','Snapback hat','Dad hat','Baseball cap','Bucket hat',
-      'Winter hat','Scarf','Gloves','Socks','Shorts','Pajama pants','Face mask',
-      'Neck gaiter','Baby onesie','Toddler gear'
-    ],
-    'Equipment & Themed Items': ['Mini stick','Foam puck','Replica Puck','Foam finger','Souvenir helmet or goalie mask','Signed memorabilia (non-game-used)'],
-    'Game-Used Items': ['Game-used puck','Game-used stick','Game-worn jersey','Game-used glove','Game-used helmet'],
-    'Toys & Collectibles': ['Bobblehead','Plush mascot','LEGO-style players','Team figurines','Keychain','Pin / lapel pin','Trading cards','Souvenir coin / medallion','Zamboni toy'],
-    'Printed & Media': ['Team program','Poster','Schedule magnet','Wall calendar','Sticker set','Decals'],
-    'Home & Lifestyle': ['Coffee mug','Water bottle','Shot glass','Beer glass','Koozie','Blanket','Pillow','Towel','Christmas ornament','Wall flag','Mousepad','Air freshener','Magnets'],
-    'Auto Accessories': ['Car flag','Window decal','Steering wheel cover','Seatbelt pad','Car magnet','Hitch cover','License plate frame'],
-    'Bags & Utility': ['Drawstring bag','Backpack','Tote bag','Lanyard','Phone case','Wallet'],
+  const merchCategories = {
+    'Jerseys': ['Home Jersey', 'Away Jersey', 'Alternate Jersey', 'Retro Jersey', 'Custom Jersey', 'Player Jersey'],
+    'Apparel & Headwear': ['T-shirt', 'Player T-shirt', 'Hoodie', 'Sweatshirt', 'Long sleeve shirt', 'Jacket','Snapback hat', 'Fitted cap', 'Dad hat', 'Baseball cap', 'Bucket hat','Beanie', 'Knit cap', 'Scarf', 'Gloves', 'Socks', 'Shorts','Pajama pants', 'Baby onesie', 'Toddler gear'],
+    'Baseball Equipment & Souvenirs': ['Baseball', 'Mini bat', 'Replica bat', 'Foam finger', 'Batting helmet souvenir','Mini helmet', 'Signed baseball', 'Signed bat', 'Signed photo'],
+    'Game-Used Items': ['Game-used baseball', 'Game-used bat', 'Game-worn jersey', 'Game-used lineup card'],
+    'Toys & Collectibles': ['Bobblehead', 'Plush mascot', 'Team figurines', 'Keychain', 'Pin / lapel pin','Baseball cards', 'Souvenir coin / medallion', 'Mini stadium replica'],
+    'Printed & Media': ['Team program', 'Poster', 'Schedule magnet', 'Wall calendar', 'Sticker set', 'Decals'],
+    'Home & Lifestyle': ['Coffee mug', 'Water bottle', 'Beer glass', 'Koozie', 'Blanket','Pillow', 'Towel', 'Christmas ornament', 'Wall flag', 'Mousepad', 'Magnets' ],
+    'Auto Accessories': ['Car flag', 'Window decal', 'Steering wheel cover', 'Seatbelt pad','Car magnet', 'Hitch cover', 'License plate frame'],
+    'Bags & Utility': ['Drawstring bag', 'Backpack', 'Tote bag', 'Lanyard', 'Phone case', 'Wallet']
   };
 
-  const concessionCategories: Record<string, string[]> = {
-    'Classic Arena Fare': ['Hot Dog','Corn Dog','Bratwurst','Sausage','Nachos','Soft Pretzel','French Fries','Cheese Curds','Popcorn','Pizza Slice'],
-    'Hot Food': ['Chicken Tenders','Buffalo Wings','Pulled Pork Sandwich','Cheeseburger','Veggie Burger','Loaded Fries','Mac and Cheese'],
-    'Cold Food & Snacks': ['Sandwich','Salad','Fruit Cup','Chips','Granola Bar','Trail Mix','Candy','Chocolate Bar'],
-    'Desserts & Treats': ['Ice Cream','Funnel Cake','Mini Donuts','Cotton Candy','Cookies','Brownie','Churros'],
-    'Non-Alcoholic Beverages': ['Soda','Bottled Water','Sports Drink','Lemonade','Iced Tea','Hot Chocolate','Coffee','Energy Drink'],
-    'Alcoholic Beverages': ['Beer (Domestic)','Beer (Craft)','Cider','Hard Seltzer','Wine','Cocktail','Spiked Slushie'],
+  const concessionCategories = {
+    'Classic Arena Fare': ['Hot Dog', 'Corn Dog', 'Bratwurst', 'Sausage', 'Nachos', 'Soft Pretzel', 'French Fries', 'Cheese Curds', 'Popcorn', 'Pizza Slice'],
+    'Hot Food': ['Chicken Tenders', 'Buffalo Wings', 'Pulled Pork Sandwich', 'Cheeseburger', 'Veggie Burger', 'Loaded Fries', 'Mac and Cheese'],
+    'Cold Food & Snacks': ['Sandwich', 'Salad', 'Fruit Cup', 'Chips', 'Granola Bar', 'Trail Mix', 'Candy', 'Chocolate Bar'],
+    'Desserts & Treats': ['Ice Cream', 'Ice Cream Helmet', 'Dippin Dots', 'Funnel Cake', 'Mini Donuts', 'Cotton Candy', 'Churros', 'Cookies', 'Brownie'],
+    'Non-Alcoholic Beverages': ['Soda', 'Bottled Water', 'Sports Drink', 'Lemonade', 'Iced Tea', 'Hot Chocolate', 'Coffee', 'Energy Drink'],
+    'Alcoholic Beverages': ['Beer (Domestic)', 'Beer (Craft)', 'Cider', 'Hard Seltzer', 'Wine', 'Cocktail', 'Spiked Slushie']
   };
 
   const getSelectedItems = (source: Record<string, boolean>, categories: Record<string, string[]>) => {
@@ -363,27 +358,6 @@ useEffect(() => {
     uploadPhotoText: { color: colorScheme === 'dark' ? '#BBBBBB' : '#0A2940' },
   });
 
-  if (false) { // change to false to hide
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <TouchableOpacity onPress={() => {
-          router.replace({
-            pathname: '/checkin/live',
-            params: {
-              league: 'NHL',
-              arenaName: 'Enterprise Center',
-              homeTeam: 'St. Louis Blues',
-              opponent: 'Colorado Avalanche',
-              gameDate: '2026-02-20T01:00:00.000Z',
-            },
-          });
-        }} style={{ padding: 20, backgroundColor: 'red' }}>
-          <Text style={{ color: 'white' }}>TEST LIVE CHECKIN</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.screenBackground}>
       {/* CUSTOM THEMED ALERT MODAL */}
@@ -417,7 +391,7 @@ useEffect(() => {
               <Text style={styles.gameInfoLabel}>League</Text>
               <Text style={styles.gameInfoValue}>{league}</Text>
 
-              <Text style={styles.gameInfoLabel}>Arena</Text>
+              <Text style={styles.gameInfoLabel}>Ballpark</Text>
               <Text style={styles.gameInfoValue}>{arenaName}</Text>
 
               <Text style={styles.gameInfoLabel}>Home Team</Text>
@@ -426,7 +400,7 @@ useEffect(() => {
               <Text style={styles.gameInfoLabel}>Opponent</Text>
               <Text style={styles.gameInfoValue}>{opponent}</Text>
 
-              <Text style={styles.gameInfoLabel}>Date / Time</Text>
+              <Text style={styles.gameInfoLabel}>Date/Time</Text>
               <Text style={styles.gameInfoValue}>
                 {new Date(gameDate || Date.now()).toLocaleString()}
               </Text>

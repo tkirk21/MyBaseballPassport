@@ -25,7 +25,7 @@ export default function TabsIndex() {
   }, []);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0A1420' : '#FFFFFF', justifyContent: 'center', alignItems: 'center' },
+    container: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0A1420' : '#F5F1E6', justifyContent: 'center', alignItems: 'center' },
     logo: { width: 200, height: 200, marginBottom: 40 },
     loadingText: { fontSize: 20, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700' },
   });

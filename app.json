@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "My Baseball Passport",
-    "slug": "mybaseballpassport",
+    "name": "BaseballPassport",
+    "slug": "MyBaseballPassport",
     "scheme": "mybaseballpassport",
     "version": "1.0.1",
     "orientation": "portrait",
@@ -67,10 +67,11 @@
       "fallbackToCacheTimeout": 0
     },
     "extra": {
+      "EXPO_PUBLIC_FACEBOOK_APP_ID": "763545830068611",
+      "router": {},
       "eas": {
-        "projectId": "a164aec3-4dc0-4576-b32e-273e889b6ada"
-      },
-      "EXPO_PUBLIC_FACEBOOK_APP_ID": "763545830068611"
+        "projectId": "4fd5781f-68f9-4e84-8212-feed523e16fc"
+      }
     },
     "plugins": [
       "expo-web-browser",
@@ -97,6 +98,7 @@
           "advertiserIDCollectionEnabled": false
         }
       ]
-    ]
+    ],
+    "owner": "tkirk21"
   }
 }

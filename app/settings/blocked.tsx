@@ -130,24 +130,24 @@ export default function BlockedUsersScreen() {
   };
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68' },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700', fontSize: 16 },
-    avatar: { width: 40, height: 40, borderRadius: 20, },
-    backArrow: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    empty: { color: colorScheme === 'dark' ? '#BBBBBB' : '#888888', textAlign: 'center', marginTop: 50, fontSize: 16 },
-    headerRow: { paddingTop: insets.top + 10, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center' },
-    headerTitle: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 28, fontWeight: '700', marginLeft: 20 },
-    inner: { padding: 20 },
-    label: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18 },
-    listRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 16 },
-    screenBackground: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF' },
-    unblockText: { color: colorScheme === 'dark' ? '#60A5FA' : '#1E88E5', fontWeight: '600' },
-    userName: { marginLeft: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18 },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68'},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B222222':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
+    avatar:{width:40,height:40,borderRadius:20},
+    backArrow:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    empty:{color:colorScheme==='dark'?'#F5F1E6':'#888888',textAlign:'center',marginTop:50,fontSize:16},
+    headerRow:{paddingTop:insets.top+10,paddingHorizontal:20,flexDirection:'row',alignItems:'center'},
+    headerTitle:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:28,fontWeight:'700',marginLeft:20},
+    inner:{padding:20},
+    label:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18},
+    listRow:{flexDirection:'row',alignItems:'center',flex:1},
+    row:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:16},
+    screenBackground:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    unblockText:{color:colorScheme==='dark'?'#AFC7E6':'#1E88E5',fontWeight:'600'},
+    userName:{marginLeft:12,color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18}
   });
 
   if (!authChecked) return null;

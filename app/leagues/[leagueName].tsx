@@ -1,6 +1,6 @@
 //app/leagues/[leagueName].tsx
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Modal } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { leagueLogos } from '@/assets/images/leagueLogos';
 import leagues from '@/assets/data/leagues.json';
@@ -14,6 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LeagueDetails() {
   const [loading, setLoading] = React.useState(true);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const { leagueName } = useLocalSearchParams();
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
@@ -85,26 +87,26 @@ export default function LeagueDetails() {
   }
 
   const styles = StyleSheet.create({
-    backButton: { position: 'absolute', left: 10, zIndex: 10, padding: 12, },
-    blueStrip: { position: 'absolute', top: -30, left: 0, right: 0, height: 120, zIndex: 5, },
-    container: { padding: 20, paddingBottom: 80, alignItems: 'center', backgroundColor: '#E6E8EA', flexGrow: 1, },
-    fullContainer: { flex: 1 },
-    description: { fontSize: 16, marginBottom: 20, textAlign: 'center', color: colorScheme === 'dark' ? '#F1F5F9' : '#0F172A', },
-    info: { fontSize: 14, marginBottom: 8, color: colorScheme === 'dark' ? '#F1F5F9' : '#0F172A', textAlign: 'center', },
-    infoBox: { backgroundColor: colorScheme === 'dark' ? 'rgba(15, 35, 55, 0.85)' : 'rgba(255,255,255,0.85)', padding: 16, borderRadius: 12, borderWidth: 4, borderColor: colorScheme === 'dark' ? '#334155' : '#0D2C42', width: '100%', alignItems: 'center', },
-    link: { fontSize: 16, color: '#99D9EA', marginTop: 12, },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', },
-    logoContainer: { top: 10, left: -10, alignSelf: 'center', width: 136, height: 136, zIndex: 20 },
-    logoInnerCircle: { width: 168, height: 94, borderWidth: 16, borderBottomWidth: 0, borderColor: colorScheme === 'dark' ? '#0A2940' : '#EDEEF0', borderTopLeftRadius: 84, borderTopRightRadius: 84, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', marginTop: 30 },
-    logoImage: { width: 170, height: 170, marginTop: -101  },
-    markerContainer: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center', position: 'relative' },
-    markerImage: { width: 40, height: 40 },
-    markerText: { position: 'absolute', top: 6, left: 10, color: 'white', fontWeight: 'bold', fontSize: 8, textAlign: 'center' },
-    map: { width: 310, height: 300, borderColor: colorScheme === 'dark' ?  '#0D2C42' : '#334155' , },
-    mapWrapper: { borderWidth: 4, borderColor: colorScheme === 'dark' ?  '#334155' : '#334155', borderRadius: 12, overflow: 'hidden', marginBottom: 16, },
-    safeArea: { flex: 1, backgroundColor: '#EDEEF0', },
-    scrollContainer: { padding: 20, paddingTop: 60, paddingBottom: 170, alignItems: 'center', },
-    title: { fontSize: 26, fontWeight: 'bold', marginBottom: 12, textAlign: 'center', color: colorScheme === 'dark' ? '#F1F5F9' : '#0F172A', },
+    backButton:{position:'absolute',left:10,zIndex:10,padding:12},
+    blueStrip:{position:'absolute',top:-30,left:0,right:0,height:120,zIndex:5},
+    container:{padding:20,paddingBottom:80,alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',flexGrow:1},
+    fullContainer:{flex:1, backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    description:{fontSize:16,marginBottom:20,textAlign:'center',color:colorScheme==='dark'?'#AFC7E6':'#0A2940'},
+    info:{fontSize:14,marginBottom:8,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:'center'},
+    infoBox:{backgroundColor:colorScheme==='dark'?'rgba(19,47,79,0.85)':'rgba(255,255,255,0.9)',padding:16,borderRadius:12,borderWidth:4,borderColor:'#B22222',width:'100%',alignItems:'center'},
+    link:{fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',marginTop:12},
+    loadingContainer:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    logoContainer:{top:10,left:-10,alignSelf:'center',width:136,height:136,zIndex:20},
+    logoInnerCircle:{width:168,height:94,borderWidth:16,borderBottomWidth:0,borderColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderTopLeftRadius:84,borderTopRightRadius:84,backgroundColor:'transparent',justifyContent:'center',alignItems:'center',marginTop:30},
+    logoImage:{width:170,height:170,marginTop:-101},
+    markerContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
+    markerImage:{width:40,height:40},
+    markerText:{position:'absolute',top:6,left:13,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
+    map:{width:310,height:300,borderColor:'#B22222'},
+    mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16},
+    safeArea:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
+    title:{fontSize:26,fontWeight:'bold',marginBottom:12,textAlign:'center',color:colorScheme==='dark'?'#FFFFFF':'#0A2940'}
   });
 
   return loading ? (

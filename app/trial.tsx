@@ -21,16 +21,16 @@ export default function TrialScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <View style={styles.screenBackground}>
-        <Text style={styles.title}>Welcome to My Hockey Passport</Text>
+        <Text style={styles.title}>Welcome to My Baseball Passport</Text>
 
         <Text style={styles.text}>Your free trial includes:</Text>
 
         <Text style={styles.bullet}>• Full access to the entire app</Text>
-        <Text style={styles.bullet}>• Up to 3 arena check-ins</Text>
+        <Text style={styles.bullet}>• Up to 3 ballpark check-ins</Text>
         <Text style={styles.bullet}>• Your first 3 days</Text>
 
         <Text style={styles.footer}>
-          After your trial ends, continue your hockey journey for $2.99 per month.
+          After your trial ends, continue your baseball journey for $2.99 per month.
         </Text>
 
         <TouchableOpacity

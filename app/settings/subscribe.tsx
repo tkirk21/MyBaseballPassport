@@ -62,20 +62,20 @@ export default function SubscribeScreen() {
   };
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0F1E33' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', textAlign: 'center', marginBottom: 12 },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68' },
-    alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontWeight: '700', fontSize: 16 },
-    button: { backgroundColor: '#0D2C42', paddingVertical: 14, borderRadius: 30, alignItems: 'center', },
-    buttonText: { color: '#FFFFFF', fontSize: 18, fontWeight: '700', },
-    card: { backgroundColor: colorScheme === 'dark' ? '#0F1E33' : '#F8FAFC', borderRadius: 16, padding: 20, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', },
-    headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 30, },
-    headerTitle: { fontSize: 28, fontWeight: '700', marginLeft: 20, color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', },
-    screen: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF', paddingTop: insets.top + 10, paddingHorizontal: 20, },
-    text: { fontSize: 16, lineHeight: 22, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', marginBottom: 20, },
-    title: { fontSize: 22, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginBottom: 10, },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#0D131F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.4,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#F5F1E6',paddingVertical:12,paddingHorizontal:32,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
+    button:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#FFFFFF',paddingVertical:14,borderRadius:30,alignItems:'center',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    buttonText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18,fontWeight:'700'},
+    card:{backgroundColor:colorScheme==='dark'?'#132F4F':'#F5F1E6',borderRadius:16,padding:20,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    headerRow:{flexDirection:'row',alignItems:'center',marginBottom:30},
+    headerTitle:{fontSize:28,fontWeight:'700',marginLeft:20,color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    screen:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',paddingTop:insets.top+10,paddingHorizontal:20},
+    text:{fontSize:16,lineHeight:22,color:colorScheme==='dark'?'#F5F1E6':'#374151',marginBottom:20},
+    title:{fontSize:22,fontWeight:'700',color:colorScheme==='dark'?'#F5F1E6':'#0A2940',marginBottom:10}
   });
 
   return (

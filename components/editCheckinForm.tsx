@@ -53,8 +53,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       ? String(initialData.awayScore)
       : ''
   );
-  const [overtimeWin, setOvertimeWin] = useState(initialData.overtimeWin ?? false);
-  const [shootoutWin, setShootoutWin] = useState(initialData.shootoutWin ?? false);
+  const [extraInnings, setExtraInnings] = useState(initialData.extraInnings || false);
   const [favoritePlayer, setFavoritePlayer] = useState(initialData.favoritePlayer || '');
   const [seatSection, setSeatSection] = useState(initialData.seatInfo?.section || '');
   const [seatRow, setSeatRow] = useState(initialData.seatInfo?.row || '');
@@ -86,27 +85,22 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
   if (!user) return null;
 
   const merchCategories = {
-    'Jerseys': ['Home Jersey', 'Away Jersey', 'Third Jersey', 'Retro Jersey', 'Custom Jersey', 'Special Occasion Jersey'],
-    'Apparel & Headwear': [
-      'T-shirt', 'Hoodie', 'Sweatshirt', 'Long sleeve shirt', 'Jacket', 'Windbreaker',
-      'Beanie', 'Knit cap', 'Snapback hat', 'Dad hat', 'Baseball cap', 'Bucket hat',
-      'Winter hat', 'Scarf', 'Gloves', 'Socks', 'Shorts', 'Pajama pants', 'Face mask',
-      'Neck gaiter', 'Baby onesie', 'Toddler gear',
-    ],
-    'Equipment & Themed Items': ['Mini stick', 'Foam puck', 'Replica Puck', 'Foam finger', 'Souvenir helmet or goalie mask', 'Signed memorabilia (non-game-used)'],
-    'Game-Used Items': ['Game-used puck', 'Game-used stick', 'Game-worn jersey', 'Game-used glove', 'Game-used helmet'],
-    'Toys & Collectibles': ['Bobblehead', 'Plush mascot', 'LEGO-style players', 'Team figurines', 'Keychain', 'Pin / lapel pin', 'Trading cards', 'Souvenir coin / medallion', 'Zamboni toy'],
+    'Jerseys': ['Home Jersey', 'Away Jersey', 'Alternate Jersey', 'Retro Jersey', 'Custom Jersey', 'Player Jersey'],
+    'Apparel & Headwear': ['T-shirt', 'Player T-shirt', 'Hoodie', 'Sweatshirt', 'Long sleeve shirt', 'Jacket','Snapback hat', 'Fitted cap', 'Dad hat', 'Baseball cap', 'Bucket hat','Beanie', 'Knit cap', 'Scarf', 'Gloves', 'Socks', 'Shorts','Pajama pants', 'Baby onesie', 'Toddler gear'],
+    'Baseball Equipment & Souvenirs': ['Baseball', 'Mini bat', 'Replica bat', 'Foam finger', 'Batting helmet souvenir','Mini helmet', 'Signed baseball', 'Signed bat', 'Signed photo'],
+    'Game-Used Items': ['Game-used baseball', 'Game-used bat', 'Game-worn jersey', 'Game-used lineup card'],
+    'Toys & Collectibles': ['Bobblehead', 'Plush mascot', 'Team figurines', 'Keychain', 'Pin / lapel pin','Baseball cards', 'Souvenir coin / medallion', 'Mini stadium replica'],
     'Printed & Media': ['Team program', 'Poster', 'Schedule magnet', 'Wall calendar', 'Sticker set', 'Decals'],
-    'Home & Lifestyle': ['Coffee mug', 'Water bottle', 'Shot glass', 'Beer glass', 'Koozie', 'Blanket', 'Pillow', 'Towel', 'Christmas ornament', 'Wall flag', 'Mousepad', 'Air freshener', 'Magnets'],
-    'Auto Accessories': ['Car flag', 'Window decal', 'Steering wheel cover', 'Seatbelt pad', 'Car magnet', 'Hitch cover', 'License plate frame'],
-    'Bags & Utility': ['Drawstring bag', 'Backpack', 'Tote bag', 'Lanyard', 'Phone case', 'Wallet'],
+    'Home & Lifestyle': ['Coffee mug', 'Water bottle', 'Beer glass', 'Koozie', 'Blanket','Pillow', 'Towel', 'Christmas ornament', 'Wall flag', 'Mousepad', 'Magnets' ],
+    'Auto Accessories': ['Car flag', 'Window decal', 'Steering wheel cover', 'Seatbelt pad','Car magnet', 'Hitch cover', 'License plate frame'],
+    'Bags & Utility': ['Drawstring bag', 'Backpack', 'Tote bag', 'Lanyard', 'Phone case', 'Wallet']
   };
 
   const concessionCategories = {
     'Classic Arena Fare': ['Hot Dog', 'Corn Dog', 'Bratwurst', 'Sausage', 'Nachos', 'Soft Pretzel', 'French Fries', 'Cheese Curds', 'Popcorn', 'Pizza Slice'],
     'Hot Food': ['Chicken Tenders', 'Buffalo Wings', 'Pulled Pork Sandwich', 'Cheeseburger', 'Veggie Burger', 'Loaded Fries', 'Mac and Cheese'],
     'Cold Food & Snacks': ['Sandwich', 'Salad', 'Fruit Cup', 'Chips', 'Granola Bar', 'Trail Mix', 'Candy', 'Chocolate Bar'],
-    'Desserts & Treats': ['Ice Cream', 'Funnel Cake', 'Mini Donuts', 'Cotton Candy', 'Cookies', 'Brownie', 'Churros'],
+    'Desserts & Treats': ['Ice Cream', 'Ice Cream Helmet', 'Dippin Dots', 'Funnel Cake', 'Mini Donuts', 'Cotton Candy', 'Churros', 'Cookies', 'Brownie'],
     'Non-Alcoholic Beverages': ['Soda', 'Bottled Water', 'Sports Drink', 'Lemonade', 'Iced Tea', 'Hot Chocolate', 'Coffee', 'Energy Drink'],
     'Alcoholic Beverages': ['Beer (Domestic)', 'Beer (Craft)', 'Cider', 'Hard Seltzer', 'Wine', 'Cocktail', 'Spiked Slushie']
   };
@@ -214,8 +208,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
         opponent: selectedOpponent,
         homeScore: homeScore.trim() === '' ? null : Number(homeScore),
         awayScore: awayScore.trim() === '' ? null : Number(awayScore),
-        overtimeWin: overtimeWin,
-        shootoutWin: shootoutWin,
+        extraInnings: extraInnings,
         favoritePlayer,
         seatInfo:
           seatSection || seatRow || seatNumber
@@ -625,7 +618,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
             setOpen={setArenaOpen}
             setValue={setSelectedArena}
             setItems={setArenaItems}
-            placeholder="Select Arena"
+            placeholder="Select Ballpark"
             placeholderStyle={styles.dropdownPlaceholder}
             style={styles.dropdown}
             zIndex={4000}
@@ -686,7 +679,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
               }}
             >
               <Text style={styles.choiceButtonTextSelected}>
-                Reset League, Arena, Home Team, Opponent
+                Reset League, ballpark, Home Team, Opponent
               </Text>
             </Pressable>
           </View>
@@ -714,33 +707,15 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
           </View>
 
           <View style={styles.resultOptionsRow}>
-
             <View style={styles.resultOptionItem}>
               <Checkbox
-                value={overtimeWin}
-                onValueChange={(value) => {
-                  setOvertimeWin(value);
-                  if (value) setShootoutWin(false);
-                }}
+                value={extraInnings}
+                onValueChange={setExtraInnings}
               />
               <Text style={styles.resultOptionText}>
-                Overtime Win
+                Extra Innings
               </Text>
             </View>
-
-            <View style={styles.resultOptionItem}>
-              <Checkbox
-                value={shootoutWin}
-                onValueChange={(value) => {
-                  setShootoutWin(value);
-                  if (value) setOvertimeWin(false);
-                }}
-              />
-              <Text style={styles.resultOptionText}>
-                Shootout Win
-              </Text>
-            </View>
-
           </View>
 
           <TextInput

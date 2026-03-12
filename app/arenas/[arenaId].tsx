@@ -14,22 +14,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LoadingPuck from '@/components/loadingPuck';
 import arenaData from '@/assets/data/arenas.json';
 import arenaHistoryData from '@/assets/data/arenaHistory.json';
-import nhlSchedule2025 from "@/assets/data/nhlSchedule2025.json";
-import khlSchedule from "@/assets/data/khlSchedule.json";
-import ahlSchedule2025 from "@/assets/data/ahlSchedule2025.json";
-import echlSchedule2025 from '@/assets/data/echlSchedule2025.json';
-import whlSchedule2025 from '@/assets/data/whlSchedule2025.json';
-import ohlSchedule2025 from '@/assets/data/ohlSchedule2025.json';
-import qmjhlSchedule2025 from '@/assets/data/qmjhlSchedule2025.json';
-import sphlSchedule2025 from '@/assets/data/sphlSchedule2025.json';
-import fphlSchedule from '@/assets/data/fphlSchedule.json';
-import ushlSchedule2025 from '@/assets/data/ushlSchedule2025.json';
-import nahlSchedule from '@/assets/data/nahlSchedule.json';
-import na3hlSchedule2025 from '@/assets/data/na3hlSchedule2025.json';
-import ncaaD1Schedule from '@/assets/data/ncaaD1Schedule.json';
-import ncaaD2Schedule from '@/assets/data/ncaaD2Schedule.json';
-import pwhlSchedule from '@/assets/data/pwhlSchedule.json';
-import aihlSchedule2025 from '@/assets/data/aihlSchedule2025.json';
+import mlbSchedule from "@/assets/data/mlbSchedule.json";
+import ilSchedule from "@/assets/data/ilSchedule.json";
 
 export default function ArenaScreen() {
   const { arenaId } = useLocalSearchParams();
@@ -193,7 +179,7 @@ export default function ArenaScreen() {
 
   // Combine known schedules
   const combinedSchedule = [
-    ...nhlSchedule2025.map((game) => ({
+    ...mlbSchedule.map((game) => ({
       id: game.id,
       league: game.league,
       date: game.date,
@@ -201,125 +187,13 @@ export default function ArenaScreen() {
       homeTeam: teamCodeMap[`${game.league}_${game.team}`] || game.team,
       awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
     })),
-    ...khlSchedule.map((game) => ({
+    ...ilSchedule.map((game) => ({
       id: game.id,
       league: game.league,
       date: game.date,
       arena: game.arena,
       homeTeam: teamCodeMap[`${game.league}_${game.team}`] || game.team,
       awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
-    })),
-    ...ahlSchedule2025.map((game) => ({
-      id: game.id,
-      league: game.league,
-      date: game.date,
-      arena: game.arena,
-      homeTeam: teamCodeMap[`${game.league}_${game.team}`] || game.team,
-      awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
-    })),
-    ...echlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...sphlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-...fphlSchedule.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...nahlSchedule.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...na3hlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...ushlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...whlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...ohlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...qmjhlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...ncaaD1Schedule.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...ncaaD2Schedule.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
-    })),
-    ...pwhlSchedule.map((game) => ({
-      id: game.id,
-      league: game.league,
-      date: game.date,
-      arena: game.arena,
-      homeTeam: teamCodeMap[`${game.league}_${game.team}`] || game.team,
-      awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
-    })),
-    ...aihlSchedule2025.map((game) => ({
-      id: `${game.team}_${game.opponent}_${game.date}`,
-      league: game.league,
-      arena: game.arena,
-      date: game.date,
-      homeTeam: game.team,
-      awayTeam: game.opponent,
     })),
   ];
 
@@ -539,8 +413,8 @@ export default function ArenaScreen() {
     alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
     arenaName: { fontSize: 28, top: 10, fontWeight: 'bold', color: '#fff', textAlign: 'center', },
     backButton: { position: 'absolute', left: 10, zIndex: 10, borderRadius: 20, padding: 8, },
-    button: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF' , marginHorizontal: 90, paddingVertical: 18, borderRadius: 30, alignItems: 'center', marginTop: 10, borderWidth: 2, borderColor: '#2F4F68', },
-    buttonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16, fontWeight: '600' },
+    button:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#F5F1E6',marginHorizontal:90,paddingVertical:18,borderRadius:30,alignItems:'center',marginTop:10,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68'},
+    buttonText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:16,fontWeight:'600'},
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F4F7FA', },
     container: { paddingBottom: 80, backgroundColor: 'transparent', },
     countdownBox: { backgroundColor: '#0A2940', alignSelf: 'center', paddingHorizontal: 24, paddingVertical: 0, borderRadius: 14, marginBottom: 16, minWidth: 150, minHeight: 75, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 8, elevation: 12, borderWidth: 1, },

@@ -592,36 +592,35 @@ export default function Login() {
   };
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0F1E33' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: '#0D2C42', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessageText: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: '#0D2C42', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
-    buttonPrimary: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 16, paddingHorizontal: 24, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', marginBottom: 10, width: '70%', alignItems: 'center', alignSelf: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: colorScheme === 'dark' ? 0.5 : 0.2, shadowRadius: 4, elevation: 6, },
-    buttonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18, fontWeight: '600', },
-    container: { flex: 1, padding: 24, justifyContent: 'center', },eyeButton: { position: 'absolute', right: 12, },
-    eyeIcon: { color: colorScheme === 'dark' ? '#BBBBBB' : '#2F4F68', fontSize: 22 },
-    forgotPasswordContainer: { alignItems: 'center', justifyContent: 'center', marginTop: 2, },
-    forgotPasswordText: { color: '#5E819F', fontWeight: '500', },
-    fullScreenLoading: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF' },
-    googleBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#DB4437', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 6, },
-    input: { height: 48, borderColor: colorScheme === 'dark' ? '#334155' : '#5E819F', borderWidth: 1, paddingHorizontal: 12, marginBottom: 12, borderRadius: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF', },
-    link: { color: colorScheme === 'dark' ? '#5E819F' : '#5E819F', fontWeight: '600', },
-    linkContainer: { marginTop: 16, alignItems: 'center', },
-    logo: { width: 400, height: 200, alignSelf: 'center', },
-    passwordContainer: { flexDirection: 'row', alignItems: 'center', height: 48, marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: colorScheme === 'dark' ? '#334155' : '#5E819F', backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF', },
-    passwordInput: { flex: 1, height: '100%', paddingHorizontal: 12, paddingVertical: 0, backgroundColor: 'transparent', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', },
-    screenBackground: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0A1420' : '#FFFFFF', },
-    scrollContent: { flexGrow: 1, justifyContent: 'center' },
-    socialRow: { flexDirection: 'row', justifyContent: 'center', gap: 12, marginBottom: 20, },
-    socialBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1877F2', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 6, },
-    socialIcon: { color: '#FFFFFF', fontSize: 20 },
-    switchTrack: { false: '#767577', true: colorScheme === 'dark' ? '#5E819F' : '#0D2C42' },
-    switchThumb: { color: stayLoggedIn ? '#0D2C42' : '#f4f3f4' },
-    toggleRowWithMargin: { marginBottom: 20 },
-    toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '70%', alignSelf: 'center', marginTop: 0, marginBottom: -20, },
-    toggleText: { fontSize: 13, color: colorScheme === 'dark' ? '#BBBBBB' : '#2F4F68', fontWeight: '500', marginRight: -10, },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
+    alertMessageText:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222'},
+    alertButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:16},
+    buttonPrimary:{backgroundColor:colorScheme==='dark'?'#243B5A':'#B22222',paddingVertical:16,paddingHorizontal:24,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#b22222':'#B22222',marginBottom:10,width:'70%',alignItems:'center',alignSelf:'center',shadowColor:'#000',shadowOffset:{width:0,height:3},shadowOpacity:colorScheme==='dark'?0.5:0.2,shadowRadius:4,elevation:6},
+    buttonText:{color:'#F5F1E6',fontSize:18,fontWeight:'600'},
+    container:{flex:1,padding:24,justifyContent:'center'},
+    eyeButton:{position:'absolute',right:12},
+    eyeIcon:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontSize:22},
+    forgotPasswordContainer:{alignItems:'center',justifyContent:'center',marginTop:2},
+    forgotPasswordText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontWeight:'500'},
+    fullScreenLoading:{position:'absolute',top:0,left:0,right:0,bottom:0,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0B1F3A':'#F5F1E6'},
+    googleBtn:{width:40,height:40,borderRadius:20,backgroundColor:'#DB4437',justifyContent:'center',alignItems:'center',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.3,shadowRadius:4,elevation:6},
+    input:{height:48,borderColor:colorScheme==='dark'?'#b22222':'#B22222',borderWidth:1,paddingHorizontal:12,marginBottom:12,borderRadius:12,color:colorScheme==='dark'?'#FFFFFF':'#1D3557',backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF'},
+    link:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontWeight:'600'},
+    linkContainer:{marginTop:16,alignItems:'center'},
+    logo:{width:400,height:200,alignSelf:'center'},
+    passwordContainer:{flexDirection:'row',alignItems:'center',height:48,marginBottom:12,borderRadius:12,borderWidth:1,borderColor:colorScheme==='dark'?'#b22222':'#B22222',backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF'},
+    passwordInput:{flex:1,height:'100%',paddingHorizontal:12,paddingVertical:0,backgroundColor:'transparent',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
+    screenBackground:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    scrollContent:{flexGrow:1,justifyContent:'center'},
+    socialRow:{flexDirection:'row',justifyContent:'center',gap:12,marginBottom:20},
+    socialBtn:{width:40,height:40,borderRadius:20,backgroundColor:'#1877F2',justifyContent:'center',alignItems:'center',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.3,shadowRadius:4,elevation:6},
+    socialIcon:{color:'#FFFFFF',fontSize:20},
+    toggleRowWithMargin:{marginBottom:20},
+    toggleRow:{flexDirection:'row',alignItems:'center',justifyContent:'center',width:'70%',alignSelf:'center',marginTop:0,marginBottom:-20},
+    toggleText:{fontSize:13,color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontWeight:'500',marginRight:-10},
   });
 
   return (
@@ -677,7 +676,7 @@ export default function Login() {
             <TextInput
               style={styles.input}
               placeholder="Email"
-              placeholderTextColor="#AAAAAA"
+              placeholderTextColor={colorScheme==='dark'?'#F5F1E6':'#666666'}
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
@@ -688,7 +687,7 @@ export default function Login() {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Password"
-                placeholderTextColor="#AAAAAA"
+                placeholderTextColor={colorScheme==='dark'?'#F5F1E6':'#666666'}
                 value={password}
                 onChangeText={setPassword}
                 autoCapitalize="none"
@@ -710,8 +709,18 @@ export default function Login() {
               <Switch
                 value={stayLoggedIn}
                 onValueChange={setStayLoggedIn}
-                trackColor={{ false: '#767577', true: switchTrackTrueColor }}
-                thumbColor={stayLoggedIn ? switchThumbActiveColor : '#f4f3f4'}
+                trackColor={{
+                  false: colorScheme === 'dark' ? '#666666' : '#CCCCCC',
+                  true: '#B22222'
+                }}
+                thumbColor={
+                  stayLoggedIn
+                    ? '#FFFFFF'
+                    : colorScheme === 'dark'
+                    ? '#999999'
+                    : '#F5F1E6'
+                }
+                ios_backgroundColor={colorScheme === 'dark' ? '#666666' : '#CCCCCC'}
               />
             </View>
 

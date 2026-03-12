@@ -255,6 +255,7 @@ const handleShare = async () => {
     photoCard: { padding: 16, borderRadius: 12, marginBottom: 24, marginHorizontal: 20, borderWidth: 4, borderColor, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, },
     photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     photoThumbnail: { width: 100, height: 100, borderRadius: 8 },
+    resultOptionText: { fontSize: 16, fontWeight: "600", textAlign: "center", marginTop: 10, paddingVertical: 4, color: "#FFFFFF", letterSpacing: 0.3, },
     retryButton: { marginTop: 16, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: "#0A2940", borderRadius: 8, },
     retryText: { color: "#fff", fontWeight: "600", },
     scoreCard: { padding: 16, borderRadius: 12, marginBottom: 16, marginTop: -10, marginHorizontal: 20, borderWidth: 4, borderColor, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, },
@@ -523,12 +524,10 @@ const handleShare = async () => {
                   {checkin.homeScore}  -  {checkin.awayScore}
                 </Text>
 
-                {checkin.overtimeWin && (
-                  <Text style={styles.sub}>OVERTIME WIN!</Text>
-                )}
-
-                {checkin.shootoutWin && (
-                  <Text style={styles.sub}>SHOOTOUT WIN!</Text>
+                {checkin.extraInnings && (
+                  <Text style={styles.resultOptionText}>
+                    This one went to extra innings!
+                  </Text>
                 )}
               </View>
             )}
@@ -646,13 +645,6 @@ const handleShare = async () => {
                   <View style={{ marginBottom: 8 }}>
                     <Text style={styles.label}>Favorite Player</Text>
                     <Text style={styles.value}>{checkin.favoritePlayer}</Text>
-                  </View>
-                )}
-
-                {checkin.notes && (
-                  <View style={{ marginBottom: 8 }}>
-                    <Text style={styles.label}>Notes</Text>
-                    <Text style={styles.value}>{checkin.notes}</Text>
                   </View>
                 )}
               </View>

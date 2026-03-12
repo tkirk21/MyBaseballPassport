@@ -99,7 +99,7 @@ export default function UserProfileScreen() {
     markerContainer: { alignItems: 'center', },
     markerInner: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center', position: 'relative', },
     markerImage: { width: 36, height: 36, },
-    markerText: { position: 'absolute', color: 'white', fontWeight: 'bold', fontSize: 8, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
+    markerText:{position:'absolute',top:6,left:12,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
     miniMap: { width: '100%', height: 280, borderRadius: 12, overflow: 'hidden', marginTop: 8, },
     placeholder: { fontSize: 16, color: '#374151', textAlign: 'center' },
     profileImage: { width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },

@@ -1,5 +1,5 @@
 //app/settings/index.tsx
-import { Linking, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Linking, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import Constants from 'expo-constants';
@@ -211,53 +211,67 @@ export default function SettingsScreen() {
     setDeleteModalVisible(true);
   };
 
+  const rateApp = () => {
+    const url = Platform.OS === 'android'
+      ? 'market://details?id=com.tkirk21.MyBaseballPassport'
+      : 'itms-apps://apps.apple.com/app/id123456789?action=write-review';
+
+    Linking.openURL(url).catch(() => {
+      const fallback = Platform.OS === 'android'
+        ? 'https://play.google.com/store/apps/details?id=com.tkirk21.MyBaseballPassport'
+        : 'https://apps.apple.com/app/id123456789';
+
+      Linking.openURL(fallback);
+    });
+  };
+
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0F1E33' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: '#0D2C42', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessageText: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: '#0D2C42', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
-    backArrow: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42' },
-    deletePasswordInput: { width: '100%', borderWidth: 2, borderColor: '#0D2C42', borderRadius: 12, padding: 12, marginTop: 10, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F8FAFC' },
-    disabledRow: { opacity: 0.5, },
-    distanceDropdown: { height: 35, width: 130, backgroundColor: '#1A3A5A', borderRadius: 12, paddingHorizontal: 12, },
-    distanceIcon: { width: 30, height: 30, },
-    distanceItemContainer: { backgroundColor: '#1A3A5A', },
-    distanceItemText: { color: '#fff', fontSize: 18, },
-    distanceListContainer: { backgroundColor: '#1A3A5A', borderRadius: 12, overflow: 'hidden' as const, },
-    distanceSelectedText: { color: '#fff', fontSize: 18, },
-    dropdown: { height: 35, width: 130, backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F1F5F9', borderRadius: 12, paddingHorizontal: 12, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', },
-    dropdownSelectedText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18 },
-    dropdownPlaceholder: { opacity: 0 },
-    dropdownIcon: { width: 30, height: 30 },
-    dropDownContainer: { backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F1F5F9', borderRadius: 12, overflow: 'hidden', },
-    dropdownItemContainer: { backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F1F5F9',  },
-    dropdownItemText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18 },
-    dropdownRightIcon: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    headerRow: { paddingHorizontal: 20, paddingBottom: 15, flexDirection: 'row', alignItems: 'center' },
-    headerTitle: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontSize: 28, fontWeight: '700', marginLeft: 20 },
-    inner: { paddingHorizontal: 20 },
-    label: { flex: 1, color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontSize: 18, marginLeft: 16 },
-    labelDisabled: { flex: 1, fontSize: 18, marginLeft: 16, color: '#999', },
-    link: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontSize: 17, },
-    logoutButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', padding: 18, borderRadius: 30, alignItems: 'center', width: 200, alignSelf: 'center', marginBottom: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', },
-        logoutText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontWeight: '700', fontSize: 18 },
-    row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
-    rowIconDisabled: { color: '#999', },
-    rowIcon: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    rowArrow: { color: colorScheme === 'dark' ? '#888888' : '#888888' },
-    screenBackground: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF' },
-    section: { marginBottom: 30 },
-    sectionTitle: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontSize: 20, fontWeight: '600', marginBottom: 16, opacity: 0.9 },
-    subLabel: { color: colorScheme === 'dark' ? '#BBBBBB' : '#aaaaaa', fontSize: 16, marginLeft: 'auto' },
-    version: { paddingBottom: 20 },
-    versionText: { color: '#888', fontSize: 16 },
-    themeButtonContainer: { flexDirection: 'row', alignItems: 'center', marginLeft: 'auto' },
-    themeButtonInactive: { paddingHorizontal: 16, paddingVertical: 10, backgroundColor: 'transparent', },
-    themeButtonActive: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 30, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', },
-    themeButtonTextInactive: { fontSize: 16, color: colorScheme === 'dark' ? '#D1D5DB' : '#6B7280', fontWeight: '500', },
-    themeButtonTextActive: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '600', },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.4,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
+    alertMessageText:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',paddingVertical:12,paddingHorizontal:32,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
+    backArrow:{color:colorScheme==='dark'?'#F5F1E6':'#0D2C42'},
+    deletePasswordInput:{width:'100%',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',borderRadius:12,padding:12,marginTop:10,color:colorScheme==='dark'?'#FFFFFF':'#0A2940',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF'},
+    disabledRow:{opacity:0.5},
+    distanceDropdown:{height:35,width:130,backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,paddingHorizontal:12},
+    distanceIcon:{width:30,height:30},
+    distanceItemContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF'},
+    distanceItemText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18},
+    distanceListContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,overflow:'hidden'},
+    distanceSelectedText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18},
+    dropdown:{height:35,width:130,backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,paddingHorizontal:12,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    dropdownSelectedText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18},
+    dropdownPlaceholder:{opacity:0},
+    dropdownIcon:{width:30,height:30},
+    dropDownContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,overflow:'hidden'},
+    dropdownItemContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF'},
+    dropdownItemText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18},
+    dropdownRightIcon:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    headerRow:{paddingHorizontal:20,paddingBottom:15,flexDirection:'row',alignItems:'center'},
+    headerTitle:{color:colorScheme==='dark'?'#F5F1E6':'#0D2C42',fontSize:28,fontWeight:'700',marginLeft:20},
+    inner:{paddingHorizontal:20},
+    label:{flex:1,color:colorScheme==='dark'?'#F5F1E6':'#0D2C42',fontSize:18,marginLeft:16},
+    labelDisabled:{flex:1,fontSize:18,marginLeft:16,color:'#999'},
+    link:{color:colorScheme==='dark'?'#F5F1E6':'#0D2C42',fontSize:17},
+    logoutButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#FFFFFF',padding:18,borderRadius:30,alignItems:'center',width:200,alignSelf:'center',marginBottom:30,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    logoutText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontWeight:'700',fontSize:18},
+    row:{flexDirection:'row',alignItems:'center',paddingVertical:8},
+    rowIconDisabled:{color:'#999'},
+    rowIcon:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    rowArrow:{color:'#888888'},
+    screenBackground:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    section:{marginBottom:30},
+    sectionTitle:{color:colorScheme==='dark'?'#F5F1E6':'#0D2C42',fontSize:20,fontWeight:'600',marginBottom:16,opacity:0.9},
+    subLabel:{color:colorScheme==='dark'?'#BBBBBB':'#aaaaaa',fontSize:16,marginLeft:'auto'},
+    version:{paddingBottom:20},
+    versionText:{color:'#888',fontSize:16},
+    themeButtonContainer:{flexDirection:'row',alignItems:'center',marginLeft:'auto'},
+    themeButtonInactive:{paddingHorizontal:16,paddingVertical:10,backgroundColor:'transparent'},
+    themeButtonActive:{paddingHorizontal:16,paddingVertical:10,borderRadius:30,backgroundColor:colorScheme==='dark'?'#1B3F68':'#FFFFFF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
+    themeButtonTextInactive:{fontSize:16,color:colorScheme==='dark'?'#D1D5DB':'#6B7280',fontWeight:'500'},
+    themeButtonTextActive:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontWeight:'600'}
   });
 
   return (
@@ -459,7 +473,7 @@ export default function SettingsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Support</Text>
 
-            <TouchableOpacity style={styles.row} onPress={() => Linking.openURL('https://apps.apple.com/app/idYOUR_ID/reviews').catch(() => {})}>
+            <TouchableOpacity style={styles.row} onPress={rateApp}>
               <Ionicons name="star-outline" size={26} color={styles.rowIcon.color} />
               <Text style={styles.label}>Rate the App</Text>
             </TouchableOpacity>

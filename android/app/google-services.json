@@ -1,40 +1,48 @@
 {
   "project_info": {
-    "project_number": "853703034223",
-    "project_id": "myhockeypassport",
-    "storage_bucket": "myhockeypassport.firebasestorage.app"
+    "project_number": "171882071353",
+    "project_id": "mybaseballpassport",
+    "storage_bucket": "mybaseballpassport.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:853703034223:android:0264623fa9c78f6b0ed49a",
+        "mobilesdk_app_id": "1:171882071353:android:c9ab9b103747925cf6d4e8",
         "android_client_info": {
-          "package_name": "com.tkirk21.MyHockeyPassport"
+          "package_name": "com.tkirk21.MyBaseballPassport"
         }
       },
       "oauth_client": [
         {
-          "client_id": "853703034223-101527k79a64l7aupv9ru8h0ph5sb2lf.apps.googleusercontent.com",
+          "client_id": "171882071353-hs12stkccjfdekm0kh47s6hesdru4t35.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkirk21.MyBaseballPassport",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAGktpRRV2BJzZ6tsGpQI5GroeMwiKgrKI"
+          "current_key": "AIzaSyBUNByH5sLZLOdqMHfWjIQLxiiG3jVjRAQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "853703034223-101527k79a64l7aupv9ru8h0ph5sb2lf.apps.googleusercontent.com",
+              "client_id": "171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "853703034223-59fejl2mrbfqg9p03l8eailbvtv6o14a.apps.googleusercontent.com",
+              "client_id": "171882071353-nr5q1n4bgphk1a2uk6u76ag4per9p80p.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.tkirk21.MyHockeyPassport"
+                "bundle_id": "com.tkirk21.MyBaseballPassport"
               }
             }
           ]

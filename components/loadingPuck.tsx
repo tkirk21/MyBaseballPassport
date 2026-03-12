@@ -43,7 +43,7 @@ export default function LoadingPuck({ size = 240 }: LoadingPuckProps) {
     ? require("@/assets/images/loading_puck_dark.png")
     : require("@/assets/images/loading_puck.png");
 
-  const backgroundColor = colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF';
+  const backgroundColor = colorScheme === 'dark' ? '#0A2940' : '#F5F1E6';
 
   return (
     <View style={[styles.overlay, { backgroundColor }]}>

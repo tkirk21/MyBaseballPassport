@@ -11,21 +11,7 @@ import { usePremium } from '@/context/PremiumContext';
 
 import LoadingPuck from '@/components/loadingPuck';
 import arenaData from '@/assets/data/arenas.json';
-import nhlSchedule2025 from '@/assets/data/nhlSchedule2025.json';
-import ahlSchedule2025 from '@/assets/data/ahlSchedule2025.json';
-import ushlSchedule2025 from '@/assets/data/ushlSchedule2025.json';
-import echlSchedule2025 from '@/assets/data/echlSchedule2025.json';
-import whlSchedule2025 from '@/assets/data/whlSchedule2025.json';
-import qmjhlSchedule2025 from '@/assets/data/qmjhlSchedule2025.json';
-import ohlSchedule2025 from '@/assets/data/ohlSchedule2025.json';
-import sphlSchedule2025 from '@/assets/data/sphlSchedule2025.json';
-import fphlSchedule from '@/assets/data/fphlSchedule.json';
-import na3hlSchedule2025 from '@/assets/data/na3hlSchedule2025.json';
-import nahlSchedule from '@/assets/data/nahlSchedule.json';
-import ncaaD1Schedule from '@/assets/data/ncaaD1Schedule.json';
-import ncaaD2Schedule from '@/assets/data/ncaaD2Schedule.json';
-import aihlSchedule2025 from '@/assets/data/aihlSchedule2025.json';
-import pwhlSchedule from '@/assets/data/pwhlSchedule.json';
+import mlbSchedule from '@/assets/data/mlbSchedule.json';
 
 const auth = getAuth();
 
@@ -81,21 +67,7 @@ export default function CheckInScreen() {
 
       const now = new Date();
       const allGamesToday = [
-        ...nhlSchedule2025,
-        ...ahlSchedule2025,
-        ...echlSchedule2025,
-        ...sphlSchedule2025,
-        ...fphlSchedule,
-        ...ohlSchedule2025,
-        ...whlSchedule2025,
-        ...qmjhlSchedule2025,
-        ...ushlSchedule2025,
-        ...nahlSchedule,
-        ...na3hlSchedule2025,
-        ...ncaaD1Schedule,
-        ...ncaaD2Schedule,
-        ...pwhlSchedule,
-        ...aihlSchedule2025.map(g => ({ ...g, league: 'AIHL' })),
+        ...mlbSchedule.map(g => ({ ...g, league: 'AIHL' })),
       ].filter(g => {
         const gameStart = new Date(g.date); // already UTC
         const oneHourBefore = new Date(gameStart.getTime() - 60 * 60 * 1000);
@@ -194,22 +166,22 @@ export default function CheckInScreen() {
   const deg2rad = (deg: number) => deg * (Math.PI / 180);
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: colorScheme === 'dark' ? '#fff' : '#0A2940', fontWeight: '700', fontSize: 16 },
-    buttons: { position: "absolute", bottom: 140, left: 60, right: 60, gap: 40, },
-    buttonPrimary: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', paddingVertical: 16, borderRadius: 30, },
-    buttonSecondary: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 16, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', borderRadius: 30, },
-    buttonText: { fontSize: 16, color: colorScheme === 'dark' ? '#fff' : '#0A2940', fontWeight: "600", textAlign: "center", },
-    container: { flex: 1, },
-    heroImage: { position: "absolute", top: 130, width: Dimensions.get("window").width * 0.6, height: 160, alignSelf: "center", },
-    header: { position: "absolute", top: 50, left: 0, right: 0, fontSize: 34, fontWeight: "bold", color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', textAlign: "center", textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
-    loadingOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", zIndex: 999, alignItems: "center", justifyContent: "center", },
-    overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(30, 30, 30, 0.1)", },
-    subHeader: { position: "absolute", top: 100, left: 0, right: 0, fontSize: 16, color: colorScheme === 'dark' ? '#CCCCCC' : '#0A2940', textAlign: "center", },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
+    buttons:{position:"absolute",bottom:140,left:60,right:60,gap:40},
+    buttonPrimary:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:16,borderRadius:30},
+    buttonSecondary:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',paddingVertical:16,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',borderRadius:30},
+    buttonText:{fontSize:16,color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:"600",textAlign:"center"},
+    container:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    heroImage:{position:"absolute",top:160,width:Dimensions.get("window").width*0.6,height:160,alignSelf:"center"},
+    header:{position:"absolute",top:50,left:0,right:0,fontSize:34,fontWeight:"bold",color:colorScheme==='dark'?'#F5F1E6':'#1D3557',textAlign:"center",textShadowColor:colorScheme==='dark'?'#000000':'#ffffff',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    loadingOverlay:{position:"absolute",top:0,left:0,right:0,bottom:0,backgroundColor:"rgba(0,0,0,0.4)",zIndex:999,alignItems:"center",justifyContent:"center"},
+    overlay:{...StyleSheet.absoluteFillObject,backgroundColor:"rgba(30,30,30,0.1)"},
+    subHeader:{position:"absolute",top:100,left:0,right:0,fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:"center"}
   });
 
   return (

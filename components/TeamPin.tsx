@@ -12,5 +12,5 @@ export default function TeamPin() {
 
 const styles = StyleSheet.create({
   pin: { backgroundColor: 'black', padding: 10, borderRadius: 20, },
-  text: { color: 'white', fontWeight: 'bold', },
+  text: { color: 'white', fontWeight: 'bold' },
 });

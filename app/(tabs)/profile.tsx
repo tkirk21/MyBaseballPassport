@@ -24,7 +24,7 @@ interface Arena { arena: string; colorCode?: string; }
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
-const storage = getStorage(firebaseApp, 'gs://myhockeypassport.firebasestorage.app');
+const storage = getStorage(firebaseApp, 'gs://mybaseballpassport.firebasestorage.app');
 
 function norm(s: any) { return (s ?? '').toString().trim().toLowerCase(); }
 
@@ -464,7 +464,7 @@ export default function ProfileScreen() {
           setMostVisitedArena(null);
         }
 
-    // Unique ballparks visited
+    // Unique arenas visited
     setArenasVisited(Object.keys(arenaCounts).length);
 
     // Teams watched
@@ -668,90 +668,90 @@ export default function ProfileScreen() {
   }
 
   const styles = StyleSheet.create({
-    addTeamButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', borderRadius: 30, paddingVertical: 8, paddingHorizontal: 10, alignItems: 'center', alignSelf: 'center', },
-    addTeamButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700', fontSize: 16, },
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', fontWeight: '700', fontSize: 16 },
-    alertMessageText: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    arenaHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4, },
-    arenaTextInline: { fontSize: 16, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', flex: 1, },
-    background: { flex: 1, width: '100%', height: '100%', },
-    blurredSection: { opacity: 0.75, },
-    cardText: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', },
-    cardTextBold: { fontSize: 26, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', },
-    checkinCard: { padding: 14, borderRadius: 10, marginBottom: 12, borderLeftWidth: 6, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 1 }, shadowRadius: 3, elevation: 2, },
-    cheerBadgeContainer: { position: 'relative', alignItems: 'center', },
-    cheerCountBadge: { position: 'absolute', top: -6, right: -8, backgroundColor: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', borderRadius: 10, paddingHorizontal: 4, paddingVertical: 1, minWidth: 16, },
-    cheerCountText: { color: colorScheme === 'dark' ? '#0A2940' : '#fff', fontSize: 10, fontWeight: '700', },
-    cheerNamesText: { fontSize: 12, color: colorScheme === 'dark' ? '#CCCCCC' : '#2F4F68', fontWeight: '600', marginTop: 2, textAlign: 'center', },
-    cheerWrapper: { alignItems: 'flex-end', },
-    chirpAvatar: { width: 22, height: 22, borderRadius: 11, marginRight: 6, },
-    chirpAvatarPlaceholder: { width: 22, height: 22, borderRadius: 11, backgroundColor: colorScheme === 'dark' ? '#444' : '#ccc', marginRight: 6, },
-    chirpInput: { flex: 1, borderWidth: 1.5, borderColor: colorScheme === 'dark' ? '#666' : '#ccc', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, fontSize: 14, backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#fff', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
-    chirpItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 4, },
-    chirpReplyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, },
-    chirpsSection: { marginTop: 8, paddingHorizontal: 6, },
-    chirpSectionWrapper: { marginTop: 12, padding: 12, borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 12, },
-    chirpSendButton: { marginLeft: 8, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 30, },
-    chirpSendText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700', fontSize: 14, },
-    chirpText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', flexShrink: 1, fontSize: 14, marginTop: 4, lineHeight: 20, },
-    chirpTextContainer: {  flex: 1, },
-    chirpUsername: { fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
-    collapseHeader: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, alignItems: 'center', },
-    collapseHeaderText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#1E3A8A', fontSize: 16, fontWeight: '600', },
-    dateAndCheerRow: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 2, marginTop: 3, marginBottom: 6, },
-    dateText: { fontSize: 14, color: colorScheme === 'dark' ? '#CCCCCC' : '#2F4F68', textAlign: 'center', marginBottom: 6, },
-    dropdownMenu: { position: 'absolute', right: -8, top: 32, backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#fff', borderRadius: 12, borderWidth: 1, borderColor: colorScheme === 'dark' ? '#D1D5DB' : '#666', paddingVertical: 4, minWidth: 110, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 8, zIndex: 999, },
-    favouriteTeamsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, justifyContent: 'center', },
-    favouriteTeamsLabel: { fontSize: 16, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 8, },
-    header: { fontSize: 34, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginTop: 10, marginBottom: 15, textAlign: 'center', textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
-    innerContainer: { paddingTop: 40, paddingHorizontal: 20, paddingBottom: 10, },
-    input: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0A2940' : "#fff", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, borderWidth: 1, borderColor: colorScheme === 'dark' ? '#666' : "#ddd", fontSize: 14, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    inputWrapper: { marginBottom: 12, },
-    leagueBlock: { marginTop: 8, backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#F0F4F8', borderRadius: 10, overflow: 'hidden', },
-    leagueHeaderTouchable: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#F0F4F8', paddingHorizontal: 20, paddingVertical: 12, },
-    leaguesList: { marginTop: 8, },
-    leaguePuck: {  width: 28, height: 28, marginRight: 8,  },
-    leagueRow: { paddingVertical: 10, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: colorScheme === 'dark' ? '#444' : '#e5e7eb', },
-    leagueRowText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16, fontWeight: '300', },
-    leagueSectionHeader: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#F0F4F8', },
-    noResultsText: { textAlign: 'center', color: colorScheme === 'dark' ? '#888888' : '#666666', padding: 40, fontSize: 16, },
-    noTeamsText: { color: colorScheme === 'dark' ? '#888888' : '#666666', fontStyle: 'italic', fontSize: 14, },
-    placeholder: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', },
-    profileActionsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center',  marginTop: 12, gap: 30, },
-    profileImage: { width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 12, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', borderWidth: 2, },
-    safeArea: { flex: 1, },
-    scrollContainer: { flexGrow: 1, },
-    section: { marginBottom: 20, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, padding: 12, borderWidth: 4, borderColor: '#0D2C42', },
-    sectionTitle: { fontSize: 20, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1E3A8A', marginBottom: 8, textAlign: 'center', },
-    settingsGearButton: { padding: 10, },
-    smallButtonText: { color: colorScheme === 'dark' ? '#fff' : '#0A2940', fontSize: 18, fontWeight: '600', },
-    smallLoadButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', alignItems: 'center', alignSelf: 'center', },
-    smallSaveProfileButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, paddingHorizontal: 10, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', alignItems: 'center', alignSelf: 'center', },
-    statsRow: { flexDirection: 'row', gap: 8, marginBottom: 20, },
-    statSection: { flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, paddingVertical: 20, justifyContent: 'center', alignItems: 'center', borderWidth: 4, borderColor: '#0D2C42', },
-    sub: { fontSize: 14, fontWeight: '600', color: colorScheme === 'dark' ? '#CCCCCC' : '#2F4F68', marginBottom: 6 },
-    teamChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, },
-    teamChipText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '600', },
-    teamChipRemove: { marginLeft: 8, },
-    teamItem: { paddingVertical: 16, paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: colorScheme === 'dark' ? '#2F4F68' : '#E5E7EB', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', },
-    teamItemText: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', flex: 1, },
-    teamItemAlreadyAdded: { color: colorScheme === 'dark' ? '#10B981' : '#059669', },
-    teamList: { paddingVertical: 8, paddingHorizontal: 14, gap: 6, },
-    teamRowText: { color: colorScheme === 'dark' ? '#CCCCCC' : '#2F4F68', fontSize: 14, },
-    teamSelectorOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.6)', },
-    teamSelectorPopup: { width: '85%', maxHeight: '80%', backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 20, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 20, },
-    teamSelectorHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: colorScheme === 'dark' ? '#2F4F68' : '#E5E7EB', },
-    teamSelectorTitle: { fontSize: 20, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
-    teamSearchInput: { height: 48, backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#F0F4F8', borderRadius: 12, paddingHorizontal: 16, fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', margin: 16, marginBottom: 8, },
-    teamsText: { fontSize: 14, fontWeight: '500', color: colorScheme === 'dark' ? '#CCCCCC' : '#2F4F68', },
-    uploadPhotoButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, paddingHorizontal: 10, borderRadius: 30, borderWidth: 2, marginBottom: 12, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', alignItems: 'center', alignSelf: 'center', },
-    upgradePrompt: { color: '#EF4444', fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginTop: 12, paddingHorizontal: 16, },
-    });
+    addTeamButton:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',borderRadius:30,paddingVertical:8,paddingHorizontal:10,alignItems:'center',alignSelf:'center'},
+    addTeamButtonText:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontWeight:'700',fontSize:16},
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#374151',fontWeight:'700',fontSize:16},
+    alertMessageText:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    arenaHeaderRow:{flexDirection:'row',alignItems:'center',marginBottom:4},
+    arenaTextInline:{fontSize:16,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',flex:1},
+    background:{flex:1,width:'100%',height:'100%'},
+    blurredSection:{opacity:0.75},
+    cardText:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#1D3557',textAlign:'center'},
+    cardTextBold:{fontSize:26,fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',textAlign:'center'},
+    checkinCard:{padding:14,borderRadius:10,marginBottom:12,borderLeftWidth:6,shadowColor:'#000',shadowOpacity:0.05,shadowOffset:{width:0,height:1},shadowRadius:3,elevation:2},
+    cheerBadgeContainer:{position:'relative',alignItems:'center'},
+    cheerCountBadge:{position:'absolute',top:-6,right:-8,backgroundColor:colorScheme==='dark'?'#FFFFFF':'#1D3557',borderRadius:10,paddingHorizontal:4,paddingVertical:1,minWidth:16},
+    cheerCountText:{color:colorScheme==='dark'?'#132F4F':'#fff',fontSize:10,fontWeight:'700'},
+    cheerNamesText:{fontSize:12,color:colorScheme==='dark'?'#AFC7E6':'#B22222',fontWeight:'600',marginTop:2,textAlign:'center'},
+    cheerWrapper:{alignItems:'flex-end'},
+    chirpAvatar:{width:22,height:22,borderRadius:11,marginRight:6},
+    chirpAvatarPlaceholder:{width:22,height:22,borderRadius:11,backgroundColor:colorScheme==='dark'?'#243B5A':'#ccc',marginRight:6},
+    chirpInput:{flex:1,borderWidth:1.5,borderColor:colorScheme==='dark'?'#4A6FA5':'#ccc',borderRadius:20,paddingHorizontal:14,paddingVertical:8,fontSize:14,backgroundColor:colorScheme==='dark'?'#243B5A':'#fff',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
+    chirpItem:{flexDirection:'row',alignItems:'center',marginBottom:4},
+    chirpReplyRow:{flexDirection:'row',alignItems:'center',marginTop:8},
+    chirpsSection:{marginTop:8,paddingHorizontal:6},
+    chirpSectionWrapper:{marginTop:12,padding:12,borderWidth:1,borderColor:'#D1D5DB',borderRadius:12},
+    chirpSendButton:{marginLeft:8,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',paddingHorizontal:16,paddingVertical:8,borderRadius:30},
+    chirpSendText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontWeight:'700',fontSize:14},
+    chirpText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',flexShrink:1,fontSize:14,marginTop:4,lineHeight:20},
+    chirpTextContainer:{flex:1},
+    chirpUsername:{fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
+    collapseHeader:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',paddingVertical:8,paddingHorizontal:12,borderRadius:8,alignItems:'center'},
+    collapseHeaderText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:16,fontWeight:'600'},
+    dateAndCheerRow:{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",gap:2,marginTop:3,marginBottom:6},
+    dateText:{fontSize:14,color:colorScheme==='dark'?'#AFC7E6':'#0D2C42',textAlign:'center',marginBottom:6},
+    dropdownMenu:{position:'absolute',right:-8,top:32,backgroundColor:colorScheme==='dark'?'#132F4F':'#fff',borderRadius:12,borderWidth:1,borderColor:colorScheme==='dark'?'#4A6FA5':'#666',paddingVertical:4,minWidth:110,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.1,shadowRadius:8,elevation:8,zIndex:999},
+    favouriteTeamsContainer:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:12,justifyContent:'center'},
+    favouriteTeamsLabel:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginBottom:8},
+    header:{fontSize:34,fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginTop:10,marginBottom:15,textAlign:'center',textShadowColor:colorScheme==='dark'?'#000000':'#ffffff',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    innerContainer:{paddingTop:40,paddingHorizontal:20,paddingBottom:10},
+    input:{flex:1,backgroundColor:colorScheme==='dark'?'#243B5A':"#fff",borderRadius:12,paddingHorizontal:14,paddingVertical:10,borderWidth:1,borderColor:colorScheme==='dark'?'#F5F1E6':"#ddd",fontSize:14,color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
+    inputWrapper:{marginBottom:12},
+    leagueBlock:{marginTop:8,backgroundColor:colorScheme==='dark'?'#132F4F':'#F0F4F8',borderRadius:10,overflow:'hidden'},
+    leagueHeaderTouchable:{backgroundColor:colorScheme==='dark'?'#132F4F':'#F0F4F8',paddingHorizontal:20,paddingVertical:12},
+    leaguesList:{marginTop:8},
+    leaguePuck:{width:28,height:28,marginRight:8},
+    leagueRow:{paddingVertical:10,paddingHorizontal:12,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#243B5A':'#e5e7eb'},
+    leagueRowText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:16,fontWeight:'300'},
+    leagueSectionHeader:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',paddingHorizontal:20,paddingTop:16,paddingBottom:8,backgroundColor:colorScheme==='dark'?'#132F4F':'#F0F4F8'},
+    noResultsText:{textAlign:'center',color:colorScheme==='dark'?'#AFC7E6':'#666666',padding:40,fontSize:16},
+    noTeamsText:{color:colorScheme==='dark'?'#F5F1E6':'#666666',fontStyle:'italic',fontSize:14},
+    placeholder:{fontSize:16,color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center'},
+    profileActionsRow:{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:12,gap:30},
+    profileImage:{width:120,height:120,borderRadius:60,alignSelf:'center',marginBottom:12,borderColor:colorScheme==='dark'?'#B22222':'#B22222',borderWidth:2},
+    safeArea:{flex:1},
+    scrollContainer:{flexGrow:1},
+    section:{marginBottom:20,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderRadius:12,padding:12,borderWidth:4,borderColor:'#B22222'},
+    sectionTitle:{fontSize:20,fontWeight:'700',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginBottom:8,textAlign:'center'},
+    settingsGearButton:{padding:10},
+    smallButtonText:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontSize:18,fontWeight:'600'},
+    smallLoadButton:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',paddingVertical:14,paddingHorizontal:40,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',alignItems:'center',alignSelf:'center'},
+    smallSaveProfileButton:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',paddingVertical:14,paddingHorizontal:10,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',alignItems:'center',alignSelf:'center'},
+    statsRow:{flexDirection:'row',gap:8,marginBottom:20},
+    statSection:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderRadius:12,paddingVertical:20,justifyContent:'center',alignItems:'center',borderWidth:4,borderColor:'#B22222'},
+    sub:{fontSize:14,fontWeight:'600',color:colorScheme==='dark'?'#AFC7E6':'#1D3557',marginBottom:6},
+    teamChip:{flexDirection:'row',alignItems:'center',backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderRadius:20,paddingHorizontal:12,paddingVertical:6},
+    teamChipText:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontWeight:'600'},
+    teamChipRemove:{marginLeft:8},
+    teamItem:{paddingVertical:16,paddingHorizontal:20,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#B22222':'#E5E7EB',flexDirection:'row',justifyContent:'space-between',alignItems:'center'},
+    teamItemText:{fontSize:16,color:colorScheme==='dark'?'#FFFFFF':'#1D3557',flex:1},
+    teamItemAlreadyAdded:{color:colorScheme==='dark'?'#10B981':'#059669'},
+    teamList:{paddingVertical:8,paddingHorizontal:14,gap:6},
+    teamRowText:{color:colorScheme==='dark'?'#AFC7E6':'#B22222',fontSize:14},
+    teamSelectorOverlay:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'},
+    teamSelectorPopup:{width:'85%',maxHeight:'80%',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:20,overflow:'hidden',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.4,shadowRadius:16,elevation:20},
+    teamSelectorHeader:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingHorizontal:20,paddingVertical:16,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#B22222':'#E5E7EB'},
+    teamSelectorTitle:{fontSize:20,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
+    teamSearchInput:{height:48,backgroundColor:colorScheme==='dark'?'#243B5A':'#F0F4F8',borderRadius:12,paddingHorizontal:16,fontSize:16,color:colorScheme==='dark'?'#FFFFFF':'#1D3557',margin:16,marginBottom:8},
+    teamsText:{fontSize:14,fontWeight:'500',color:colorScheme==='dark'?'#AFC7E6':'#B22222'},
+    uploadPhotoButton:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',paddingVertical:14,paddingHorizontal:10,borderRadius:30,borderWidth:2,marginBottom:12,borderColor:colorScheme==='dark'?'#B22222':'#B22222',alignItems:'center',alignSelf:'center'},
+    upgradePrompt:{color:'#B22222',fontSize:18,fontWeight:'bold',textAlign:'center',marginTop:12,paddingHorizontal:16}
+  });
 
   return (
     <KeyboardAvoidingView
@@ -915,7 +915,7 @@ export default function ProfileScreen() {
 
               <View style={{ marginBottom: 16 }}>
                 <Text style={styles.favouriteTeamsLabel}>
-                  Favourite Teams
+                  Favorite Teams
                 </Text>
 
                 <TouchableOpacity
@@ -923,14 +923,14 @@ export default function ProfileScreen() {
                   onPress={() => setTeamSelectorVisible(true)}
                 >
                   <Text style={styles.addTeamButtonText}>
-                    + Add favourite team
+                    + Add favorite team
                   </Text>
                 </TouchableOpacity>
 
                 <View style={styles.favouriteTeamsContainer}>
                   {favouriteTeams.length === 0 ? (
                     <Text style={styles.noTeamsText}>
-                      No favourite teams added yet
+                      No favorite teams added yet
                     </Text>
                   ) : (
                     favouriteTeams.map((team) => (
@@ -952,7 +952,7 @@ export default function ProfileScreen() {
 
               <View style={styles.profileActionsRow}>
                 <TouchableOpacity style={styles.settingsGearButton} onPress={() => router.push('/settings')}>
-                  <Ionicons name="settings-outline" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
+                  <Ionicons name="settings-outline" size={28} color={colorScheme === 'dark' ? '#F5F1E6' : '#0A2940'} />
                 </TouchableOpacity>
 
                 {loading ? (
@@ -968,14 +968,14 @@ export default function ProfileScreen() {
             <View style={styles.statsRow}>
               {hasAppAccess ? (
                 <View style={styles.statSection}>
-                  <Text style={styles.sectionTitle}>Ballparks Visited</Text>
+                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
                   <Text style={styles.cardTextBold}>{arenasVisited}</Text>
                 </View>
               ) : (
                 <View style={[styles.statSection, styles.blurredSection]}>
-                  <Text style={styles.sectionTitle}>Ballparks Visited</Text>
+                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
                   <Text style={styles.upgradePrompt}>
-                    Subscribe to see ballparks visited.
+                    Subscribe to see arenas visited.
                   </Text>
                 </View>
               )}
@@ -1011,28 +1011,28 @@ export default function ProfileScreen() {
               <View style={[styles.section, styles.blurredSection]}>
                 <Text style={styles.sectionTitle}>Most Watched Teams</Text>
                 <Text style={styles.upgradePrompt}>
-                  6 month subscription is cheaper than ballpark parking.
+                  6 month subscription is cheaper than arena parking.
                 </Text>
               </View>
             )}
 
             {hasAppAccess ? (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Most Visited Ballpark</Text>
+                <Text style={styles.sectionTitle}>Most Visited Arena</Text>
                 {mostVisitedArena ? (
                   <Text style={styles.cardText}>
                     {mostVisitedArena.arena}: {mostVisitedArena.count}{' '}
                     {mostVisitedArena.count === 1 ? 'visit' : 'visits'}
                   </Text>
                 ) : (
-                  <Text style={styles.placeholder}>No ballparks yet.</Text>
+                  <Text style={styles.placeholder}>No arenas yet.</Text>
                 )}
               </View>
             ) : (
               <View style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Most Visited Ballpark</Text>
+                <Text style={styles.sectionTitle}>Most Visited Arena</Text>
                 <Text style={styles.upgradePrompt}>
-                  Subscribe to see most visited ballpark.
+                  Subscribe to see most visited arena.
                 </Text>
               </View>
             )}

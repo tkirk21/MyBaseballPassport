@@ -1,8 +1,8 @@
 import Purchases from 'react-native-purchases';
 import { Platform } from 'react-native';
 
-const IOS_API_KEY = 'appl_JGxavdoMkpHIjcnwSCOTJLcpqnY';
-const ANDROID_API_KEY = 'goog_oMcRJqarSxHaSinKLHIWjvrPbGD';
+const IOS_API_KEY = 'test_SxhPsLnMNaklGjWdYCZKxsGHnPM';
+const ANDROID_API_KEY = 'test_SxhPsLnMNaklGjWdYCZKxsGHnPM';
 
 export const configureRevenueCat = async (userId: string) => {
   const apiKey =

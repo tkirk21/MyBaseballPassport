@@ -19,22 +19,8 @@ import { usePremium } from '@/context/PremiumContext';
 import LoadingPuck from '@/components/loadingPuck';
 import arenaData from '@/assets/data/arenas.json';
 import leaguesData from '@/assets/data/leagues.json';
-import nhlSchedule2025 from '@/assets/data/nhlSchedule2025.json';
-import khlSchedule from '@/assets/data/khlSchedule.json';
-import ahlSchedule2025 from '@/assets/data/ahlSchedule2025.json';
-import ushlSchedule2025 from '@/assets/data/ushlSchedule2025.json';
-import echlSchedule2025 from '@/assets/data/echlSchedule2025.json';
-import whlSchedule2025 from '@/assets/data/whlSchedule2025.json';
-import qmjhlSchedule2025 from '@/assets/data/qmjhlSchedule2025.json';
-import ohlSchedule2025 from '@/assets/data/ohlSchedule2025.json';
-import sphlSchedule2025 from '@/assets/data/sphlSchedule2025.json';
-import fphlSchedule from '@/assets/data/fphlSchedule.json';
-import nahlSchedule from '@/assets/data/nahlSchedule.json';
-import na3hlSchedule2025 from '@/assets/data/na3hlSchedule2025.json';
-import ncaaD1Schedule from '@/assets/data/ncaaD1Schedule.json';
-import ncaaD2Schedule from '@/assets/data/ncaaD2Schedule.json';
-import aihlSchedule2025 from '@/assets/data/aihlSchedule2025.json';
-import pwhlSchedule from '@/assets/data/pwhlSchedule.json';
+import mlbSchedule from '@/assets/data/mlbSchedule.json';
+import ilSchedule from '@/assets/data/ilSchedule.json';
 
 const auth = getAuth();
 
@@ -96,22 +82,16 @@ export default function HomeScreen() {
 
   //Combines all league schedules into one array for today's games filtering
   const combinedSchedule = [
-    ...nhlSchedule2025,
-    ...khlSchedule,
-    ...ahlSchedule2025,
-    ...echlSchedule2025,
-    ...whlSchedule2025,
-    ...qmjhlSchedule2025,
-    ...ohlSchedule2025,
-    ...sphlSchedule2025,
-    ...fphlSchedule,
-    ...ushlSchedule2025,
-    ...nahlSchedule,
-    ...na3hlSchedule2025,
-    ...ncaaD1Schedule,
-    ...ncaaD2Schedule,
-    ...pwhlSchedule,
-    ...aihlSchedule2025.map(game => ({
+    ...mlbSchedule.map(game => ({
+      id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
+      league: game.league,
+      homeTeam: game.homeTeam,
+      opponent: game.awayTeam,
+      arena: game.location,
+      city: '',
+      date: game.date,
+    })),
+    ...ilSchedule.map(game => ({
       id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
       league: game.league,
       homeTeam: game.homeTeam,
@@ -147,68 +127,16 @@ export default function HomeScreen() {
   //Groups leagues for Explore Leagues picker and grid
   const leagueGroups = [
     {
-      title: 'Major Professional',
+      title: 'Major League',
       leagues: [
-        { name: 'NHL', logo: require('@/assets/images/puck_logo_nhl.png') },
-        { name: 'KHL', logo: require('@/assets/images/puck_logo_khl.png') },
+        { name: 'MLB', logo: require('@/assets/images/ball_logo_mlb.png') },
       ],
     },
     {
-      title: 'Minor Professional',
+      title: 'Minor League',
       leagues: [
-        { name: 'AHL', logo: require('@/assets/images/puck_logo_ahl.png') },
-        { name: 'ECHL', logo: require('@/assets/images/puck_logo_echl.png') },
-        { name: 'SPHL', logo: require('@/assets/images/puck_logo_sphl.png') },
-        { name: 'FPHL', logo: require('@/assets/images/puck_logo_fphl.png') },
-      ],
-    },
-    {
-      title: 'Canadian Hockey League',
-      leagues: [
-        { name: 'OHL', logo: require('@/assets/images/puck_logo_ohl.png') },
-        { name: 'QMJHL', logo: require('@/assets/images/puck_logo_qmjhl.png') },
-        { name: 'WHL', logo: require('@/assets/images/puck_logo_whl.png') },
-      ],
-    },
-    {
-      title: 'USA Hockey Junior Leagues',
-      leagues: [
-        { name: 'USHL', logo: require('@/assets/images/puck_logo_ushl.png') },
-        { name: 'NAHL', logo: require('@/assets/images/puck_logo_nahl.png') },
-        { name: 'NA3HL', logo: require('@/assets/images/puck_logo_na3hl.png') },
-      ],
-    },
-    {
-      title: 'NCAA College Hockey',
-      leagues: [
-        { name: 'NCAA DIV I', logo: require('@/assets/images/puck_logo_ncaadiv1.png') },
-        { name: 'NCAA DIV II', logo: require('@/assets/images/puck_logo_ncaadiv2.png') },
-      ],
-    },
-    {
-      title: 'European Hockey',
-      leagues: [
-        { name: 'SHL', logo: require('@/assets/images/puck_logo_shl.png') },
-        { name: 'HockeyAllsvenskan', logo: require('@/assets/images/puck_logo_HockeyAllsvenskan.png') },
-        { name: 'NL', logo: require('@/assets/images/puck_logo_nl.png') },
-        { name: 'LIIGA', logo: require('@/assets/images/puck_logo_liiga.png') },
-        { name: 'DEL', logo: require('@/assets/images/puck_logo_del.png') },
-        { name: 'ELH', logo: require('@/assets/images/puck_logo_elh.png') },
-        { name: 'ICEHL', logo: require('@/assets/images/puck_logo_icehl.png') },
-        { name: 'Slovak Extraliga', logo: require('@/assets/images/puck_logo_Slovakextraliga.png') },
-        { name: 'EHL', logo: require('@/assets/images/puck_logo_ehl.png') },
-      ],
-    },
-    {
-      title: 'Oceania Hockey',
-      leagues: [
-        { name: 'AIHL', logo: require('@/assets/images/puck_logo_aihl.png') },
-      ],
-    },
-    {
-      title: 'Women\'s Hockey',
-      leagues: [
-        { name: 'PWHL', logo: require('@/assets/images/puck_logo_pwhl.png') },
+        { name: 'IL', logo: require('@/assets/images/ball_logo_il.png') },
+        { name: 'PCL', logo: require('@/assets/images/ball_logo_pcl.png') },
       ],
     },
   ];
@@ -250,7 +178,7 @@ export default function HomeScreen() {
       });
 
       if (!arenaInfo) {
-        setAlertMessage('Arena location not found.');
+        setAlertMessage('Ballpark location not found.');
         setAlertVisible(true);
         return;
       }
@@ -316,7 +244,7 @@ export default function HomeScreen() {
 
       if (distance > threshold) {
         setCheckingIn(false);
-        setAlertMessage('Not close enough to the arena. You need to be at the arena.');
+        setAlertMessage('Not close enough to the ballpark. You need to be at the ballpark.');
         setAlertVisible(true);
         return;
       }
@@ -598,12 +526,12 @@ export default function HomeScreen() {
       if (diff > 5 * 60 * 1000) {
         const hours = Math.floor(diff / (3600000));
         const minutes = Math.floor((diff % 3600000) / 60000);
-        setNextPuckDrop(`${hours}h ${minutes}m until next puck drop!`);
+        setNextPuckDrop(`${hours}h ${minutes}m until the next pitch!`);
       } else {
         const totalSeconds = Math.floor(diff / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
-        setNextPuckDrop(`Next puck drop in: ${minutes}:${seconds.toString().padStart(2, '0')}`);
+        setNextPuckDrop(`Next pitch in: ${minutes}:${seconds.toString().padStart(2, '0')}`);
       }
     };
 
@@ -816,74 +744,71 @@ export default function HomeScreen() {
   }, []);
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20, },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16, },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12, },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22, },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30, },
-    alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700', fontSize: 16, },
-    arenaCard: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF', padding: 12, borderRadius: 12, marginBottom: 12, width: '100%', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 6, elevation: 6, },
-    background: { flex: 1, width: '100%', height: '100%', },
-    buttonsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8, },
-    cardText: { fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', },
-    countdownMini: { fontSize: 14, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 10, opacity: 0.9, },
-    countdownLive: { fontSize: 24, fontWeight: '900', color: '#D32F2F', letterSpacing: 2, fontVariant: ['tabular-nums'], },
-    distanceText: { fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', },
-    header: { fontSize: 34, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginTop: -20, marginBottom: 15, textAlign: 'center', textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
-    hiddenPicker: { width: '100%', height: 56, opacity: 0 },
-    favoriteCardText: { fontSize: 18, fontWeight: '400',},
-    favoriteGameBorder: { borderWidth: 3, borderRadius: 10, },
-    filterChip: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, marginRight: 8, },
-    filterChipActive: { backgroundColor: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
-    filterChipText: { fontSize: 14, color: colorScheme === 'dark' ? '#FFFFFF' : '#1E3A8A', },
-    filterChipTextActive: { color: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', fontWeight: '700', },
-    gameCard: { flexDirection: 'column', backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#F0F4F8', padding: 12, borderRadius: 10, marginBottom: 10, width: '100%', },
-    innerContainer: { paddingTop: Constants.statusBarHeight + 40, paddingHorizontal: 20, minHeight: Dimensions.get('window') },
-    lbAvatar: { width: 36, height: 36, borderRadius: 18, marginRight: 10 },
-    lbEmptyText: { textAlign: 'center', color: '#6B7280', paddingVertical: 20, },
-    lbName: { flex: 1, fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    lbNameTop3: { fontWeight: 'bold' },
-    lbRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 8, backgroundColor: colorScheme === 'dark' ? '#0A2940' : 'rgba(255,255,255,0.9)', borderRadius: 10, marginBottom: 6 },
-    lbRowTop3: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#E0E7FF', borderWidth: 2, borderColor: '#0D2C42' },
-    lbScoreLabel: { fontSize: 12, color: colorScheme === 'dark' ? '#CCCCCC' : '#6B7280', fontWeight: '500', },
-    lbScoreContainer: { flexDirection: 'row', alignItems: 'center', gap: 4, },
-    lbScoreTop3: { fontWeight: '900' },
-    lbScore: { fontSize: 18, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', minWidth: 40, textAlign: 'right' },
-    lbTeamRowName: { flexDirection: 'row', alignItems: 'center', flex: 1, },
-    leaderboardFooterShare: { alignItems: 'center', marginTop: 16, },
-    leagueFilter: { flexDirection: 'row', marginBottom: 10, paddingHorizontal: 10, },
-    leagueGrid: { paddingHorizontal: 8, rowGap: 16, columnGap: 8, },
-    leagueGridItem: { flex: 1, maxWidth: '33.33%', minWidth: 80, alignItems: 'center', paddingHorizontal: 4, },
-    leagueGridItemPressed: { transform: [{ scale: 0.95 }], shadowOpacity: 0.3, shadowRadius: 8, elevation: 8, },
-    leagueLogo: { width: 60, height: 60, marginBottom: 6, },
-    leagueName: { fontSize: 12, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', },
-    loadingOverlay: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center', zIndex: 999, },
-    picker: { width: '100%', height: 56, fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#000', backgroundColor: colorScheme === 'dark' ? '#0A2940' : 'white', paddingHorizontal: 0, textAlign: 'center', dropdownIconColor: colorScheme === 'dark' ? '#FFFFFF' : '#000', },
-    pickerContainer: { height: 40, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#ccc', borderRadius: 12, overflow: 'hidden', marginBottom: 12, justifyContent: 'center', alignItems: 'center', },
-    pickerOverlayTextContainer: { position: 'absolute', left: 12, right: 40, top: 0, bottom: 0, justifyContent: 'center' },
-    pickerOverlayArrowContainer: { position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center', pointerEvents: 'none' },
-    pickerSelectedText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16 },
-    pickerArrow: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    placeholder: { fontSize: 16, color: colorScheme === 'dark' ? '#BBBBBB' : '#374151', textAlign: 'center', },
-    rank: { fontSize: 16, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#4B5563', width: 50 },
-    rankGold: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', fontWeight: 'bold' },
-    scrollContainer: { flexGrow: 1, },
-    section: { marginBottom: 30, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, padding: 12, borderWidth: 4, borderColor: '#0D2C42', },
-    sectionTitle: { fontSize: 20, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#1E3A8A', marginBottom: 10, textAlign: 'center', },
-    smallButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 10, paddingHorizontal: 12, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', flex: 1, marginHorizontal: 4, alignItems: 'center', },
-    smallButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 12, fontWeight: '600', },
-    tabButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#E5E7EB' },
-    tabText: { fontSize: 14, color: colorScheme === 'dark' ? '#6B7280' : '#000000', fontWeight: '600' },
-    tabActive: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#0D2C42' },
-    tabTextActive: { color: colorScheme === 'dark' ? '#fff' : '#FFF' },
-    tabRow: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 8, marginBottom: 16,  },
-    tabButton: { flex: 1, paddingVertical: 8, paddingHorizontal: 8, borderRadius: 20, backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#E5E7EB', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colorScheme === 'dark' ? '#2F4F68' : '#D1D5DB', },
-    tabActive: { backgroundColor: colorScheme === 'dark' ? '#1E3A5A' : '#0D2C42', },
-    tabText: { fontSize: 12, color: colorScheme === 'dark' ? '#6B7280' : '#000000',  fontWeight: '600', textAlign: 'center',  },
-    tabTextActive: { color: colorScheme === 'dark' ? '#FFFFFF' : '#FFFFFF', fontWeight: '700', },
-    blurredSection: { opacity: 0.75, },
-    upgradePrompt: { color: '#EF4444', fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginTop: 12, paddingHorizontal: 16, },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:'#B22222',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:16},
+    arenaCard:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',padding:12,borderRadius:12,marginBottom:12,width:'100%',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.12,shadowRadius:6,elevation:6},
+    background:{flex:1,width:'100%',height:'100%'},
+    buttonsRow:{flexDirection:'row',justifyContent:'space-between',marginTop:8},
+    cardText:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#0D131F',textAlign:'center'},
+    countdownMini:{fontSize:14,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#0D131F',textAlign:'center',marginBottom:10,opacity:0.9},
+    countdownLive:{fontSize:24,fontWeight:'900',color:'#B22222',letterSpacing:2,fontVariant:['tabular-nums']},
+    distanceText:{fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
+    header:{fontSize:34,fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginTop:10,marginBottom:15,textAlign:'center',textShadowColor:colorScheme==='dark'?'#000000':'#ffffff',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    hiddenPicker:{width:'100%',height:56,opacity:0},
+    favoriteCardText:{fontSize:18,fontWeight:'400'},
+    favoriteGameBorder:{borderWidth:3,borderRadius:10,borderColor:'#B22222'},
+    filterChip:{backgroundColor:colorScheme==='dark'?'#2E5A8A':'#F5F1E6',paddingVertical:6,paddingHorizontal:12,borderRadius:20,marginRight:8},
+    filterChipActive:{backgroundColor:'#B22222'},
+    filterChipText:{fontSize:14,color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
+    filterChipTextActive:{color:'#FFFFFF',fontWeight:'700'},
+    gameCard:{flexDirection:'column',backgroundColor:colorScheme==='dark'?'#243B5A':'#F0F4F8',padding:12,borderRadius:10,marginBottom:10,width:'100%'},
+    innerContainer:{paddingTop:Constants.statusBarHeight+40,paddingHorizontal:20,minHeight:Dimensions.get('window')},
+    lbAvatar:{width:36,height:36,borderRadius:18,marginRight:10},
+    lbEmptyText:{textAlign:'center',color:colorScheme==='dark'?'#F5F1E6':'#C9D1D9',paddingVertical:20},
+    lbName:{flex:1,fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
+    lbNameTop3:{fontWeight:'bold'},
+    lbRow:{flexDirection:'row',alignItems:'center',paddingVertical:10,paddingHorizontal:8,backgroundColor:colorScheme==='dark'?'#243B5A':'rgba(255,255,255,0.9)',borderRadius:10,marginBottom:6},
+    lbRowTop3:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:2,borderColor:'#1D3557'},
+    lbScoreLabel:{fontSize:12,color:colorScheme==='dark'?'#F5F1E6':'#6B7280',fontWeight:'500'},
+    lbScoreContainer:{flexDirection:'row',alignItems:'center',gap:4},
+    lbScoreTop3:{fontWeight:'900'},
+    lbScore:{fontSize:18,fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',minWidth:40,textAlign:'right'},
+    lbTeamRowName:{flexDirection:'row',alignItems:'center',flex:1},
+    leaderboardFooterShare:{alignItems:'center',marginTop:16},
+    leagueFilter:{flexDirection:'row',marginBottom:10,paddingHorizontal:10},
+    leagueGrid:{paddingHorizontal:8,rowGap:16,columnGap:8},
+    leagueGridItem:{flex:1,maxWidth:'33.33%',minWidth:80,alignItems:'center',paddingHorizontal:4},
+    leagueGridItemPressed:{transform:[{scale:0.95}],shadowOpacity:0.3,shadowRadius:8,elevation:8},
+    leagueLogo:{width:60,height:60,marginBottom:6},
+    leagueName:{fontSize:12,color:colorScheme==='dark'?'#F5F1E6':'#374151',textAlign:'center'},
+    loadingOverlay:{position:'absolute',top:0,bottom:0,left:0,right:0,backgroundColor:'rgba(0,0,0,0.4)',justifyContent:'center',alignItems:'center',zIndex:999},
+    picker:{width:'100%',height:56,fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#000',backgroundColor:colorScheme==='dark'?'#2E5A8A':'white',paddingHorizontal:0,textAlign:'center',dropdownIconColor:colorScheme==='dark'?'#FFFFFF':'#0D131F'},
+    pickerContainer:{height:40,borderWidth:2,borderColor:colorScheme==='dark'?'#F5F1E6':'#0D131F',borderRadius:12,overflow:'hidden',marginBottom:12,justifyContent:'center',alignItems:'center'},
+    pickerOverlayTextContainer:{position:'absolute',left:12,right:40,top:0,bottom:0,justifyContent:'center'},
+    pickerOverlayArrowContainer:{position:'absolute',right:12,top:0,bottom:0,justifyContent:'center',pointerEvents:'none'},
+    pickerSelectedText:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontSize:16},
+    pickerArrow:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
+    placeholder:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#374151',textAlign:'center'},
+    rank:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#4B5563',width:50},
+    rankGold:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontWeight:'bold'},
+    scrollContainer:{flexGrow:1},
+    section:{marginBottom:30,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderRadius:12,padding:12,borderWidth:4,borderColor:'#B22222'},
+    sectionTitle:{fontSize:20,fontWeight:'700',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginBottom:8,textAlign:'center'},
+    smallButton:{backgroundColor:colorScheme==='dark'?'#2E5A8A':'#B22222',paddingVertical:10,paddingHorizontal:12,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#B22222',flex:1,marginHorizontal:4,alignItems:'center'},
+    smallButtonText:{color:'#F5F1E6',fontSize:12,fontWeight:'600'},
+    tabButton:{flex:1,paddingVertical:8,paddingHorizontal:8,borderRadius:20,backgroundColor:colorScheme==='dark'?'#2E5A8A':'#E5E7EB',alignItems:'center',justifyContent:'center',borderWidth:1,borderColor:colorScheme==='dark'?'#F5F1E6':'#D1D5DB'},
+    tabActive:{backgroundColor:'#B22222'},
+    tabText:{fontSize:12,color:colorScheme==='dark'?'#F5F1E6':'#000000',fontWeight:'600',textAlign:'center'},
+    tabTextActive:{color:'#F5F1E6',fontWeight:'700'},
+    tabRow:{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:8,marginBottom:16},
+    blurredSection:{opacity:0.75},
+    upgradePrompt:{color:'#B22222',fontSize:18,fontWeight:'bold',textAlign:'center',marginTop:12,paddingHorizontal:16},
   });
+
 
   if (isLoadingPremium) {
     return null;
@@ -904,7 +829,7 @@ export default function HomeScreen() {
           <View style={styles.alertContainer}>
             <Text style={styles.alertTitle}>
               {alertMessage.includes('Location is required') ? 'Permission denied' :
-               alertMessage.includes('Arena not found') ? 'Error' :
+               alertMessage.includes('Ballpark not found') ? 'Error' :
                alertMessage.includes('Could not get') ? 'Location failed' :
                'Cannot check in yet'}
             </Text>
@@ -923,8 +848,8 @@ export default function HomeScreen() {
 
             {/* Closest Arenas */}
             {hasAppAccess ? (
-              <View key="closest-arenas" style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Closest Ballparks</Text>
+              <View key="closest-arenas" style={styles.section}>
+                <Text style={styles.sectionTitle}>Closest Ballpark</Text>
                 {location ? getUniqueArenas(arenaData)
                   .map(arena => ({
                     ...arena,
@@ -953,9 +878,9 @@ export default function HomeScreen() {
               </View>
             ) : (
               <View key="closest-arenas" style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Closest Arenas</Text>
+                <Text style={styles.sectionTitle}>Closest Ballpark</Text>
                 <Text style={styles.upgradePrompt}>
-                  Subscribe to see nearby arenas.
+                  Subscribe to see nearby ballparks.
                 </Text>
               </View>
             )}
@@ -1041,7 +966,9 @@ export default function HomeScreen() {
                 <FlatList data={leaguesToShow} keyExtractor={item => item.name} numColumns={3} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={styles.leagueGrid} renderItem={({ item }) => (
                   <Pressable style={({ pressed }) => [styles.leagueGridItem, pressed && styles.leagueGridItemPressed]} onPress={() => router.push(`/leagues/${item.name}`)}>
                     <Image source={item.logo} style={styles.leagueLogo} resizeMode="contain" />
-                    <Text style={styles.leagueName}>{item.name}</Text>
+                    <Text style={styles.leagueName}>
+                      {leaguesData.find(l => l.league === item.name)?.leagueName || item.name}
+                    </Text>
                   </Pressable>
                 )} />
               </View>

@@ -5,12 +5,12 @@ import { getFirestore } from 'firebase/firestore';          // ← NEW
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
-apiKey: 'AIzaSyDz8YMD3vTMMtMi1aw-_H7xRuO3crzivzk',
-authDomain: 'myhockeypassport.firebaseapp.com',
-projectId: 'myhockeypassport',
-storageBucket: 'myhockeypassport.appspot.com',
-messagingSenderId: '853703034223',
-appId: '1:853703034223:android:3437691b39e5488b0ed49a',
+  apiKey: "AIzaSyDBP0w1sBO35bz6XNlB7CBkRXBdCZ-eTTI",
+  authDomain: "mybaseballpassport.firebaseapp.com",
+  projectId: "mybaseballpassport",
+  storageBucket: "mybaseballpassport.appspot.com",
+  messagingSenderId: "171882071353",
+  appId: "1:171882071353:web:3394307477ffe24df6d4e8"
 };
 
 const app = initializeApp(firebaseConfig);

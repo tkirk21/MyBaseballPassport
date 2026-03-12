@@ -32,7 +32,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
       return;
     }
 
-    const chirpsRef = collection(db, "profiles", friendId, "checkins", checkinId, "chirps");
+    const chirpsRef = collection(db, "profiles", friendId, "checkins", checkinId, "rides");
     const q = query(chirpsRef, orderBy("timestamp", "asc"));
 
     const unsub = onSnapshot(q, (snapshot) => {
@@ -48,7 +48,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
       } else if (err?.code === "unavailable") {
         setChirps([]);
       } else {
-        console.error("Chirp listener error:", err);
+        console.error("Ride listener error:", err);
       }
     });
 
@@ -91,7 +91,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
         timestamp: serverTimestamp(),
       };
 
-      await addDoc(collection(db, "profiles", friendId, "checkins", checkinId, "chirps"), newChirp);
+      await addDoc(collection(db, "profiles", friendId, "checkins", checkinId, "rides"), newChirp);
 
       setChirps(prev => [...prev, {
         id: Date.now().toString(),
@@ -101,7 +101,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
 
       setMessage('');
     } catch (err) {
-      console.error("Error sending chirp:", err);
+      console.error("Error sending ri:", err);
     } finally {
       setLoading(false);
     }
@@ -120,7 +120,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
     }
 
     try {
-      const chirpRef = doc(db, "profiles", friendId, "checkins", checkinId, "chirps", chirpId);
+      const chirpRef = doc(db, "profiles", friendId, "checkins", checkinId, "rides", chirpId);
       await deleteDoc(chirpRef);
 
       setChirps(prev => prev.filter(c => c.id !== chirpId));
@@ -144,7 +144,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
     }
 
     try {
-      const chirpRef = doc(db, "profiles", friendId, "checkins", checkinId, "chirps", chirpId);
+      const chirpRef = doc(db, "profiles", friendId, "checkins", checkinId, "rides", chirpId);
       await updateDoc(chirpRef, { text: editText.trim() });
 
       setChirps(prev =>
@@ -251,7 +251,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
-          placeholder="Add a chirp..."
+          placeholder="Add a ..."
           placeholderTextColor="#999"
           value={message}
           onChangeText={setMessage}
@@ -261,7 +261,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
           disabled={loading || !message.trim()}
           style={[styles.sendButton, (loading || !message.trim()) && { opacity: 0.5 }]}
         >
-          <Text style={styles.sendText}>Chirp</Text>
+          <Text style={styles.sendText}>Ride</Text>
         </TouchableOpacity>
       </View>
     </View>

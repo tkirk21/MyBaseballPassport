@@ -9,8 +9,7 @@ import { useColorScheme } from '../../hooks/useColorScheme';
 
 const auth = getAuth();
 const LEAGUES_DATA = [
-  "NHL", "KHL", "AHL", "ECHL", "SPHL", "FPHL", "LNAH", "OHL", "QMJHL", "WHL", "USHL", "NAHL", "NA3HL", "NCAA DIV I",
-  "NCAA DIV II", "SHL", "HockeyAllsvenskan", "EHL", "LIIGA", "ELH", "DEL", "NL", "ICEHL", "Slovak Extraliga", "AIHL", "PWHL",
+  "MAJOR LEAGUE BASEBALL", "INTERNATIONAL LEAGUE", "PACFIC COAST LEAGUE",
 ];
 
 export default function FavoriteLeaguesScreen() {
@@ -99,23 +98,23 @@ export default function FavoriteLeaguesScreen() {
   };
 
   const styles = StyleSheet.create({
-    alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16 },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700', fontSize: 16 },
-    backArrow: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    bottomContainer: { paddingBottom: 40, paddingHorizontal: 20 },
-    centeredList: { flex: 1, justifyContent: 'center', paddingHorizontal: 20 },
-    headerRow: { paddingTop: 50, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center' },
-    headerTitle: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 28, fontWeight: '700', marginLeft: 20 },
-    list: { paddingHorizontal: 20, },
-    leagueRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#1A3A5A', },
-    leagueText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
-    saveButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', width: '70%', alignSelf: 'center', alignItems: 'center' },
-    saveButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 18, fontWeight: '600' },
-    screenBackground: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF' },
+    alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
+    alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
+    alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#F5F1E6',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
+    backArrow:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    bottomContainer:{paddingBottom:40,paddingHorizontal:20},
+    centeredList:{flex:1,justifyContent:'center',paddingHorizontal:20},
+    headerRow:{paddingTop:50,paddingHorizontal:20,flexDirection:'row',alignItems:'center'},
+    headerTitle:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:28,fontWeight:'700',marginLeft:20},
+    list:{paddingHorizontal:20},
+    leagueRow:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:16,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68'},
+    leagueText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    saveButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#FFFFFF',paddingVertical:14,borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',width:'70%',alignSelf:'center',alignItems:'center'},
+    saveButtonText:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940',fontSize:18,fontWeight:'600'},
+    screenBackground:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'}
   });
 
   return (

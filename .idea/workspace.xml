@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="24a29cdc-4e55-4adc-b865-3b4d3c71e0e8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/assets/data/ilSchedule.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.expo/devices.json" beforeDir="false" afterPath="$PROJECT_DIR$/.expo/devices.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.firebaserc" beforeDir="false" afterPath="$PROJECT_DIR$/.firebaserc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/MyHockeyPassport.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MyBaseBallPassport.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GoogleService-Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/GoogleService-Info.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/google-services.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/notification_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/notification_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/splashscreen_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/splashscreen_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/notification_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/notification_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/splashscreen_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/splashscreen_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/notification_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/notification_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/splashscreen_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/splashscreen_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/notification_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/notification_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/splashscreen_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/splashscreen_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/notification_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/notification_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/splashscreen_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/splashscreen_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/friends.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/map.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/map.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/live.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/live.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/manual.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/manual.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/blocked.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/blocked.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/change-email.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/change-email.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/change-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/change-password.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/favorite-leagues.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/favorite-leagues.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings/subscribe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/subscribe.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/signup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/signup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/trial.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/trial.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/userprofile/[userId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/userprofile/[userId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/ahlSchedule2025.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/data/mlbSchedule.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/aihlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/arenaHistory.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/data/arenaHistory.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/arenas.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/data/arenas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/echlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/fphlSchedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/historicalTeams.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/data/historicalTeams.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/khlSchedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/leagues.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/data/leagues.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/na3hlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/nahlSchedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/ncaaD1Schedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/ncaaD2Schedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/nhlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/ohlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/pwhlSchedule.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/qmjhlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/sphlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/ushlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/data/whlSchedule2025.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/1.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/background.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_close_view.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_dark.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/background_dark.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_far_view.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_inside_arena.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/background_inside_arena.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_inside_arena_dark.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/background_inside_arena_dark.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/background_sports.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/checkin_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/checkin_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/icon_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/icon_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/leagueLogos.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/leagueLogos.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/loading_puck.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/loading_puck.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/loading_puck_dark.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/loading_puck_dark.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/logo_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/logo_no_font.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_no_font.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/logo_with_font.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_with_font.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/logo_with_font_dark.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_with_font_dark.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/notification-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/notification-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/photo1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/pin_template.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/pin_template.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/placeholder.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/placeholder.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_HockeyAllsvenskan.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_Slovakextraliga.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ahl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_aihl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_del.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_echl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ehl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_elh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_fphl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_icehl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_khl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_liiga.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_na3hl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_nahl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ncaadiv1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ncaadiv2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_nhl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_nl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ohl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_pwhl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_qmjhl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_shl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_sphl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_ushl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/puck_logo_whl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TeamPin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TeamPin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/editCheckinForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/editCheckinForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/friends/cheerButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/friends/cheerButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/friends/chirpBox.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/friends/chirpBox.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/loadingPuck.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/loadingPuck.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/firebaseConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/firebaseConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-services.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/splash.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/revenuecat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/revenuecat.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;tkirk21&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/tkirk21/MyBaseballPassport.git&quot;,
+    &quot;accountId&quot;: &quot;02c1115d-3c40-4305-a689-b6c13c87fad6&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="3AbWLr1wczHAJf95Gj5WiojIc1S" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
+  }
+}</component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="24a29cdc-4e55-4adc-b865-3b4d3c71e0e8" name="Changes" comment="" />
+      <created>1772861698966</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772861698966</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/android/app/build.gradle</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

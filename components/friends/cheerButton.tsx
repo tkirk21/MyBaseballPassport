@@ -29,7 +29,7 @@ export default function CheerButton({ friendId, checkinId }: Props) {
       if (!friendId || !checkinId) return;
 
       try {
-        const cheersRef = collection(db, "profiles", friendId, "checkins", checkinId, "cheers");
+        const cheersRef = collection(db, "profiles", friendId, "checkins", checkinId, "roots");
 
         const snap = await getDocs(cheersRef);
 
@@ -51,15 +51,15 @@ export default function CheerButton({ friendId, checkinId }: Props) {
 
         if (err?.code === "permission-denied") {
           setAlertTitle("Permission Denied");
-          setAlertMessage("You do not have permission to view cheers.");
+          setAlertMessage("You do not have permission to view roots.");
           setAlertVisible(true);
         } else if (err?.code === "unavailable") {
           setAlertTitle("Network Error");
-          setAlertMessage("Network unavailable while loading cheers.");
+          setAlertMessage("Network unavailable while loading roots.");
           setAlertVisible(true);
         } else {
-          setAlertTitle("Cheer Load Failed");
-          setAlertMessage(err?.message || "Unknown error while loading cheers.");
+          setAlertTitle("Root Load Failed");
+          setAlertMessage(err?.message || "Unknown error while loading roots.");
           setAlertVisible(true);
         }
 
@@ -99,9 +99,9 @@ export default function CheerButton({ friendId, checkinId }: Props) {
     let existing = null;
 
     try {
-      cheerRef = doc(db, "profiles", friendId, "checkins", checkinId, "cheers", userId);
+      cheerRef = doc(db, "profiles", friendId, "checkins", checkinId, "roots", userId);
 
-      const cheersCollection = collection(db, "profiles", friendId, "checkins", checkinId, "cheers");
+      const cheersCollection = collection(db, "profiles", friendId, "checkins", checkinId, "roots");
 
       const cheersSnap = await getDocs(cheersCollection);
 
@@ -113,15 +113,15 @@ export default function CheerButton({ friendId, checkinId }: Props) {
 
           if (err?.code === "permission-denied") {
             setAlertTitle("Permission Denied");
-            setAlertMessage("You do not have permission to modify this cheer.");
+            setAlertMessage("You do not have permission to modify this root.");
             setAlertVisible(true);
           } else if (err?.code === "unavailable") {
             setAlertTitle("Network Error");
-            setAlertMessage("Network unavailable while checking cheer status.");
+            setAlertMessage("Network unavailable while checking root status.");
             setAlertVisible(true);
           } else {
-            setAlertTitle("Cheer Check Failed");
-            setAlertMessage(err?.message || "Unknown error while checking cheer.");
+            setAlertTitle("root Check Failed");
+            setAlertMessage(err?.message || "Unknown error while checking root.");
             setAlertVisible(true);
           }
 
@@ -144,15 +144,15 @@ export default function CheerButton({ friendId, checkinId }: Props) {
 
           if (err?.code === "permission-denied") {
             setAlertTitle("Permission Denied");
-            setAlertMessage("You do not have permission to remove this cheer.");
+            setAlertMessage("You do not have permission to remove this root.");
             setAlertVisible(true);
           } else if (err?.code === "unavailable") {
             setAlertTitle("Network Error");
-            setAlertMessage("Network lost while removing cheer.");
+            setAlertMessage("Network lost while removing root.");
             setAlertVisible(true);
           } else {
-            setAlertTitle("Cheer Remove Failed");
-            setAlertMessage(err?.message || "Unknown error while removing cheer.");
+            setAlertTitle("Root Remove Failed");
+            setAlertMessage(err?.message || "Unknown error while removing root.");
             setAlertVisible(true);
           }
 
@@ -169,7 +169,7 @@ export default function CheerButton({ friendId, checkinId }: Props) {
             targetId: friendId,
             checkinId,
             timestamp: serverTimestamp(),
-            type: "cheer"
+            type: "root"
           });
 
           setCheerCount(c => c + 1);
@@ -179,15 +179,15 @@ export default function CheerButton({ friendId, checkinId }: Props) {
 
           if (err?.code === "permission-denied") {
             setAlertTitle("Permission Denied");
-            setAlertMessage("You do not have permission to add a cheer here.");
+            setAlertMessage("You do not have permission to add a root here.");
             setAlertVisible(true);
           } else if (err?.code === "unavailable") {
             setAlertTitle("Network Error");
-            setAlertMessage("Network lost while adding cheer.");
+            setAlertMessage("Network lost while adding root.");
             setAlertVisible(true);
           } else {
-            setAlertTitle("Cheer Add Failed");
-            setAlertMessage(err?.message || "Unknown error while adding cheer.");
+            setAlertTitle("Root Add Failed");
+            setAlertMessage(err?.message || "Unknown error while adding root.");
             setAlertVisible(true);
           }
 
@@ -196,7 +196,7 @@ export default function CheerButton({ friendId, checkinId }: Props) {
       }
 
     } catch (err) {
-      console.error("Unexpected cheer toggle failure:", err);
+      console.error("Unexpected root toggle failure:", err);
     }
   };
 
@@ -220,7 +220,7 @@ export default function CheerButton({ friendId, checkinId }: Props) {
     <>
       <View style={styles.container}>
         <TouchableOpacity onPress={handleCheerPress} style={styles.button} activeOpacity={0.7}>
-          <Text style={styles.text}>Cheer🎉</Text>
+          <Text style={styles.text}>Root🎉</Text>
           {cheerCount > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{cheerCount}</Text>
