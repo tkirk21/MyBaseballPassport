@@ -103,7 +103,13 @@ export default function SubscribeScreen() {
         </Text>
 
         <TouchableOpacity style={styles.button} onPress={handleSubscribe} disabled={loading}>
-          <Text style={styles.buttonText}>Manage Subscription</Text>
+          <Text style={styles.buttonText}>Subscribe Now</Text>
+        </TouchableOpacity>
+
+        <View style={{ height: 12 }} />
+
+        <TouchableOpacity style={styles.button} onPress={handleRestorePurchases} disabled={loading}>
+          <Text style={styles.buttonText}>Restore Purchases</Text>
         </TouchableOpacity>
 
         <Modal visible={alertVisible} transparent animationType="fade">

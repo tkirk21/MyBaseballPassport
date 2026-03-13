@@ -28,9 +28,6 @@ function CustomTabs() {
   const [profileUnreadCount, setProfileUnreadCount] = useState(0);
   const auth = getAuth(firebaseApp);
   const currentUser = auth.currentUser;
-  if (!currentUser) {
-    return null;
-  }
 
   useEffect(() => {
     if (!currentUser?.uid) return;
@@ -198,6 +195,10 @@ function CustomTabs() {
 
     return () => unsubs.forEach((u) => u());
   }, [currentUser?.uid]);
+
+  if (!currentUser) {
+    return <View style={{ flex: 1, backgroundColor: '#F5F1E6' }} />;
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F5F1E6', paddingBottom: insets.bottom }}>

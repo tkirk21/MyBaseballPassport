@@ -221,7 +221,7 @@
   },
   {
     "teamName": "Kansas City Royals",
-    "teamCode": "KCR",
+    "teamCode": "KC",
     "arena": "Kauffman Stadium",
     "arenaId": "kauffman_stadium_kansas_city",
     "city": "Kansas City, Missouri",
@@ -402,7 +402,7 @@
   },
   {
     "teamName": "San Diego Padres",
-    "teamCode": "SDP",
+    "teamCode": "SD",
     "arena": "Petco Park",
     "arenaId": "petco_park_san_diego",
     "city": "San Diego, California",
@@ -420,7 +420,7 @@
   },
   {
     "teamName": "San Francisco Giants",
-    "teamCode": "SFG",
+    "teamCode": "SF",
     "arena": "Oracle Park",
     "arenaId": "oracle_park_san_francisco",
     "city": "San Francisco, California",
@@ -479,7 +479,7 @@
   },
   {
     "teamName": "Tampa Bay Rays",
-    "teamCode": "TBR",
+    "teamCode": "TB",
     "arena": "Tropicana Field",
     "arenaId": "tropicana_field_st_petersburg",
     "city": "St. Petersburg, Florida",
@@ -535,7 +535,7 @@
   },
   {
     "teamName": "Washington Nationals",
-    "teamCode": "WAS",
+    "teamCode": "WSH",
     "arena": "Nationals Park",
     "arenaId": "nationals_park_washington",
     "city": "Washington, DC",

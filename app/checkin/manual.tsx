@@ -50,6 +50,17 @@ const resolveArenaLatLng = (
     : null;
 };
 
+const isSeasonValid = (item: any, selectedDate: Date) => {
+    if (!item.seasonStart || !item.seasonEnd) return true;
+
+    const monthDay =
+      String(selectedDate.getMonth() + 1).padStart(2, '0') +
+      '-' +
+      String(selectedDate.getDate()).padStart(2, '0');
+
+      return monthDay >= item.seasonStart && monthDay <= item.seasonEnd;
+    };
+
 const ManualCheckIn = () => {
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -370,7 +381,7 @@ const ManualCheckIn = () => {
         const end = arena.endDate ? new Date(arena.endDate) : null;
         if (end) end.setHours(23, 59, 59, 999);
 
-        return selectedDate >= start && (!end || selectedDate <= end);
+        return selectedDate >= start && (!end || selectedDate <= end) && isSeasonValid(arena, selectedDate);
       })
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
@@ -380,7 +391,7 @@ const ManualCheckIn = () => {
         const end = hist.endDate ? new Date(hist.endDate) : null;
         if (end) end.setHours(23, 59, 59, 999);
 
-        return selectedDate >= start && (!end || selectedDate <= end);
+        return selectedDate >= start && (!end || selectedDate <= end) && isSeasonValid(hist, selectedDate);
       })
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
@@ -417,7 +428,7 @@ const ManualCheckIn = () => {
       const start = item.startDate ? new Date(item.startDate) : new Date(0);
       const end = item.endDate ? new Date(item.endDate) : null;
 
-      return selectedDate >= start && (!end || selectedDate <= end);
+      return selectedDate >= start && (!end || selectedDate <= end) && isSeasonValid(item, selectedDate);
     });
 
     const resolvedArenaNames = validEntries.map(item => {

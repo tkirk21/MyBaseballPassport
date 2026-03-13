@@ -116,12 +116,33 @@ export default function MapScreen() {
     }
   };
 
-  const isDateInRange = (checkDate: Date, start: string | undefined, end: string | undefined) => {
+  const isDateInRange = (
+    checkDate: Date,
+    start: string | undefined,
+    end: string | undefined,
+    seasonStart?: string,
+    seasonEnd?: string
+  ) => {
     if (!start) return false;
+
     const checkTime = checkDate.getTime();
     const startTime = new Date(start).getTime();
     const endTime = end ? new Date(end).getTime() : Infinity;
-    return checkTime >= startTime && checkTime <= endTime;
+
+    const historicalValid = checkTime >= startTime && checkTime <= endTime;
+
+    if (!historicalValid) return false;
+
+    if (seasonStart && seasonEnd) {
+      const monthDay =
+        String(checkDate.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(checkDate.getDate()).padStart(2, '0');
+
+      return monthDay >= seasonStart && monthDay <= seasonEnd;
+    }
+
+    return true;
   };
 
   const visiblePins = useMemo(() => {
@@ -393,8 +414,9 @@ export default function MapScreen() {
               const candidates = historicalTeamsData
                 .filter((h: any) => h.teamName === data.teamName)
                 .sort((a: any, b: any) => {
-                  const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate) ? -1 : 1;
-                  const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate) ? -1 : 1;
+                  const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate, a.seasonStart, a.seasonEnd) ? -1 : 1;
+                  const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate, b.seasonStart, b.seasonEnd) ? -1 : 1;
+
                   if (aIn !== bIn) return aIn - bIn; // prefer ones that contain the date
 
                   // tiebreaker: closer start date
@@ -468,8 +490,10 @@ export default function MapScreen() {
               const candidates = historicalTeamsData
                 .filter((h: any) => h.teamName === ci.teamName)
                 .sort((a: any, b: any) => {
-                  const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate) ? -1 : 1;
-                  const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate) ? -1 : 1;
+                  const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate, a.seasonStart, a.seasonEnd) ? -1 : 1;
+                  const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate, b.seasonStart, b.seasonEnd) ? -1 : 1;
+
+
                   if (aIn !== bIn) return aIn - bIn;
 
                   return Math.abs(gameDateObj.getTime() - new Date(a.startDate).getTime()) -

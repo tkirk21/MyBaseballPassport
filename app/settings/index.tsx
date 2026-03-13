@@ -19,6 +19,8 @@ const auth = getAuth();
 
 export default function SettingsScreen() {
   const currentUser = auth.currentUser;
+  const providerId = currentUser?.providerData[0]?.providerId;
+  const isPasswordUser = providerId === 'password';
   if (!currentUser) {
     return null;
   }
@@ -568,14 +570,16 @@ export default function SettingsScreen() {
               <View style={styles.alertContainer}>
                 <Text style={styles.alertTitle}>Delete Account</Text>
                 <Text style={styles.alertMessageText}>This action cannot be undone. All your data will be permanently deleted.</Text>
-                <TextInput
-                  placeholder="Enter your password"
-                  placeholderTextColor="#888"
-                  secureTextEntry
-                  value={deletePassword}
-                  onChangeText={setDeletePassword}
-                  style={styles.deletePasswordInput}
-                />
+                {isPasswordUser && (
+                  <TextInput
+                    placeholder="Enter your password"
+                    placeholderTextColor="#888"
+                    secureTextEntry
+                    value={deletePassword}
+                    onChangeText={setDeletePassword}
+                    style={styles.deletePasswordInput}
+                  />
+                )}
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 20 }}>
                   <TouchableOpacity
@@ -588,15 +592,16 @@ export default function SettingsScreen() {
                     onPress={async () => {
                       try {
 
-                        if (!auth.currentUser || !auth.currentUser.email) return;
+                        if (!auth.currentUser) return;
 
-                        const credential = EmailAuthProvider.credential(
-                          auth.currentUser.email,
-                          deletePassword
-                        );
+                        if (isPasswordUser) {
+                          const credential = EmailAuthProvider.credential(
+                            auth.currentUser.email!,
+                            deletePassword
+                          );
 
-                        await reauthenticateWithCredential(auth.currentUser, credential);
-
+                          await reauthenticateWithCredential(auth.currentUser, credential);
+                        }
                         setDeleteModalVisible(false);
 
                         router.dismissAll();

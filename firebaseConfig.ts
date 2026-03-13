@@ -22,7 +22,6 @@ persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 const db = getFirestore(app);                             // ← NEW
 
 // EXACT IDs FROM YOUR GOOGLE CLOUD CONSOLE
-export const webClientId = '853703034223-101527k79a64l7aupy9ru8h0ph5sb2lf.apps.googleusercontent.com';
-export const androidClientId = '853703034223-kd7c1r5j5q6b0q5r0q6r5j5q6b0q5r0q.apps.googleusercontent.com';
+export const webClientId = '171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com';
 
 export { app, auth, db };
