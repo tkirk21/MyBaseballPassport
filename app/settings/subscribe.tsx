@@ -1,4 +1,4 @@
-import { Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import Purchases from 'react-native-purchases';
 import { Stack, useRouter } from 'expo-router';
@@ -61,6 +61,24 @@ export default function SubscribeScreen() {
     }
   };
 
+  const handleRestorePurchases = async () => {
+    try {
+      const customerInfo = await Purchases.restorePurchases();
+
+      const hasPremium =
+        customerInfo.entitlements.active['MY SPORTS PASSPORT LLC Pro'] !== undefined;
+
+      if (hasPremium) {
+        Alert.alert('Success', 'Purchases restored successfully.');
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert('No Purchase Found', 'No active subscription found.');
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Restore failed.');
+    }
+  };
+
   const styles = StyleSheet.create({
     alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
     alertContainer:{backgroundColor:colorScheme==='dark'?'#0D131F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.4,shadowRadius:16,elevation:16},
@@ -95,7 +113,7 @@ export default function SubscribeScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.title}>My Sports Passport Premium</Text>
+        <Text style={styles.title}>My Baseball Passport Premium</Text>
         <Text style={styles.text}>
           • $2.99 per month after trial{'\n'}
           • Unlimited check-ins, maps, and stats{'\n'}

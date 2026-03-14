@@ -5078,6 +5078,25 @@
     "endDate": "1994-11-01"
   },
   {
+    "teamName": "Eugene Emeralds",
+    "teamCode": "EUG",
+    "arena": "Civic Stadium",
+    "arenaId": "civic_stadium_eugene",
+    "city": "Eugene, Oregon",
+    "address": "2077 Willamette St, Eugene, OR 97405",
+    "website": "milb.com/san-antonio",
+    "latitude": 44.03680287729676,
+    "longitude": -123.09106914710058,
+    "colorCode": "#007A53",
+    "colorCode2": "#000000",
+    "colorCode3": "#44D62C",
+    "colorCode4": "#FFFFFF",
+    "league": "PCL",
+    "timezone": "America/Los Angeles",
+    "startDate": "1969-02-01",
+    "endDate": "1973-11-01"
+  },
+  {
     "teamName": "Fresno Grizzlies",
     "teamCode": "FRS",
     "arena": "Pete Beiden Field",
@@ -5820,6 +5839,23 @@
     "timezone": "America/Los Angeles",
     "startDate": "1998-02-01",
     "endDate": "2008-11-01"
+  },
+  {
+    "teamName": "Tulsa Oilers",
+    "teamCode": "TUL",
+    "arena": "Oiler Park",
+    "arenaId": "oiler_park_oklahoma",
+    "city": "Tulsa, Oklahoma",
+    "address": "Tulsa, OK 74114",
+    "website": "milb.com/el-paso",
+    "latitude": 36.139514143226,
+    "longitude": -95.92689428388442,
+    "colorCode": "#FE0000",
+    "colorCode2": "#FFFFFF",
+    "league": "PCL",
+    "timezone": "America/Dallas",
+    "startDate": "1966-02-01",
+    "endDate": "1968-11-01"
   },
   {
     "teamName": "Vancouver Canadians",

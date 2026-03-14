@@ -251,7 +251,7 @@ export default function ChirpBox({ friendId, checkinId }: Props) {
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
-          placeholder="Add a ..."
+          placeholder="Add a ride ..."
           placeholderTextColor="#999"
           value={message}
           onChangeText={setMessage}

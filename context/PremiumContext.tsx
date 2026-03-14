@@ -124,7 +124,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
           const customerInfo = await Purchases.getCustomerInfo();
 
           const hasPremium =
-            customerInfo.entitlements.active['MY SPORTS PASSPORT LLC Pro'] !== undefined;
+            customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
 
           if (hasPremium) {
             setHasFullAccess(true);

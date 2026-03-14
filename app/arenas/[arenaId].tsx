@@ -16,6 +16,7 @@ import arenaData from '@/assets/data/arenas.json';
 import arenaHistoryData from '@/assets/data/arenaHistory.json';
 import mlbSchedule from "@/assets/data/mlbSchedule.json";
 import ilSchedule from "@/assets/data/ilSchedule.json";
+import pclSchedule from "@/assets/data/pclSchedule.json";
 
 export default function ArenaScreen() {
   const { arenaId } = useLocalSearchParams();
@@ -188,6 +189,14 @@ export default function ArenaScreen() {
       awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
     })),
     ...ilSchedule.map((game) => ({
+      id: game.id,
+      league: game.league,
+      date: game.date,
+      arena: game.arena,
+      homeTeam: teamCodeMap[`${game.league}_${game.team}`] || game.team,
+      awayTeam: teamCodeMap[`${game.league}_${game.opponent}`] || game.opponent,
+    })),
+    ...pclSchedule.map((game) => ({
       id: game.id,
       league: game.league,
       date: game.date,

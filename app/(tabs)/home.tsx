@@ -21,6 +21,7 @@ import arenaData from '@/assets/data/arenas.json';
 import leaguesData from '@/assets/data/leagues.json';
 import mlbSchedule from '@/assets/data/mlbSchedule.json';
 import ilSchedule from '@/assets/data/ilSchedule.json';
+import pclSchedule from '@/assets/data/pclSchedule.json';
 
 const auth = getAuth();
 
@@ -100,6 +101,15 @@ export default function HomeScreen() {
       city: '',
       date: game.date,
     })),
+    ...pclSchedule.map(game => ({
+      id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
+      league: game.league,
+      homeTeam: game.homeTeam,
+      opponent: game.awayTeam,
+      arena: game.location,
+      city: '',
+      date: game.date,
+    })),
   ];
 
   const now = Date.now();
@@ -133,7 +143,7 @@ export default function HomeScreen() {
       ],
     },
     {
-      title: 'Minor League',
+      title: 'Triple-A Leagues',
       leagues: [
         { name: 'IL', logo: require('@/assets/images/ball_logo_il.png') },
         { name: 'PCL', logo: require('@/assets/images/ball_logo_pcl.png') },

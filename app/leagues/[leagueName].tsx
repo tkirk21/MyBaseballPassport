@@ -56,6 +56,7 @@ export default function LeagueDetails() {
     }
   }, [selectedArena]);
 
+
   if (!league) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -154,11 +155,31 @@ export default function LeagueDetails() {
                   ref={mapRef}
                   style={styles.map}
                   mapType="standard"
-                  region={{
-                    latitude: 39.5,
-                    longitude: -98.35,
-                    latitudeDelta: 45,
-                    longitudeDelta: 45,
+                  onMapReady={() => {
+                    const validCoords = leagueArenas
+                      .filter(a => typeof a.latitude === 'number' && typeof a.longitude === 'number')
+                      .map(a => ({
+                        latitude: a.latitude,
+                        longitude: a.longitude,
+                      }));
+
+                    if (validCoords.length > 0) {
+                      mapRef.current?.fitToCoordinates(validCoords, {
+                        edgePadding: {
+                          top: 50,
+                          right: 50,
+                          bottom: 50,
+                          left: 50,
+                        },
+                        animated: true,
+                      });
+                    }
+                  }}
+                  initialRegion={{
+                    latitude: leagueArenas[0]?.latitude || 39.5,
+                    longitude: leagueArenas[0]?.longitude || -98.35,
+                    latitudeDelta: 10,
+                    longitudeDelta: 10,
                   }}
                 >
                   <UrlTile

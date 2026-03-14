@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "171882071353-sp2mvcjla45lk4bdp2ritnjnvbfklfdk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tkirk21.MyBaseballPassport",
+            "certificate_hash": "c6f81bae441b107770d3d9c9a64b6a1cb0916557"
+          }
+        },
+        {
           "client_id": "171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com",
           "client_type": 3
         }
