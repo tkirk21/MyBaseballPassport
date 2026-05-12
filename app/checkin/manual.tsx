@@ -16,9 +16,10 @@ import { useColorScheme } from '../../hooks/useColorScheme';
 import LoadingPuck from '@/components/loadingPuck';
 import { usePremium } from '@/context/PremiumContext';
 
-import arenasData from '../../assets/data/arenas.json';
-import historicalTeamsData from '../../assets/data/historicalTeams.json';
-import arenaHistoryData from '../../assets/data/arenaHistory.json';
+import { loadArenas } from '@/utils/loadArenas';
+import localHistoricalTeamsData from '../../assets/data/historicalTeams.json';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
 
 const db = getFirestore(firebaseApp);
 const storage = getStorage(firebaseApp, 'gs://mybaseballpassport.firebasestorage.app');
@@ -51,15 +52,15 @@ const resolveArenaLatLng = (
 };
 
 const isSeasonValid = (item: any, selectedDate: Date) => {
-    if (!item.seasonStart || !item.seasonEnd) return true;
+  if (!item.seasonStart || !item.seasonEnd) return true;
 
-    const monthDay =
-      String(selectedDate.getMonth() + 1).padStart(2, '0') +
-      '-' +
-      String(selectedDate.getDate()).padStart(2, '0');
+   const monthDay =
+     String(selectedDate.getMonth() + 1).padStart(2, '0') +
+     '-' +
+     String(selectedDate.getDate()).padStart(2, '0');
 
-      return monthDay >= item.seasonStart && monthDay <= item.seasonEnd;
-    };
+     return monthDay >= item.seasonStart && monthDay <= item.seasonEnd;
+   };
 
 const ManualCheckIn = () => {
   const router = useRouter();
@@ -68,6 +69,7 @@ const ManualCheckIn = () => {
   const user = auth.currentUser;
   if (!user) return null;
   const { hasFullAccess, isInTrial, isSubscribed, checkInCount } = usePremium();
+  const hasAppAccess = hasFullAccess || isInTrial;
   const [friendsList, setFriendsList] = useState<{ id: string; name: string }[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredFriends, setFilteredFriends] = useState<{ id: string; name: string }[]>([]);
@@ -76,8 +78,11 @@ const ManualCheckIn = () => {
   const [alertMessage, setAlertMessage] = useState('');
   const [gameDate, setGameDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [arenas, setArenas] = useState([]);
-  const [allArenas, setAllArenas] = useState([]);
+  const [arenas, setArenas] = useState<any[]>([]);
+  const [rawArenas, setRawArenas] = useState<any[]>([]);
+  const [allArenas, setAllArenas] = useState<any[]>([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState<any[]>([]);
+  const [historicalTeamsData, setHistoricalTeamsData] = useState(localHistoricalTeamsData);
   const [leagueOpen, setLeagueOpen] = useState(false);
   const [arenaOpen, setArenaOpen] = useState(false);
   const [homeTeamOpen, setHomeTeamOpen] = useState(false);
@@ -96,7 +101,11 @@ const ManualCheckIn = () => {
   const [companions, setCompanions] = useState('');
   const [highlights, setHighlights] = useState('');
   const [parkingAndTravel, setParkingAndTravel] = useState('');
+  const [shareParkingTip, setShareParkingTip] = useState(false);
+  const [sharePregameBar, setSharePregameBar] = useState(false);
+  const [pregameBar, setPregameBar] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [sharedPhotos, setSharedPhotos] = useState<boolean[]>([]);
   const [didBuyMerch, setDidBuyMerch] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState({});
   const [merchItems, setMerchItems] = useState({});
@@ -126,6 +135,23 @@ const ManualCheckIn = () => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      const arenaData = await loadArenas();
+      const historyData = await loadArenaHistory();
+      const historicalData = await loadHistoricalTeams();
+
+      setRawArenas(arenaData);
+      setArenaHistoryData(historyData);
+
+      if (historicalData.length > 0) {
+        setHistoricalTeamsData(historicalData);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (!u) {
         setAlertMessage('Session expired. Please log in again.');
@@ -143,8 +169,8 @@ const ManualCheckIn = () => {
 
   const handleCheckInSubmit = async () => {
 
-    if (!hasFullAccess && (!isInTrial || checkInCount >= 3)) {
-      setAlertMessage('You have used your 3 free check-ins. Subscribe to continue logging games.');
+    if (!hasFullAccess && !isInTrial && checkInCount >= 3) {
+      setAlertMessage('You have reached today’s free check-in limit. Upgrade to Premium for unlimited access or come back tomorrow.');
       setAlertVisible(true);
       setIsSubmitting(false);
       return;
@@ -209,7 +235,6 @@ const ManualCheckIn = () => {
         );
       });
 
-
       if (alreadyExists) {
         setAlertMessage('This game has already been checked in.');
         setAlertVisible(true);
@@ -232,7 +257,6 @@ const ManualCheckIn = () => {
               }
 
               const blob = await response.blob();
-
               const photoRef = ref(storage, `${basePath}/${index}.jpg`);
 
               await uploadBytes(photoRef, blob);
@@ -276,11 +300,30 @@ const ManualCheckIn = () => {
         return result;
       };
 
-      const match = allArenas.find(
-        (arena: any) =>
-          arena.league === selectedLeague &&
-          arena.teamName === selectedHomeTeam
-      );
+      const match = allArenas.find((arena: any) => {
+        if (arena.league !== selectedLeague) return false;
+        if (arena.teamName !== selectedHomeTeam) return false;
+
+        const historyRecord = arenaHistoryData.find(h =>
+          h.teamName === arena.teamName &&
+          h.league === arena.league &&
+          h.currentArena === arena.arena
+        );
+
+        let resolvedArena = arena.arena;
+
+        if (historyRecord) {
+          const record = historyRecord.history.find(h => {
+            const from = new Date(h.from);
+            const to = h.to ? new Date(h.to) : null;
+            return gameDate >= from && (!to || gameDate <= to);
+          });
+
+          if (record) resolvedArena = record.name;
+        }
+
+        return resolvedArena === selectedArena;
+      });
 
       const docData = {
         league: selectedLeague,
@@ -300,11 +343,15 @@ const ManualCheckIn = () => {
         companions: companions,
         highlights,
         ParkingAndTravel: parkingAndTravel,
+        shareParkingTip: shareParkingTip && parkingAndTravel.trim() !== '',
+        pregameBar,
+        sharePregameBar: sharePregameBar && pregameBar.trim() !== '',
         merchBought: getSelectedItems(merchItems, merchCategories),
         concessionsBought: getSelectedItems(concessionItems, concessionCategories),
         gameDate: gameDate.toISOString(),
         checkinType: 'Manual',
         photos: photoUrls,
+        sharedPhotoFlags: photoUrls.map((_, index) => sharedPhotos[index] ? 1 : 0),
         userId: user.uid,
         timestamp: serverTimestamp(),
         latitude: typeof match?.latitude === 'number' ? match.latitude : null,
@@ -312,25 +359,43 @@ const ManualCheckIn = () => {
       };
 
       try {
-        await addDoc(collection(db, 'profiles', user.uid, 'checkins'), docData);
+        const checkinRef = await addDoc(collection(db, 'profiles', user.uid, 'checkins'), docData);
+        await setDoc(
+          doc(db, 'arenas', match?.arenaId ?? 'unknown', 'checkins', checkinRef.id),
+          {
+            arenaName: selectedArena,
+            teamName: selectedHomeTeam,
+            league: selectedLeague,
+            timestamp: serverTimestamp(),
+            userId: user.uid,
+            shareParkingTip: shareParkingTip && parkingAndTravel.trim() !== '',
+            ParkingAndTravel: parkingAndTravel,
+            sharePregameBar: sharePregameBar && pregameBar.trim() !== '',
+            pregameBar,
+            photos: photoUrls,
+            sharedPhotoFlags: photoUrls.map((_, index) => sharedPhotos[index] ? 1 : 0),
+          }
+        );
 
-        const profileRef = doc(db, 'profiles', user.uid);
-
-        const profileSnap = await getDoc(profileRef);
-
-        if (!profileSnap.exists()) {
-          await setDoc(profileRef, {
-            checkInCount: 1,
-          });
-        } else {
+        if (match?.arenaId) {
           await setDoc(
-            profileRef,
+            doc(db, 'arenas', match.arenaId),
             {
-              checkInCount: increment(1),
+              totalCheckins: increment(1),
             },
             { merge: true }
           );
         }
+
+        const today = new Date().toISOString().split('T')[0];
+        await setDoc(
+          doc(db, 'profiles', user.uid),
+          {
+            checkInCount: increment(1),
+            [`dailyCheckInCounts.${today}`]: increment(1),
+          },
+          { merge: true }
+        );
 
       } catch (writeError: any) {
         if (writeError?.code === 'permission-denied') {
@@ -374,9 +439,7 @@ const ManualCheckIn = () => {
   // League dropdown
   useEffect(() => {
     const selectedDate = gameDate;
-
-    const processed = arenasData
-      .filter(arena => {
+    const processed = rawArenas.filter(arena => {
         const start = arena.startDate ? new Date(arena.startDate) : new Date(0);
         const end = arena.endDate ? new Date(arena.endDate) : null;
         if (end) end.setHours(23, 59, 59, 999);
@@ -396,13 +459,11 @@ const ManualCheckIn = () => {
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
     const allArenasRaw = [...processed, ...processedHistorical];
-
     const allArenasFiltered = allArenasRaw.filter(a =>
       a.league && typeof a.league === 'string' && a.league.trim() !== ''
     );
 
     setAllArenas(allArenasFiltered);
-    setArenas(allArenasFiltered);
 
     const leagues = [...new Set(allArenasFiltered.map(a => a.league))];
     setLeagueItems(leagues.map(l => ({ label: l, value: l })));
@@ -421,7 +482,6 @@ const ManualCheckIn = () => {
     }
 
     const selectedDate = gameDate;
-
     const validEntries = allArenas.filter(item => {
       if (item.league !== selectedLeague) return false;
 
@@ -521,10 +581,10 @@ const ManualCheckIn = () => {
 
   // Home Team → Opponents (with date filter)
   useEffect(() => {
-    if (selectedHomeTeam && selectedLeague && arenas.length > 0 && gameDate) {
+    if (selectedHomeTeam && selectedLeague && allArenas.length > 0 && gameDate) {
       const gameDateObj = new Date(gameDate);
 
-      const opponentOptions = arenas
+      const opponentOptions = allArenas
         .filter(item => {
           if (item.league !== selectedLeague || item.teamName === selectedHomeTeam) return false;
 
@@ -681,6 +741,10 @@ const ManualCheckIn = () => {
     favoritePlayerPlaceholder: { color: colorScheme === 'dark' ? '#BBBBBB' : '#666666' },
     input: { borderWidth: 2, borderColor: colorScheme === 'dark' ? '#334155' : '#0D2C42', borderRadius: 8, padding: 12, marginBottom: 12, fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF', },
     label: { fontSize: 16, fontWeight: '600', marginTop: 18, marginBottom: 6, color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', },
+    lockedInput: { opacity: 0.5, borderColor: 'red' },
+    photoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, gap: 8 },
+    photoThumbnailWrapper: { position: 'relative', width: 100, minHeight: 132 },
+    photoThumbnail: { width: 100, height: 100, borderRadius: 8 },
     Placeholder: { color: colorScheme === 'dark' ? '#BBBBBB' : '#666666' },
     requestContainer: { marginTop: 16, marginBottom: 8, alignItems: 'center', },
     requestQuestion: { fontSize: 15, color: colorScheme === 'dark' ? '#BBBBBB' : '#444444', textAlign: 'center', marginBottom: 4, },
@@ -688,6 +752,7 @@ const ManualCheckIn = () => {
     resultOptionsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 12, },
     resultOptionItem: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 12, },
     resultOptionText: { marginLeft: 8, fontSize: 15, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', },
+    premiumLockText: { textAlign: 'center', marginBottom: 12, color: 'red', fontWeight: '600' },
     screenBackground: { flex: 1, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF', },
     scoreRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
     scoreLabel: { fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
@@ -697,6 +762,7 @@ const ManualCheckIn = () => {
     seatLabel: { fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
     seatLabelRow: { fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginLeft: 12, marginRight: 6 },
     seatInput: { width: 50, textAlign: 'center', marginBottom: 0 },
+    shareToArenaText: { textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginTop: 8, marginBottom: 12, fontSize: 15, fontWeight: '500', },
     submitButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, borderRadius: 30, width: '50%', alignSelf: 'center', alignItems: 'center', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', },
     submitButtonSubmitting: { opacity: 0.7 },
     submitText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16, fontWeight: '600', },
@@ -746,6 +812,35 @@ const ManualCheckIn = () => {
             <Text style={styles.datePickerText}>{gameDate.toDateString()}</Text>
           </TouchableOpacity>
 
+          {showDatePicker && Platform.OS === 'ios' && (
+            <View
+              style={{
+                backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF',
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 12,
+              }}
+            >
+              <DateTimePicker
+                value={gameDate}
+                mode="date"
+                display="spinner"
+                onChange={(event, selectedDate) => {
+                  if (selectedDate) setGameDate(selectedDate);
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(false)}
+                style={{ alignSelf: 'flex-end', marginTop: 8 }}
+              >
+                <Text style={{ color: '#0066CC', fontWeight: '600', fontSize: 16 }}>
+                  Done
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <DropDownPicker
             open={leagueOpen}
             value={selectedLeague}
@@ -761,6 +856,11 @@ const ManualCheckIn = () => {
             dropDownContainerStyle={styles.dropDownContainer}
             textStyle={styles.dropDownText}
             listEmptyTextStyle={styles.dropDownListEmpty}
+            ListEmptyComponent={() => (
+              <Text style={{ padding: 20, textAlign: "center", color: "#666" }}>
+                You must pick a date first.
+                </Text>
+            )}
           />
 
           <DropDownPicker
@@ -897,264 +997,407 @@ const ManualCheckIn = () => {
           </View>
         </View>
 
-          <TextInput
-            placeholder="Favorite Player"
-            placeholderTextColor={styles.favoritePlayerPlaceholder.color}
-            value={favoritePlayer}
-            onChangeText={setFavoritePlayer}
-            style={styles.input}
-          />
-          <Text style={styles.label}>Seat Information:</Text>
-          <View style={styles.seatInfoRow}>
-            <Text style={styles.seatLabel}>Section:</Text>
-            <TextInput value={seatSection} onChangeText={setSeatSection} style={[styles.input, styles.seatInput]} />
-            <Text style={styles.seatLabelRow}>Row:</Text>
-            <TextInput value={seatRow} onChangeText={setSeatRow} style={[styles.input, styles.seatInput]} />
-            <Text style={styles.seatLabelRow}>Seat:</Text>
-            <TextInput value={seatNumber} onChangeText={setSeatNumber} style={[styles.input, styles.seatInput]} />
-          </View>
-
-          <TextInput
-            placeholder="Who did you go with? (@ to tag friends)"
-            placeholderTextColor={styles.Placeholder.color}
-            value={companions}
-            onChangeText={(text) => {
-              setCompanions(text);
-              const lastChar = text[text.length - 1];
-              const atIndex = text.lastIndexOf('@');
-
-              if (lastChar === '@' || (atIndex >= 0 && cursorPosition > atIndex)) {
-                const query = text.slice(atIndex + 1).toLowerCase().trim();
-                const matches = friendsList.filter(f => f.name.toLowerCase().includes(query));
-                setFilteredFriends(matches);
-                setShowSuggestions(matches.length > 0);
-              } else {
-                setShowSuggestions(false);
-              }
-            }}
-            onSelectionChange={(e) => setCursorPosition(e.nativeEvent.selection.start)}
-            multiline
-            style={styles.input}
-          />
-
-          {showSuggestions && (
-            <View style={{
-              backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF',
-              borderWidth: 1,
-              borderColor: colorScheme === 'dark' ? '#334155' : '#D1D5DB',
-              borderRadius: 8,
-              maxHeight: 200,
-              marginTop: 4,
-            }}>
-              <ScrollView>
-                {filteredFriends.map((friend) => (
-                  <TouchableOpacity
-                    key={friend.id}
-                    style={{
-                      padding: 12,
-                      borderBottomWidth: 1,
-                      borderBottomColor: colorScheme === 'dark' ? '#334155' : '#E5E7EB',
-                    }}
-                    onPress={() => {
-                      const beforeAt = companions.slice(0, companions.lastIndexOf('@'));
-                      const newText = `${beforeAt}@${friend.name}`;
-                      setCompanions(newText);
-                      setShowSuggestions(false);
-                    }}
-                  >
-                    <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' }}>
-                      {friend.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
-
-          <Text style={styles.label}>Upload Photos (up to 3):</Text>
-          <TouchableOpacity style={styles.input} onPress={pickImage}>
-            <Text style={styles.uploadPhotoText}>
-              {images.length === 0 ? 'Select Photos' : images.length < 3 ? 'Add More (max 3)' : 'Max 3 reached'}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, gap: 8 }}>
-            {images.map((uri, index) => (
-              <View key={index} style={{ position: 'relative', width: 100, height: 100 }}>
-                <Image
-                  source={{ uri }}
-                  style={{ width: 100, height: 100, borderRadius: 8 }}
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  style={{ position: 'absolute', top: -8, right: -8, backgroundColor: 'red', borderRadius: 12, width: 24, height: 24, justifyContent: 'center', alignItems: 'center' }}
-                  onPress={() => setImages(images.filter((_, i) => i !== index))}
-                >
-                  <Text style={{ color: 'white', fontSize: 16 }}>×</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.label}>Did you buy any merch?</Text>
-          <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-            <Pressable
-              style={[
-                styles.choiceButton,
-                didBuyMerch === true && styles.choiceButtonSelected,
-              ]}
-              onPress={() => setDidBuyMerch(true)}
-            >
-              <Text style={[
-                styles.choiceButtonText,
-                didBuyMerch === true && styles.choiceButtonTextSelected
-              ]}>
-                Yes
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.choiceButton,
-                didBuyMerch === false && styles.choiceButtonSelected,
-              ]}
-              onPress={() => setDidBuyMerch(false)}
-            >
-              <Text style={[
-                styles.choiceButtonText,
-                didBuyMerch === false && styles.choiceButtonTextSelected
-              ]}>
-                No
-              </Text>
-            </Pressable>
-          </View>
-
-          {didBuyMerch && (
+          {hasAppAccess ? (
             <>
-              {Object.keys(merchCategories).map((category) => (
-                <View key={category} style={styles.categoryContainer}>
-                  <Pressable
-                    onPress={() =>
-                      setExpandedCategories((prev) => ({
-                        ...prev,
-                        [category]: !prev[category],
-                      }))
-                    }
-                    style={styles.categoryHeader}
-                  >
-                    <Text style={styles.categoryTitle}>{category}</Text>
-                    <AntDesign
-                      name={expandedCategories[category] ? 'up' : 'down'}
-                      size={16}
-                      color="black"
-                    />
-                  </Pressable>
+              <TextInput
+                placeholder="Favorite Player"
+                placeholderTextColor={styles.favoritePlayerPlaceholder.color}
+                value={favoritePlayer}
+                onChangeText={setFavoritePlayer}
+                style={styles.input}
+              />
+              <Text style={styles.label}>Seat Information:</Text>
+              <View style={styles.seatInfoRow}>
+                <Text style={styles.seatLabel}>Section:</Text>
+                <TextInput value={seatSection} onChangeText={setSeatSection} style={[styles.input, styles.seatInput]} />
+                <Text style={styles.seatLabelRow}>Row:</Text>
+                <TextInput value={seatRow} onChangeText={setSeatRow} style={[styles.input, styles.seatInput]} />
+                <Text style={styles.seatLabelRow}>Seat:</Text>
+                <TextInput value={seatNumber} onChangeText={setSeatNumber} style={[styles.input, styles.seatInput]} />
+              </View>
 
-                  {expandedCategories[category] &&
-                    merchCategories[category].map((item) => (
-                      <View key={item} style={styles.checkboxRow}>
-                        <Checkbox
-                          value={merchItems[item] || false}
-                          onValueChange={(v) =>
-                            setMerchItems((prev) => ({ ...prev, [item]: v }))
-                          }
-                        />
-                        <Text style={styles.checkboxLabel}>{item}</Text>
-                      </View>
+              <TextInput
+                placeholder="Who did you go with? (@ to tag friends)"
+                placeholderTextColor={styles.Placeholder.color}
+                value={companions}
+                onChangeText={(text) => {
+                  setCompanions(text);
+                  const lastChar = text[text.length - 1];
+                  const atIndex = text.lastIndexOf('@');
+
+                  if (lastChar === '@' || (atIndex >= 0 && cursorPosition > atIndex)) {
+                    const query = text.slice(atIndex + 1).toLowerCase().trim();
+                    const matches = friendsList.filter(f => f.name.toLowerCase().includes(query));
+                    setFilteredFriends(matches);
+                    setShowSuggestions(matches.length > 0);
+                  } else {
+                    setShowSuggestions(false);
+                  }
+                }}
+                onSelectionChange={(e) => setCursorPosition(e.nativeEvent.selection.start)}
+                multiline
+                style={styles.input}
+              />
+
+              {showSuggestions && (
+                <View style={{
+                  backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF',
+                  borderWidth: 1,
+                  borderColor: colorScheme === 'dark' ? '#334155' : '#D1D5DB',
+                  borderRadius: 8,
+                  maxHeight: 200,
+                  marginTop: 4,
+                }}>
+                  <ScrollView>
+                    {filteredFriends.map((friend) => (
+                      <TouchableOpacity
+                        key={friend.id}
+                        style={{
+                          padding: 12,
+                          borderBottomWidth: 1,
+                          borderBottomColor: colorScheme === 'dark' ? '#334155' : '#E5E7EB',
+                        }}
+                        onPress={() => {
+                          const beforeAt = companions.slice(0, companions.lastIndexOf('@'));
+                          const newText = `${beforeAt}@${friend.name}`;
+                          setCompanions(newText);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        <Text style={{ color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' }}>
+                          {friend.name}
+                        </Text>
+                      </TouchableOpacity>
                     ))}
+                  </ScrollView>
                 </View>
-              ))}
+              )}
+            </>
+          ) : (
+            <>
+              <TextInput
+                placeholder="Favorite Player"
+                placeholderTextColor={styles.favoritePlayerPlaceholder.color}
+                editable={false}
+                style={[styles.input, styles.lockedInput]}
+              />
+              <Text style={styles.label}>Seat Information:</Text>
+              <View style={styles.seatInfoRow}>
+                <Text style={styles.seatLabel}>Section:</Text>
+                <TextInput editable={false} style={[styles.input, styles.lockedInput]} />
+                <Text style={styles.seatLabelRow}>Row:</Text>
+                <TextInput editable={false} style={[styles.input, styles.lockedInput]} />
+                <Text style={styles.seatLabelRow}>Seat:</Text>
+                <TextInput editable={false} style={[styles.input, styles.lockedInput]} />
+              </View>
+              <TextInput
+                placeholder="Who did you go with?"
+                placeholderTextColor={styles.Placeholder.color}
+                editable={false}
+                multiline
+                style={[styles.input, styles.lockedInput]}
+              />
+              <Text style={styles.premiumLockText}>
+                Upgrade to Premium to unlock favorite player, seat details, and companions.
+              </Text>
             </>
           )}
 
-          <Text style={styles.label}>Did you buy any concessions?</Text>
-          <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-            <Pressable
-              style={[
-                styles.choiceButton,
-                didBuyConcessions === true && styles.choiceButtonSelected,
-              ]}
-              onPress={() => setDidBuyConcessions(true)}
-            >
-              <Text style={[
-                styles.choiceButtonText,
-                didBuyConcessions === true && styles.choiceButtonTextSelected
-              ]}>
-                Yes
+          {hasAppAccess ? (
+            <>
+              <Text style={styles.label}>Upload Photos (up to 3):</Text>
+              <TouchableOpacity style={styles.input} onPress={pickImage}>
+                <Text style={styles.uploadPhotoText}>
+                  {images.length === 0 ? 'Select Photos' : images.length < 3 ? 'Add More (max 3)' : 'Max 3 reached'}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.photoGrid}>
+                {images.map((uri, index) => (
+                  <View key={index} style={styles.photoThumbnailWrapper}>
+                    <Image source={{ uri }} style={styles.photoThumbnail} resizeMode="cover" />
+
+                    <View style={styles.sharePhotoRow}>
+                      <Checkbox
+                        value={sharedPhotos[index] || false}
+                        onValueChange={(value) => {
+                          const updated = [...sharedPhotos];
+                          updated[index] = value;
+                          setSharedPhotos(updated);
+                        }}
+                      />
+                      <Text style={styles.checkboxLabel}>Share</Text>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => {
+                        setImages(images.filter((_, i) => i !== index));
+                        setSharedPhotos(sharedPhotos.filter((_, i) => i !== index));
+                      }}
+                    >
+                      <Text style={styles.deleteText}>×</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+
+              <Text style={styles.shareToArenaText}>
+                Share to the ballpark page
               </Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.choiceButton,
-                didBuyConcessions === false && styles.choiceButtonSelected,
-              ]}
-              onPress={() => setDidBuyConcessions(false)}
-            >
-              <Text style={[
-                styles.choiceButtonText,
-                didBuyConcessions === false && styles.choiceButtonTextSelected
-              ]}>
-                No
+            </>
+          ) : (
+            <>
+              <Text style={styles.label}>Upload Photos (up to 3):</Text>
+              <View style={[styles.input, styles.lockedInput]}>
+                <Text style={styles.uploadPhotoText}>Select Photos</Text>
+              </View>
+              <Text style={styles.premiumLockText}>
+                Upgrade to Premium to unlock photo uploads.
               </Text>
-            </Pressable>
-          </View>
-
-          {didBuyConcessions && (
-             <>
-              {Object.keys(concessionCategories).map((category) => (
-                <View key={category} style={styles.categoryContainer}>
-                  <Pressable
-                    onPress={() =>
-                      setExpandedCategories((prev) => ({
-                        ...prev,
-                        [category]: !prev[category],
-                      }))
-                    }
-                    style={styles.categoryHeader}
-                  >
-                    <Text style={styles.categoryTitle}>{category}</Text>
-                    <AntDesign
-                      name={expandedCategories[category] ? 'up' : 'down'}
-                      size={16}
-                      color="black"
-                    />
-                  </Pressable>
-
-                  {expandedCategories[category] &&
-                    concessionCategories[category].map((item) => (
-                      <View key={item} style={styles.checkboxRow}>
-                        <Checkbox
-                          value={concessionItems[item] || false}
-                          onValueChange={(v) =>
-                            setConcessionItems((prev) => ({ ...prev, [item]: v }))
-                          }
-                        />
-                        <Text style={styles.checkboxLabel}>{item}</Text>
-                      </View>
-                    ))}
-                </View>
-              ))}
             </>
           )}
 
-          <TextInput
-            placeholder="Highlights"
-            placeholderTextColor={styles.Placeholder.color}
-            value={highlights}
-            onChangeText={setHighlights}
-            style={styles.input}
-            multiline
-          />
+          {hasAppAccess ? (
+            <>
+              <Text style={styles.label}>Did you buy any merch?</Text>
+              <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                <Pressable
+                  style={[
+                    styles.choiceButton,
+                    didBuyMerch === true && styles.choiceButtonSelected,
+                  ]}
+                  onPress={() => setDidBuyMerch(true)}
+                >
+                  <Text style={[
+                    styles.choiceButtonText,
+                    didBuyMerch === true && styles.choiceButtonTextSelected
+                  ]}>
+                    Yes
+                  </Text>
+                </Pressable>
 
-          <TextInput
-            placeholder="Parking and travel Tips"
-            placeholderTextColor={styles.Placeholder.color}
-            value={parkingAndTravel}
-            onChangeText={setParkingAndTravel}
-            style={styles.input}
-            multiline
-          />
+                <Pressable
+                  style={[
+                    styles.choiceButton,
+                    didBuyMerch === false && styles.choiceButtonSelected,
+                  ]}
+                  onPress={() => setDidBuyMerch(false)}
+                >
+                  <Text style={[
+                    styles.choiceButtonText,
+                    didBuyMerch === false && styles.choiceButtonTextSelected
+                  ]}>
+                    No
+                  </Text>
+                </Pressable>
+              </View>
+
+              {didBuyMerch && (
+                <>
+                  {Object.keys(merchCategories).map((category) => (
+                    <View key={category} style={styles.categoryContainer}>
+                      <Pressable
+                        onPress={() =>
+                          setExpandedCategories((prev) => ({
+                            ...prev,
+                            [category]: !prev[category],
+                          }))
+                        }
+                        style={styles.categoryHeader}
+                      >
+                        <Text style={styles.categoryTitle}>{category}</Text>
+                        <AntDesign
+                          name={expandedCategories[category] ? 'up' : 'down'}
+                          size={16}
+                          color="black"
+                        />
+                      </Pressable>
+
+                      {expandedCategories[category] &&
+                        merchCategories[category].map((item) => (
+                          <View key={item} style={styles.checkboxRow}>
+                            <Checkbox
+                              value={merchItems[item] || false}
+                              onValueChange={(v) =>
+                                setMerchItems((prev) => ({ ...prev, [item]: v }))
+                              }
+                            />
+                            <Text style={styles.checkboxLabel}>{item}</Text>
+                          </View>
+                        ))}
+                    </View>
+                  ))}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Text style={styles.label}>Did you buy any merch?</Text>
+              <View style={[styles.input, styles.lockedInput]}>
+                <Text style={styles.uploadPhotoText}>Premium only</Text>
+              </View>
+              <Text style={styles.premiumLockText}>
+                Upgrade to Premium to log merch purchases.
+              </Text>
+            </>
+          )}
+
+          {hasAppAccess ? (
+            <>
+              <Text style={styles.label}>Did you buy any concessions?</Text>
+              <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                <Pressable
+                  style={[
+                    styles.choiceButton,
+                    didBuyConcessions === true && styles.choiceButtonSelected,
+                  ]}
+                  onPress={() => setDidBuyConcessions(true)}
+                >
+                  <Text style={[
+                    styles.choiceButtonText,
+                    didBuyConcessions === true && styles.choiceButtonTextSelected
+                  ]}>
+                    Yes
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.choiceButton,
+                    didBuyConcessions === false && styles.choiceButtonSelected,
+                  ]}
+                  onPress={() => setDidBuyConcessions(false)}
+                >
+                  <Text style={[
+                    styles.choiceButtonText,
+                    didBuyConcessions === false && styles.choiceButtonTextSelected
+                  ]}>
+                    No
+                  </Text>
+                </Pressable>
+              </View>
+
+              {didBuyConcessions && (
+                <>
+                  {Object.keys(concessionCategories).map((category) => (
+                    <View key={category} style={styles.categoryContainer}>
+                      <Pressable
+                        onPress={() =>
+                          setExpandedCategories((prev) => ({
+                            ...prev,
+                            [category]: !prev[category],
+                          }))
+                        }
+                        style={styles.categoryHeader}
+                      >
+                        <Text style={styles.categoryTitle}>{category}</Text>
+                        <AntDesign
+                          name={expandedCategories[category] ? 'up' : 'down'}
+                          size={16}
+                          color="black"
+                        />
+                      </Pressable>
+
+                      {expandedCategories[category] &&
+                        concessionCategories[category].map((item) => (
+                          <View key={item} style={styles.checkboxRow}>
+                            <Checkbox
+                              value={concessionItems[item] || false}
+                              onValueChange={(v) =>
+                                setConcessionItems((prev) => ({ ...prev, [item]: v }))
+                              }
+                            />
+                            <Text style={styles.checkboxLabel}>{item}</Text>
+                          </View>
+                        ))}
+                    </View>
+                  ))}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Text style={styles.label}>Did you buy any concessions?</Text>
+              <View style={[styles.input, styles.lockedInput]}>
+                <Text style={styles.uploadPhotoText}>Premium only</Text>
+              </View>
+              <Text style={styles.premiumLockText}>
+                Upgrade to Premium to log concessions.
+              </Text>
+            </>
+          )}
+
+          {hasAppAccess ? (
+            <>
+              <TextInput
+                placeholder="Highlights"
+                placeholderTextColor={styles.Placeholder.color}
+                value={highlights}
+                onChangeText={setHighlights}
+                style={styles.input}
+                multiline
+              />
+
+              <TextInput
+                placeholder="Parking and travel Tips"
+                placeholderTextColor={styles.Placeholder.color}
+                value={parkingAndTravel}
+                onChangeText={setParkingAndTravel}
+                style={styles.input}
+                multiline
+              />
+
+              <View style={styles.checkboxRow}>
+                <Checkbox value={shareParkingTip} onValueChange={setShareParkingTip} />
+                <Text style={styles.checkboxLabel}>Share this parking/travel tip on the arena page</Text>
+              </View>
+
+              <TextInput
+                placeholder="Pregame Bar (where did you eat or drink before the game?)"
+                placeholderTextColor={styles.Placeholder.color}
+                value={pregameBar}
+                onChangeText={setPregameBar}
+                style={styles.input}
+                multiline
+              />
+
+              <View style={styles.checkboxRow}>
+                <Checkbox value={sharePregameBar} onValueChange={setSharePregameBar} />
+                <Text style={styles.checkboxLabel}>Share this pregame Bar tip on the arena page</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <TextInput
+                placeholder="Highlights"
+                placeholderTextColor={styles.Placeholder.color}
+                editable={false}
+                style={[styles.input, styles.lockedInput]}
+                multiline
+              />
+
+              <TextInput
+                placeholder="Parking and travel Tips"
+                placeholderTextColor={styles.Placeholder.color}
+                editable={false}
+                style={[styles.input, styles.lockedInput]}
+                multiline
+              />
+
+              <TextInput
+                placeholder="Pregame Bar"
+                placeholderTextColor={styles.Placeholder.color}
+                editable={false}
+                style={[styles.input, styles.lockedInput]}
+                multiline
+              />
+
+              <Text style={styles.premiumLockText}>
+                Upgrade to Premium to add notes, travel tips, and pregame details.
+              </Text>
+            </>
+          )}
 
           <View style={styles.bottomRow}>
             <TouchableOpacity style={styles.backIconButton} onPress={() => router.back()}>
@@ -1185,20 +1428,7 @@ const ManualCheckIn = () => {
             <DateTimePicker
               value={gameDate}
               mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) setGameDate(selectedDate);
-              }}
-            />
-          )}
-
-          {/* IOS / IPAD — modal picker */}
-          {showDatePicker && Platform.OS === 'ios' && (
-            <DateTimePicker
-              value={gameDate}
-              mode="date"
-              display="default"
+              display="calendar"
               onChange={(event, selectedDate) => {
                 setShowDatePicker(false);
                 if (selectedDate) setGameDate(selectedDate);

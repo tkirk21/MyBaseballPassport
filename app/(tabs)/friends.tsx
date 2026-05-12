@@ -20,9 +20,9 @@ import * as Sharing from 'expo-sharing';
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
-const arenasData = require("@/assets/data/arenas.json");
-const arenaHistory = require("@/assets/data/arenaHistory.json");
-const historicalTeams = require("@/assets/data/historicalTeams.json");
+import { loadArenas } from '@/utils/loadArenas';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
 
 const resolveTeamName = (item: any): string => {
   return (
@@ -68,6 +68,9 @@ const getTimestamp = (ts: any): Date => {
 
 export default function FriendsTab() {
   const [allUsers, setAllUsers] = useState<Profile[]>([]);
+  const [arenasData, setArenasData] = useState<any[]>([]);
+  const [arenaHistory, setArenaHistory] = useState<any[]>([]);
+  const [historicalTeams, setHistoricalTeams] = useState<any[]>([]);
   const [blockedFriends, setBlockedFriends] = useState<string[]>([]);
   const [feed, setFeed] = useState<ActivityItem[]>([]);
   const [friends, setFriends] = useState<string[]>([]);
@@ -102,6 +105,18 @@ export default function FriendsTab() {
     if (!theirFriends.length || !friends.length) return 0;
     return friends.filter(fid => theirFriends.includes(fid)).length;
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const arenas = await loadArenas();
+      setArenasData(arenas);
+
+      const historical = await loadHistoricalTeams();
+      setHistoricalTeams(historical);
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchUsersAndFriends = async () => {
@@ -609,19 +624,19 @@ export default function FriendsTab() {
     activityItemCard:{backgroundColor:colorScheme==='dark'?'#1D3557':'#FFFFFF',borderRadius:10,padding:14,marginBottom:12,shadowColor:"#000",shadowOpacity:0.05,shadowOffset:{width:0,height:1},shadowRadius:3,elevation:2,borderWidth:1,borderColor:colorScheme==='dark'?'#666':'#B22222'},
     activityHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
     activityItemBold: { fontWeight: "bold", color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557' },
-    activityItemCard: { backgroundColor: colorScheme === 'dark' ? '#1D3557' : "#F5F1E6", borderRadius: 10, padding: 14, marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.05, shadowOffset: { width: 0, height: 1 }, shadowRadius: 3, elevation: 2, borderWidth: 1, borderColor: colorScheme === 'dark' ? '#666' : '#B22222' },
+    activityCard:{borderLeftWidth:4,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#D1D5DB',paddingVertical:14,paddingHorizontal:12,marginBottom:12,borderRadius:10},
     activityItemText: { fontSize: 15, color: colorScheme === 'dark' ? '#FFFFFF' : "#1D3557", flex: 1 },
     activityUserText: { fontSize: 14, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557' },
     alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#1D3557' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666666' : '#B22222', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16, },
-    alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', textAlign: 'center', marginBottom: 12 },
+    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#16213E' : '#FFFFFF', borderRadius: 20, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#4A6FA5' : '#D1D5DB', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 14, elevation: 14, },
+    alertTitle: { fontSize: 19, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', textAlign: 'center', marginBottom: 16 },
     alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-    alertButton: { backgroundColor: '#B22222', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#B22222', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
-    alertButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
+    alertButton: { backgroundColor: colorScheme === 'dark' ? '#2E5A8A' : '#E8EEF9', borderWidth: 1, borderColor: colorScheme === 'dark' ? '#4A6FA5' : '#CBD5E1', paddingVertical: 11, paddingHorizontal: 28, borderRadius: 24, minWidth: 160, alignItems: 'center', marginTop: 8 },
+    alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', fontWeight: '700', fontSize: 15 },
     arenaNameText: { fontSize: 16, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', flex: 1 },
     avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
     activeDot: { position: 'absolute', right: -2, bottom: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: '#4ADE80', borderWidth: 3, borderColor: '#fff', },
-    acceptButton: { backgroundColor: '#4CAF50', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 6, marginLeft: 8 },
+    acceptButton: { backgroundColor: colorScheme === 'dark' ? '#2E7D5A' : '#DFF5E3', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20, marginLeft: 8, minWidth: 78, alignItems: 'center' },
     background: { flex: 1, width: '100%', height: '100%' },
     button: { color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', fontWeight: 'bold' },
     buttonTextWhite: { color: '#FFFFFF', fontWeight: 'bold' },
@@ -632,7 +647,7 @@ export default function FriendsTab() {
     container: { flex: 1, paddingVertical: 16, paddingHorizontal: 20 },
     dateAndCheerRow: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 108, marginBottom: 6, },
     dateText: { fontSize: 12, color: colorScheme === 'dark' ? '#BBBBBB' : "#6B7280" },
-    denyButton: { backgroundColor: '#F44336', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 6, marginLeft: 8 },
+    denyButton: { backgroundColor: colorScheme === 'dark' ? '#8A3A3A' : '#FDE2E2', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20, marginLeft: 8, minWidth: 78, alignItems: 'center' },
     emptyText: { fontSize: 15, color: colorScheme === 'dark' ? '#BBBBBB' : '#6B7280', textAlign: "center", lineHeight: 20 },
     emptyTitle: { fontSize: 20, fontWeight: "700", color: colorScheme === 'dark' ? '#FFFFFF' : "#1D3557", textAlign: "center", marginBottom: 8 },
     friendshipBoldName: { fontWeight: "bold", color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557' },
@@ -643,8 +658,11 @@ export default function FriendsTab() {
     lbRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 8, backgroundColor: colorScheme === 'dark' ? '#1D3557' : 'rgba(255,255,255,0.9)', borderRadius: 10, marginBottom: 6 },
     lbRowTop3:{backgroundColor:colorScheme==='dark'?'#1D3557':'#FFFFFF',borderWidth:2,borderColor:'#B22222'},
     lbScore: { fontSize: 18, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', minWidth: 40, textAlign: 'right' },
-    loadMoreButton: { alignSelf: "center", backgroundColor: '#B22222', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#B22222' },
-    loadMoreText: { color: '#FFFFFF', fontWeight: "bold", fontSize: 14 },
+    leagueAndArenaRow:{flexDirection:'row',alignItems:'center',marginBottom:8},
+    leagueBadgeInline:{borderWidth:1,borderRadius:4,paddingHorizontal:6,paddingVertical:2,marginRight:8},
+    leagueBadgeTextInline:{fontSize:12,fontWeight:'700'},
+    loadMoreButton: { alignSelf: "center", backgroundColor: colorScheme === 'dark' ? '#2E5A8A' : '#E0E7FF', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 30, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#4A6FA5' : '#2F4F68' },
+    loadMoreText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', fontWeight: "bold", fontSize: 14 },
     loadingOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colorScheme === 'dark' ? '#1D3557' : "#FFFFFF" },
     matchupText: { fontSize: 14, fontWeight: '500', color: colorScheme === 'dark' ? '#CCCCCC' : '#1D3557', marginBottom: 6 },
     modalOverlay: { flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
@@ -672,7 +690,7 @@ export default function FriendsTab() {
     unknownActivityTime: { fontSize: 12, color: colorScheme === 'dark' ? '#BBBBBB' : "#6B7280", marginTop: 4 },
   });
 
-  if (loading) {
+  if (loading || arenasData.length === 0 || historicalTeams.length === 0) {
     return (
       <View style={styles.loadingOverlay}>
         <LoadingPuck />

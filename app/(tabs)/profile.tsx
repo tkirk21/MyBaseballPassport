@@ -14,9 +14,9 @@ import { ProfileAlertContext } from './_layout';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { usePremium } from '@/context/PremiumContext';
 
-import arenasData from '@/assets/data/arenas.json';
-import arenaHistoryData from '@/assets/data/arenaHistory.json';
-import leagues from '@/assets/data/leagues.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
+import { loadLeagues } from '@/utils/loadLeagues';
 import { leagueLogos } from '@/assets/images/leagueLogos';
 
 interface CheerIconProps { size?: number; color?: string; }
@@ -30,34 +30,24 @@ function norm(s: any) { return (s ?? '').toString().trim().toLowerCase(); }
 
 async function getCheerCount(userId: string, checkinId: string) {
   try {
-    const cheersRef = collection(
+    const rootsRef = collection(
       db,
       "profiles",
       userId,
       "checkins",
       checkinId,
-      "cheers"
+      "roots"
     );
 
-    const snap = await getDocs(cheersRef);
+    const snap = await getDocs(rootsRef);
     const cheerCount = snap.size;
     const cheerNames = snap.docs
       .map(d => d.data()?.name)
       .filter(Boolean);
 
     return { cheerCount, cheerNames };
-  } catch (error: any) {
-      if (error?.code === 'permission-denied') {
-        setAlertMessage('You do not have access to cheers.');
-        setAlertVisible(true);
-      } else if (error?.code === 'unauthenticated') {
-        setAlertMessage('Session expired. Please log in again.');
-        setAlertVisible(true);
-      } else {
-        setAlertMessage('Failed to load cheers.');
-        setAlertVisible(true);
-      }
-      return { cheerCount: 0, cheerNames: [] };
+  } catch {
+    return { cheerCount: 0, cheerNames: [] };
   }
 }
 
@@ -126,6 +116,9 @@ export default function ProfileScreen() {
   const [expandedLeagues, setExpandedLeagues] = useState<Record<string, boolean>>({});
   const [image, setImage] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [arenasData, setArenasData] = useState<any[]>([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState<any[]>([]);
+  const [leagues, setLeagues] = useState<any[]>([]);
 
   const [recentCheckIns, setRecentCheckIns] = useState<any[]>([]);
   const [arenasVisited, setArenasVisited] = useState(0);
@@ -138,24 +131,37 @@ export default function ProfileScreen() {
     Record<string, Record<string, number>>
   >({});
   const [leaguesExpanded, setLeaguesExpanded] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [visibleCheerList, setVisibleCheerList] = useState<string | null>(null);
   const [visibleCheckins, setVisibleCheckins] = useState(5);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const arenas = await loadArenas();
+      setArenasData(arenas);
+
+      const history = await loadArenaHistory();
+      setArenaHistoryData(history);
+
+      const leaguesData = await loadLeagues();
+      setLeagues(leaguesData);
+    };
+
+    fetchData();
+  }, []);
+
   const filteredTeamsByLeague = useMemo(() => {
-    let teams = arenasData;
+    let teams = arenasData || [];
 
     if (teamSearchQuery.trim()) {
       const q = teamSearchQuery.toLowerCase().trim();
-      teams = arenasData.filter(team =>
-        team.teamName.toLowerCase().includes(q) ||
-        (team.city && team.city.toLowerCase().includes(q)) ||
-        (team.teamCode && team.teamCode.toLowerCase().includes(q))
+      teams = teams.filter(team =>
+        team.teamName?.toLowerCase().includes(q) ||
+        team.city?.toLowerCase().includes(q) ||
+        team.teamCode?.toLowerCase().includes(q)
       );
     }
 
-    // Group by league
     const grouped = teams.reduce((acc: Record<string, typeof arenasData>, team) => {
       const league = team.league || 'Unknown';
       if (!acc[league]) acc[league] = [];
@@ -163,14 +169,13 @@ export default function ProfileScreen() {
       return acc;
     }, {});
 
-    // Sort leagues alphabetically, and teams inside each league alphabetically
     return Object.keys(grouped)
       .sort()
       .map(league => ({
         league,
         teams: grouped[league].sort((a, b) => a.teamName.localeCompare(b.teamName))
       }));
-  }, [teamSearchQuery]);
+  }, [arenasData, teamSearchQuery]);
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -355,12 +360,10 @@ export default function ProfileScreen() {
       const checkIns = await Promise.all(
         snapshot.docs.map(async (d) => {
           const data = d.data();
-
           const { cheerCount, cheerNames } = await getCheerCount(user.uid, d.id);
-
-          const chirpsRef = collection(db, "profiles", user.uid, "checkins", d.id, "chirps");
-          const chirpSnap = await getDocs(chirpsRef);
-          const hasChirps = chirpSnap.size > 0;
+          const ridesRef = collection(db, "profiles", user.uid, "checkins", d.id, "rides");
+          const rideSnap = await getDocs(ridesRef);
+          const hasChirps = rideSnap.size > 0;
 
           return {
             id: d.id,
@@ -454,7 +457,10 @@ export default function ProfileScreen() {
               topArenaId.toString().trim().toLowerCase()
           );
 
-          const prettyName = arenaMatch?.arena || topArenaId;
+          const prettyName =
+            arenaMatch?.arena ||
+            checkIns.find(ci => (ci.arenaId || '').trim().toLowerCase() === topArenaId)?.arenaName ||
+            topArenaId;
 
           setMostVisitedArena({
             arena: prettyName,
@@ -514,7 +520,7 @@ export default function ProfileScreen() {
     const deleteChirp = async (chirpId: string) => {
       try {
         await deleteDoc(
-          doc(db, 'profiles', userId, 'checkins', checkinId, 'chirps', chirpId)
+          doc(db, 'profiles', userId, 'checkins', checkinId, 'rides', chirpId)
         );
 
         setChirps(prev => prev.filter(c => c.id !== chirpId));
@@ -537,7 +543,7 @@ export default function ProfileScreen() {
 
       try {
         await updateDoc(
-          doc(db, 'profiles', userId, 'checkins', checkinId, 'chirps', chirpId),
+          doc(db, 'profiles', userId, 'checkins', checkinId, 'rides', chirpId),
           { text: editText.trim() }
         );
 
@@ -567,8 +573,8 @@ export default function ProfileScreen() {
         return;
       }
 
-      const chirpsRef = collection(db, 'profiles', userId, 'checkins', checkinId, 'chirps');
-      const q = query(chirpsRef, orderBy('timestamp', 'asc'));
+      const ridesRef = collection(db, 'profiles', userId, 'checkins', checkinId, 'rides');
+      const q = query(ridesRef, orderBy('timestamp', 'asc'));
       const unsub = onSnapshot(q, (snap) => {
         const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         setChirps(list);
@@ -966,19 +972,10 @@ export default function ProfileScreen() {
             </View>
 
             <View style={styles.statsRow}>
-              {hasAppAccess ? (
-                <View style={styles.statSection}>
-                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
-                  <Text style={styles.cardTextBold}>{arenasVisited}</Text>
-                </View>
-              ) : (
-                <View style={[styles.statSection, styles.blurredSection]}>
-                  <Text style={styles.sectionTitle}>Arenas Visited</Text>
-                  <Text style={styles.upgradePrompt}>
-                    Subscribe to see arenas visited.
-                  </Text>
-                </View>
-              )}
+              <View style={styles.statSection}>
+                <Text style={styles.sectionTitle}>Ballparks Visited</Text>
+                <Text style={styles.cardTextBold}>{arenasVisited}</Text>
+              </View>
               {hasAppAccess ? (
                 <View style={styles.statSection}>
                   <Text style={styles.sectionTitle}>Teams Watched</Text>
@@ -988,7 +985,7 @@ export default function ProfileScreen() {
                 <View style={[styles.statSection, styles.blurredSection]}>
                   <Text style={styles.sectionTitle}>Teams Watched</Text>
                   <Text style={styles.upgradePrompt}>
-                    Monthly subscription costs less than a puck.
+                    Premium subscription costs less than a baseball.
                   </Text>
                 </View>
               )}
@@ -1011,28 +1008,28 @@ export default function ProfileScreen() {
               <View style={[styles.section, styles.blurredSection]}>
                 <Text style={styles.sectionTitle}>Most Watched Teams</Text>
                 <Text style={styles.upgradePrompt}>
-                  6 month subscription is cheaper than arena parking.
+                  6 month subscription is cheaper than ballpark parking.
                 </Text>
               </View>
             )}
 
             {hasAppAccess ? (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Most Visited Arena</Text>
+                <Text style={styles.sectionTitle}>Most Visited Ballpark</Text>
                 {mostVisitedArena ? (
                   <Text style={styles.cardText}>
                     {mostVisitedArena.arena}: {mostVisitedArena.count}{' '}
                     {mostVisitedArena.count === 1 ? 'visit' : 'visits'}
                   </Text>
                 ) : (
-                  <Text style={styles.placeholder}>No arenas yet.</Text>
+                  <Text style={styles.placeholder}>No ballparks yet.</Text>
                 )}
               </View>
             ) : (
               <View style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Most Visited Arena</Text>
+                <Text style={styles.sectionTitle}>Most Visited Ballpark</Text>
                 <Text style={styles.upgradePrompt}>
-                  Subscribe to see most visited arena.
+                  Subscribe to see most visited ballpark.
                 </Text>
               </View>
             )}
@@ -1185,10 +1182,10 @@ export default function ProfileScreen() {
 
                         {checkIn.hasChirps && (
                           <View style={styles.chirpSectionWrapper}>
-                            <ChirpsSection userId={auth.currentUser?.uid!} checkinId={checkIn.id} />
+                            <ChirpsSection userId={user.uid} checkinId={checkIn.id} />
                             <View style={styles.chirpReplyRow}>
                               <TextInput
-                                placeholder="Reply to this chirp..."
+                                placeholder="Reply to this ride..."
                                 placeholderTextColor={colorScheme === 'dark' ? '#BBBBBB' : '#999'}
                                 style={styles.chirpInput}
                                 value={checkIn.newChirpText || ''}
@@ -1205,9 +1202,9 @@ export default function ProfileScreen() {
                                   const text = checkIn.newChirpText?.trim();
                                   if (!text) return;
                                   const user = auth.currentUser;
-                                  const chirpsRef = collection(db, 'profiles', user.uid, 'checkins', checkIn.id, 'chirps');
+                                  const ridesRef = collection(db, 'profiles', user.uid, 'checkins', checkIn.id, 'rides');
                                   try {
-                                    await addDoc(chirpsRef, {
+                                    await addDoc(ridesRef, {
                                       text,
                                       userName: name || 'Anonymous',
                                       userImage: imageUrl || null,
@@ -1222,7 +1219,7 @@ export default function ProfileScreen() {
                                       setAlertMessage('Session expired. Please log in again.');
                                       setAlertVisible(true);
                                     } else {
-                                      setAlertMessage('Failed to post chirp.');
+                                      setAlertMessage('Failed to post ride.');
                                       setAlertVisible(true);
                                     }
                                     return;
@@ -1235,7 +1232,7 @@ export default function ProfileScreen() {
                                 }}
                                 style={styles.chirpSendButton}
                               >
-                                <Text style={styles.chirpSendText}>Chirp</Text>
+                                <Text style={styles.chirpSendText}>Ride</Text>
                               </TouchableOpacity>
                             </View>
                           </View>
@@ -1286,7 +1283,7 @@ export default function ProfileScreen() {
                         ]}
                         onPress={() => showUpgradePrompt(
                           "Premium Feature",
-                          "Subscribe to view check-in details and to reply to chirps."
+                          "Subscribe to view check-in details and to reply to roots from your friends."
                         )}
                       >
                         <View style={styles.arenaHeaderRow}>
@@ -1324,7 +1321,11 @@ export default function ProfileScreen() {
                           </Text>
 
                           {checkIn.cheerCount > 0 && (
-                            <View style={styles.cheerWrapper}>
+                            <TouchableOpacity
+                              style={styles.cheerWrapper}
+                              onPress={() => toggleCheerList(checkIn.id)}
+                              activeOpacity={0.7}
+                            >
                               <View style={styles.cheerBadgeContainer}>
                                 <Text style={{ fontSize: 16 }}>🎉</Text>
                                 <View style={styles.cheerCountBadge}>
@@ -1334,13 +1335,33 @@ export default function ProfileScreen() {
                               {visibleCheerList === checkIn.id && checkIn.cheerNames.map((name, index) => (
                                 <Text key={index} style={styles.cheerNamesText}>{name}</Text>
                               ))}
-                            </View>
+                            </TouchableOpacity>
                           )}
                         </View>
 
                         {checkIn.hasChirps && (
                           <View style={styles.chirpSectionWrapper}>
-                            <ChirpsSection userId={auth.currentUser?.uid!} checkinId={checkIn.id} />
+                            <ChirpsSection userId={user.uid} checkinId={checkIn.id} />
+
+                            <View style={styles.chirpReplyRow}>
+                              <TextInput
+                                placeholder="Reply to this ride..."
+                                placeholderTextColor={colorScheme === 'dark' ? '#BBBBBB' : '#999'}
+                                style={styles.chirpInput}
+                              />
+
+                              <TouchableOpacity
+                                onPress={() =>
+                                  showUpgradePrompt(
+                                    "Premium Feature",
+                                    "Sorry, upgrade to Premium to ride back."
+                                  )
+                                }
+                                style={styles.chirpSendButton}
+                              >
+                                <Text style={styles.chirpSendText}>Ride</Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
                         )}
                       </TouchableOpacity>

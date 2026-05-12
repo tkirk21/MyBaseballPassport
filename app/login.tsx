@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Easing, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, signInWithCredential, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
-import { auth, db, webClientId } from '@/firebaseConfig';
+import { auth, db, iosClientId, webClientId } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
 import LoadingPuck from "../components/loadingPuck";
@@ -34,14 +34,15 @@ export default function Login() {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com',
+      webClientId,
+      iosClientId,
       offlineAccess: true,
     });
   }, []);
 
   const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: '763545830068611',
-    redirectUri: 'fb763545830068611://authorize',
+    clientId: '1893308821318057',
+    redirectUri: 'fb1893308821318057://authorize',
   });
 
   const spinValue = useRef(new Animated.Value(0)).current;

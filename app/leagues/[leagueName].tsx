@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Modal } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { leagueLogos } from '@/assets/images/leagueLogos';
-import leagues from '@/assets/data/leagues.json';
-import arenas from '@/assets/data/arenas.json';
+import { loadLeagues } from '@/utils/loadLeagues';
+import { loadArenas } from '@/utils/loadArenas';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
 import LoadingPuck from '@/components/loadingPuck';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,17 +20,34 @@ export default function LeagueDetails() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   if (!leagueName || typeof leagueName !== 'string') return null;
-  const league = leagues.find((l: any) => (l.league || '').toUpperCase() === String(leagueName || '').toUpperCase());
-  const leagueCode = (league?.league || '').toUpperCase();
-  const leagueArenas = useMemo(() => {
-    return (arenas as any[]).filter((a) => (a.league || '').toUpperCase() === leagueCode);}, [leagueCode]);
   const [selectedArena, setSelectedArena] = useState(null);
+  const [arenas, setArenas] = useState<any[]>([]);
+  const [leagues, setLeagues] = useState<any[]>([]);
+  const league = leagues.find(
+    (l: any) => (l.league || '').toUpperCase() === String(leagueName || '').toUpperCase()
+  );
+  const leagueCode = (league?.league || '').toUpperCase();
   const mapRef = useRef<MapView>(null);
+  const leagueArenas = useMemo(() => {
+    return (arenas as any[]).filter((a) => (a.league || '').toUpperCase() === leagueCode);
+  }, [leagueCode, arenas]);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, [leagueName]);
+
+  useEffect(() => {
+    const fetchArenas = async () => {
+      const data = await loadArenas();
+      setArenas(data);
+
+      const leaguesData = await loadLeagues();
+      setLeagues(leaguesData);
+    };
+
+    fetchArenas();
+  }, []);
 
   useEffect(() => {
     if (
@@ -56,6 +73,29 @@ export default function LeagueDetails() {
     }
   }, [selectedArena]);
 
+  const styles = StyleSheet.create({
+    backButton:{position:'absolute',left:10,zIndex:10,padding:12},
+    blueStrip:{position:'absolute',top:-30,left:0,right:0,height:120,zIndex:5},
+    container:{padding:20,paddingBottom:80,alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',flexGrow:1},
+    fullContainer:{flex:1, backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    description:{fontSize:16,marginBottom:20,textAlign:'center',color:colorScheme==='dark'?'#AFC7E6':'#0A2940'},
+    info:{fontSize:14,marginBottom:8,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:'center'},
+    infoBox:{backgroundColor:colorScheme==='dark'?'rgba(19,47,79,0.85)':'rgba(255,255,255,0.9)',padding:16,borderRadius:12,borderWidth:4,borderColor:'#B22222',width:'100%',alignItems:'center'},
+    link:{fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',marginTop:12},
+    loadingContainer:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    logoContainer:{top:10,left:-10,alignSelf:'center',width:136,height:136,zIndex:20},
+    logoInnerCircle:{width:168,height:94,borderWidth:16,borderBottomWidth:0,borderColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderTopLeftRadius:84,borderTopRightRadius:84,backgroundColor:'transparent',justifyContent:'center',alignItems:'center',marginTop:30},
+    logoImage:{width:170,height:170,marginTop:-101},
+    markerContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
+    markerImage:{width:40,height:40},
+    markerText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
+    map:{width:310,height:300,borderColor:'#B22222'},
+    mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16},
+    pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
+    safeArea:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
+    scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
+    title:{fontSize:26,fontWeight:'bold',marginBottom:12,textAlign:'center',color:colorScheme==='dark'?'#FFFFFF':'#0A2940'}
+  });
 
   if (!league) {
     return (
@@ -86,29 +126,6 @@ export default function LeagueDetails() {
       </SafeAreaView>
     );
   }
-
-  const styles = StyleSheet.create({
-    backButton:{position:'absolute',left:10,zIndex:10,padding:12},
-    blueStrip:{position:'absolute',top:-30,left:0,right:0,height:120,zIndex:5},
-    container:{padding:20,paddingBottom:80,alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',flexGrow:1},
-    fullContainer:{flex:1, backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
-    description:{fontSize:16,marginBottom:20,textAlign:'center',color:colorScheme==='dark'?'#AFC7E6':'#0A2940'},
-    info:{fontSize:14,marginBottom:8,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:'center'},
-    infoBox:{backgroundColor:colorScheme==='dark'?'rgba(19,47,79,0.85)':'rgba(255,255,255,0.9)',padding:16,borderRadius:12,borderWidth:4,borderColor:'#B22222',width:'100%',alignItems:'center'},
-    link:{fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',marginTop:12},
-    loadingContainer:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
-    logoContainer:{top:10,left:-10,alignSelf:'center',width:136,height:136,zIndex:20},
-    logoInnerCircle:{width:168,height:94,borderWidth:16,borderBottomWidth:0,borderColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderTopLeftRadius:84,borderTopRightRadius:84,backgroundColor:'transparent',justifyContent:'center',alignItems:'center',marginTop:30},
-    logoImage:{width:170,height:170,marginTop:-101},
-    markerContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
-    markerImage:{width:40,height:40},
-    markerText:{position:'absolute',top:6,left:13,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
-    map:{width:310,height:300,borderColor:'#B22222'},
-    mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16},
-    safeArea:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
-    scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
-    title:{fontSize:26,fontWeight:'bold',marginBottom:12,textAlign:'center',color:colorScheme==='dark'?'#FFFFFF':'#0A2940'}
-  });
 
   return loading ? (
     <View style={styles.loadingContainer}>
@@ -195,6 +212,7 @@ export default function LeagueDetails() {
                       <Marker
                         key={`${a.league}-${a.arena}-${idx}`}
                         coordinate={{ latitude: a.latitude, longitude: a.longitude }}
+                        anchor={{ x: 0.5, y: 0.5 }}
                         title={a.arena}
                         description={a.city || ''}
                         onPress={() => setSelectedArena(a)}
@@ -209,10 +227,10 @@ export default function LeagueDetails() {
                           }
                         }}
                       >
-                        <View style={styles.markerContainer}>
+                        <View style={[styles.pinCircle,{backgroundColor:a.colorCode,borderColor:a.colorCode2 || a.colorCode}]}>
                           <Image
                             source={require('../../assets/images/pin_template.png')}
-                            style={[styles.markerImage, { tintColor: a.colorCode || 'red' }]}
+                            style={[styles.markerImage,{tintColor:a.colorCode2 || a.colorCode}]}
                             resizeMode="contain"
                           />
                           <Text style={styles.markerText}>
@@ -225,7 +243,7 @@ export default function LeagueDetails() {
               </View>
             </>
           ) : (
-            <Text style={styles.info}>No arenas found for this league.</Text>
+            <Text style={styles.info}>No ballparks found for this league.</Text>
           )}
           <View style={styles.infoBox}>
             <Text style={styles.title}>{league.leagueName}</Text>

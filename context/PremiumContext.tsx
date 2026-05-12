@@ -25,11 +25,15 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
 
   useEffect(() => {
-    Purchases.configure({
-      apiKey: Platform.OS === 'ios'
-        ? 'appl_JGxavdoMkpHIjcnwSCOTJLcpqnY'
-        : 'goog_oMcRJqarSxHaSinKLHIWjvrPbGD'
-    });
+    try {
+      Purchases.configure({
+        apiKey: Platform.OS === 'ios'
+          ? 'appl_hhmMXIFBfktKinKnlQOSkZMURYY'
+          : 'goog_eyNGjXLylnSmoGOHGhXMbDoPKtb'
+      });
+    } catch (e) {
+      console.log('Subscription service could not start.', e);
+    }
   }, []);
 
   useEffect(() => {
@@ -110,11 +114,14 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         }
 
         const data = profileSnap.data();
-        setCheckInCount(data?.checkInCount ?? 0);
+        const today = new Date().toLocaleDateString('en-CA');
+        setCheckInCount(data?.[`dailyCheckInCounts.${today}`] ?? 0);
 
         unsubscribeProfile = onSnapshot(profileRef, (snap) => {
           if (snap.exists()) {
-            setCheckInCount(snap.data()?.checkInCount ?? 0);
+            const liveData = snap.data();
+            const today = new Date().toLocaleDateString('en-CA');
+            setCheckInCount(liveData?.[`dailyCheckInCounts.${today}`] ?? 0);
           }
         });
         // unsubscribeProfile now handles live updates
@@ -126,13 +133,13 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
           const hasPremium =
             customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
 
-          if (hasPremium) {
-            setHasFullAccess(true);
-            setIsInTrial(false);
-            setIsSubscribed(true);
-            setIsLoadingPremium(false);
-            return;
-          } else {
+           if (hasPremium) {
+             setHasFullAccess(true);
+             setIsInTrial(false);
+             setIsSubscribed(true);
+             setIsLoadingPremium(false);
+              return;
+           } else {
             setIsSubscribed(false);
           }
         } catch (e) {
@@ -141,7 +148,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
 
         removeRcListener = Purchases.addCustomerInfoUpdateListener((customerInfo) => {
           const hasPremium =
-            customerInfo.entitlements.active['MY SPORTS PASSPORT LLC Pro'] !== undefined;
+            customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
 
           setIsSubscribed(hasPremium);
           setHasFullAccess(hasPremium);

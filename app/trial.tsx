@@ -23,14 +23,14 @@ export default function TrialScreen() {
       <View style={styles.screenBackground}>
         <Text style={styles.title}>Welcome to My Baseball Passport</Text>
 
-        <Text style={styles.text}>Your free trial includes:</Text>
+        <Text style={styles.text}>Your free access includes:</Text>
 
-        <Text style={styles.bullet}>• Full access to the entire app</Text>
+        <Text style={styles.bullet}>• Full access to all premium features</Text>
         <Text style={styles.bullet}>• Up to 3 ballpark check-ins</Text>
-        <Text style={styles.bullet}>• Your first 3 days</Text>
+        <Text style={styles.bullet}>• 3 days of full premium access</Text>
 
         <Text style={styles.footer}>
-          After your trial ends, continue your baseball journey for $2.99 per month.
+          After 3 days, continue with free access or upgrade to premium for $1.99 per month or $19.99 per year. Subscription renews automatically until cancelled.
         </Text>
 
         <TouchableOpacity

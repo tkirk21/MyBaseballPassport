@@ -9,27 +9,18 @@
     ]
   },
   {
-    "currentArena": "Chase Field",
-    "teamName": "Arizona Diamondbacks",
-    "league": "MLB",
-    "history": [
-	    { "name": "Bank One Ballpark", "from": "1998-03-01", "to": "2005-11-01" },
-      { "name": "Chase Field", "from": "2006-02-01", "to": null }
-    ]
-  },
-  {
     "currentArena": "Oakland–Alameda County Coliseum",
     "teamName": "Oakland Athletics",
     "league": "MLB",
     "history": [
       { "name": "Oakland–Alameda County Coliseum", "from": "1966-02-01", "to": "1998-11-01" },
-      { "name": "Network Associates Coliseum", "from": "1998-02-01", "to": "2008-11-01" },
-      { "name": "McAfee Coliseum", "from": "2004-02-01", "to": "2008-11-01" },
-      { "name": "Oakland–Alameda County Coliseum", "from": "2008-02-01", "to": "2011-11-01" },
-      { "name": "Overstock.com", "from": "2011-02-01", "to": "2011-11-01" },
-      { "name": "O.co Colisuem", "from": "2011-02-01", "to": "2016-11-01" },
-      { "name": "Oakland–Alameda County Coliseum", "from": "2016-02-01", "to": "2019-11-01" },
-      { "name": "RingCentral Coliseum", "from": "2019-02-01", "to": "2020-11-01" },
+      { "name": "Network Associates Coliseum", "from": "1998-02-01", "to": "2004-06-30" },
+      { "name": "McAfee Coliseum", "from": "2004-07-01", "to": "2008-09-18" },
+      { "name": "Oakland–Alameda County Coliseum", "from": "2008-09-19", "to": "2011-04-26" },
+      { "name": "Overstock.com", "from": "2011-04-27", "to": "2011-06-05" },
+      { "name": "O.co Colisuem", "from": "2011-06-06", "to": "2016-04-01" },
+      { "name": "Oakland–Alameda County Coliseum", "from": "2016-02-02", "to": "2019-06-04" },
+      { "name": "RingCentral Coliseum", "from": "2019-06-05", "to": "2020-11-01" },
       { "name": "Oakland–Alameda County Coliseum", "from": "2020-02-01", "to": "2020-11-01" },
 	    { "name": "RingCentral Coliseum", "from": "2020-02-01", "to": "2023-11-01" },
       { "name": "Oakland–Alameda County Coliseum", "from": "2024-02-01", "to": null }
@@ -141,7 +132,7 @@
     "history": [
       { "name": "Pacific Bell Park", "from": "2000-02-01", "to": "2003-11-01" },
       { "name": "SBC Park", "from": "2004-02-01", "to": "2005-11-01" },
-	    { "name": "AT&T Park", "from": "2006-02-01", "to": "2018-11-01" },
+      { "name": "AT&T Park", "from": "2006-02-01", "to": "2018-11-01" },
       { "name": "Oracle Park", "from": "2019-02-01", "to": null }
     ]
   },
@@ -326,6 +317,72 @@
       { "name": "Sky Sox Stadium", "from": "1988-02-01", "to": "2004-10-31" },
       { "name": "Security Service Field", "from": "2005-02-01", "to": "2018-11-01" }
     ]
+  },
+  {
+    "currentArena": "7 17 Credit Union Park",
+    "teamName": "Akron RubberDucks",
+    "league": "EL",
+    "history": [
+      { "name": "Canal Park", "from": "1997-03-01", "to": "2025-10-31" },
+      { "name": "7 17 Credit Union Park", "from": "2026-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "Peoples Natural Gas Field",
+    "teamName": "Altoona Curve",
+    "league": "EL",
+    "history": [
+      { "name": "Blair County Ballpark", "from": "1999-03-01", "to": "2012-10-31" },
+      { "name": "Peoples Natural Gas Field", "from": "2013-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "Mirabito Stadium",
+    "teamName": "Binghamton Rumble Ponies",
+    "league": "EL",
+    "history": [
+      { "name": "Binghamton Municipal Stadium", "from": "1992-02-01", "to": "2001-02-28" },
+      { "name": "NYSEG Stadium", "from": "2001-03-01", "to": "2021-10-31" },
+      { "name": "Mirabito Stadium", "from": "2022-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "Mirabito Stadium",
+    "teamName": "Binghamton Mets",
+    "league": "EL",
+    "history": [
+      { "name": "Binghamton Municipal Stadium", "from": "1992-02-01", "to": "2001-02-28" },
+      { "name": "NYSEG Stadium", "from": "2001-03-01", "to": "2021-10-31" },
+      { "name": "Mirabito Stadium", "from": "2022-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "UPMC Park",
+    "teamName": "Altoona Curve",
+    "league": "EL",
+    "history": [
+      { "name": "Jerry Uht Park", "from": "1999-03-01", "to": "2016-10-31" },
+      { "name": "UPMC Park", "from": "2017-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "FNB Field",
+    "teamName": "Harrisburg Senators",
+    "league": "EL",
+    "history": [
+      { "name": "Riverside Stadium", "from": "1987-03-01", "to": "2004-10-31" },
+      { "name": "Commerce Bank Park", "from": "2005-03-01", "to": "2009-10-31" },
+      { "name": "Metro Bank Park", "from": "2009-03-01", "to": "2015-10-31" },
+      { "name": "FNB Field", "from": "2016-02-01", "to": null }
+    ]
+  },
+  {
+    "currentArena": "Dunkin' Park",
+    "teamName": "Hartford Yard Goats",
+    "league": "EL",
+    "history": [
+      { "name": "Dunkin' Donuts Park ", "from": "2017-03-01", "to": "2022-10-31" },
+      { "name": "Dunkin' Park", "from": "2023-02-01", "to": null }
+    ]
   }
-
 ]

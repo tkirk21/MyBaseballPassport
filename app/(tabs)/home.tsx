@@ -17,11 +17,9 @@ import ViewShot from 'react-native-view-shot';
 import { usePremium } from '@/context/PremiumContext';
 
 import LoadingPuck from '@/components/loadingPuck';
-import arenaData from '@/assets/data/arenas.json';
-import leaguesData from '@/assets/data/leagues.json';
-import mlbSchedule from '@/assets/data/mlbSchedule.json';
-import ilSchedule from '@/assets/data/ilSchedule.json';
-import pclSchedule from '@/assets/data/pclSchedule.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadLeagues } from '@/utils/loadLeagues';
+import { loadSchedule } from '@/utils/loadSchedule';
 
 const auth = getAuth();
 
@@ -52,7 +50,79 @@ export default function HomeScreen() {
   const [teamPopularityLoading, setTeamPopularityLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'arenas' | 'teams' | 'team_popularity'>('arenas');
   const [myFriends, setMyFriends] = useState<string[]>([]);
+  const [arenaData, setArenaData] = useState<any[]>([]);
+  const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
+  const [leaguesData, setLeaguesData] = useState<any[]>([]);
   const leaderboardShotRef = useRef<ViewShot>(null);
+  const [dropdownVisible,setDropdownVisible]=useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setScheduleLoading(true);
+      const data = await loadArenas();
+      setArenaData(data);
+
+      const leagues = await loadLeagues();
+      setLeaguesData(leagues);
+
+      const mlb = await loadSchedule('mlbSchedule.json');
+      const il = await loadSchedule('ilSchedule.json');
+      const pcl = await loadSchedule('pclSchedule.json');
+      const el = await loadSchedule('elSchedule.json');
+      const sl = await loadSchedule('slSchedule.json');
+      const tl = await loadSchedule('tlSchedule.json');
+      const mwl = await loadSchedule('mwlSchedule.json');
+      const nwl = await loadSchedule('nwlSchedule.json');
+      const sal = await loadSchedule('salSchedule.json');
+      const fsl = await loadSchedule('fslSchedule.json');
+      const cl = await loadSchedule('clSchedule.json');
+      const cal = await loadSchedule('calSchedule.json');
+      const acl = await loadSchedule('aclSchedule.json');
+      const fcl = await loadSchedule('fclSchedule.json');
+      const dsl = await loadSchedule('dslSchedule.json');
+      const fl = await loadSchedule('flSchedule.json');
+      const alpb = await loadSchedule('alpbSchedule.json');
+      const aapb = await loadSchedule('aapbSchedule.json');
+      const pl = await loadSchedule('plSchedule.json');
+      const npb = await loadSchedule('npbSchedule.json');
+      const kbo = await loadSchedule('kboSchedule.json');
+      const cpbl = await loadSchedule('cpblSchedule.json');
+      const lmb = await loadSchedule('lmbSchedule.json');
+      const abl = await loadSchedule('ablSchedule.json');
+
+      setCombinedSchedule([
+        ...mlb,
+        ...il,
+        ...pcl,
+        ...el,
+        ...sl,
+        ...tl,
+        ...mwl,
+        ...nwl,
+        ...sal,
+        ...fsl,
+        ...cl,
+        ...cal,
+        ...acl,
+        ...fcl,
+        ...dsl,
+        ...fl,
+        ...alpb,
+        ...aapb,
+        ...pl,
+        ...npb,
+        ...kbo,
+        ...cpbl,
+        ...lmb,
+        ...abl,
+      ]);
+
+      setScheduleLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   // DEDUPE arenas so multi-team arenas only show once
   const getUniqueArenas = (arenas: any[]) => {
@@ -80,37 +150,6 @@ export default function HomeScreen() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
-
-  //Combines all league schedules into one array for today's games filtering
-  const combinedSchedule = [
-    ...mlbSchedule.map(game => ({
-      id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
-      league: game.league,
-      homeTeam: game.homeTeam,
-      opponent: game.awayTeam,
-      arena: game.location,
-      city: '',
-      date: game.date,
-    })),
-    ...ilSchedule.map(game => ({
-      id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
-      league: game.league,
-      homeTeam: game.homeTeam,
-      opponent: game.awayTeam,
-      arena: game.location,
-      city: '',
-      date: game.date,
-    })),
-    ...pclSchedule.map(game => ({
-      id: `${game.homeTeam}_${game.awayTeam}_${game.date}`,
-      league: game.league,
-      homeTeam: game.homeTeam,
-      opponent: game.awayTeam,
-      arena: game.location,
-      city: '',
-      date: game.date,
-    })),
-  ];
 
   const now = Date.now();
   const liveBufferMs = 3 * 60 * 60 * 1000;
@@ -147,6 +186,57 @@ export default function HomeScreen() {
       leagues: [
         { name: 'IL', logo: require('@/assets/images/ball_logo_il.png') },
         { name: 'PCL', logo: require('@/assets/images/ball_logo_pcl.png') },
+      ],
+    },
+    {
+      title: 'Double-A Leagues',
+      leagues: [
+        { name: 'EL', logo: require('@/assets/images/ball_logo_el.png') },
+        { name: 'SL', logo: require('@/assets/images/ball_logo_sl.png') },
+        { name: 'TL', logo: require('@/assets/images/ball_logo_tl.png') },
+      ],
+    },
+    {
+      title: 'High-A Leagues',
+      leagues: [
+        { name: 'MWL', logo: require('@/assets/images/ball_logo_mwl.png') },
+        { name: 'NWL', logo: require('@/assets/images/ball_logo_nwl.png') },
+        { name: 'SAL', logo: require('@/assets/images/ball_logo_sal.png') },
+      ],
+    },
+    {
+      title: 'Single-A Leagues',
+      leagues: [
+        { name: 'FSL', logo: require('@/assets/images/ball_logo_fsl.png') },
+        { name: 'CL', logo: require('@/assets/images/ball_logo_cl.png') },
+        { name: 'CAL', logo: require('@/assets/images/ball_logo_cal.png') },
+      ],
+    },
+    {
+      title: 'Rookie Leagues',
+      leagues: [
+        { name: 'ACL', logo: require('@/assets/images/ball_logo_acl.png') },
+        { name: 'FCL', logo: require('@/assets/images/ball_logo_fcl.png') },
+        { name: 'DSL', logo: require('@/assets/images/ball_logo_dsl.png') },
+      ],
+    },
+    {
+      title: 'Independent Leagues',
+      leagues: [
+        { name: 'FL', logo: require('@/assets/images/ball_logo_fl.png') },
+        { name: 'ALPB', logo: require('@/assets/images/ball_logo_alpb.png') },
+        { name: 'AAPB', logo: require('@/assets/images/ball_logo_aapb.png') },
+        { name: 'PL', logo: require('@/assets/images/ball_logo_pl.png') },
+      ],
+    },
+    {
+      title: 'International Leagues',
+      leagues: [
+        { name: 'NPB', logo: require('@/assets/images/ball_logo_npb.png') },
+        { name: 'KBOL', logo: require('@/assets/images/ball_logo_kbol.png') },
+        { name: 'CPBL', logo: require('@/assets/images/ball_logo_cpbl.png') },
+        { name: 'LMB', logo: require('@/assets/images/ball_logo_lmb.png') },
+        { name: 'ABL', logo: require('@/assets/images/ball_logo_abl.png') },
       ],
     },
   ];
@@ -203,7 +293,6 @@ export default function HomeScreen() {
         return;
       }
 
-
       await Linking.openURL(url);
     } catch (error) {
       setAlertMessage('Failed to open directions.');
@@ -226,7 +315,7 @@ export default function HomeScreen() {
       }
 
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Lowest,
+        accuracy: Location.Accuracy.High,
         maximumAge: 10000,
         timeout: 5000,
       });
@@ -243,22 +332,6 @@ export default function HomeScreen() {
         return;
       }
 
-      const distance = getDistance(
-        location.coords.latitude,
-        location.coords.longitude,
-        arena.latitude,
-        arena.longitude
-      );
-
-      const threshold = distanceUnit === 'km' ? 0.45 : 0.28;
-
-      if (distance > threshold) {
-        setCheckingIn(false);
-        setAlertMessage('Not close enough to the ballpark. You need to be at the ballpark.');
-        setAlertVisible(true);
-        return;
-      }
-
       const now = new Date().getTime();
       const start = new Date(game.date).getTime();
 
@@ -271,6 +344,22 @@ export default function HomeScreen() {
       if (!insideLiveWindow) {
         setCheckingIn(false);
         setAlertMessage('This game is not currently within the live check-in window.');
+        setAlertVisible(true);
+        return;
+      }
+
+      const distance = getDistance(
+        location.coords.latitude,
+        location.coords.longitude,
+        arena.latitude,
+        arena.longitude
+      );
+
+      const threshold = distanceUnit === 'km' ? 0.45 : 0.28;
+
+      if (distance > threshold) {
+        setCheckingIn(false);
+        setAlertMessage('Not close enough to the ballpark. You need to be at the ballpark.');
         setAlertVisible(true);
         return;
       }
@@ -390,8 +479,6 @@ export default function HomeScreen() {
     }
   };
 
-
-
   //Redirects to user's saved startup tab on app resume
   useEffect(() => {
     if (!user) return;
@@ -427,7 +514,6 @@ export default function HomeScreen() {
     loadStartupTab();
   }, []);
 
-
   //Pulsing fade animation for "Detecting location..." placeholder
   useEffect(() => {
     Animated.loop(
@@ -449,7 +535,7 @@ export default function HomeScreen() {
         }
 
         const loc = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Lowest,
+          accuracy: Location.Accuracy.High,
           maximumAge: 10000,
           timeout: 5000,
         });
@@ -467,7 +553,6 @@ export default function HomeScreen() {
 
     loadLocation();
   }, []);
-
 
   useEffect(() => {
     if (!user) return;
@@ -590,7 +675,6 @@ export default function HomeScreen() {
     return () => unsub();
   }, []);
 
-
   // Loads favorite leagues on mount and listens for real-time updates from Firestore
   useEffect(() => {
     const profileRef = doc(db, 'profiles', user.uid);
@@ -641,7 +725,6 @@ export default function HomeScreen() {
     return () => unsub();
   }, []);
 
-
   //Loads saved Explore Leagues filter (favorites or group) from AsyncStorage on mount
   useEffect(() => {
     AsyncStorage.getItem('exploreFilterMode').then(savedMode => {
@@ -664,8 +747,6 @@ export default function HomeScreen() {
       AsyncStorage.setItem('exploreSelectedGroup', selectedGroup);
     }
   }, [exploreFilterMode, selectedGroup]);
-
-
 
   useEffect(() => {
     const friendsRef = collection(db, 'profiles', user.uid, 'friends');
@@ -690,7 +771,6 @@ export default function HomeScreen() {
 
     return () => unsub();
   }, []);
-
 
   useEffect(() => {
     loadGlobalLeaderboard();
@@ -758,7 +838,7 @@ export default function HomeScreen() {
     alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
     alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
-    alertButton:{backgroundColor:'#B22222',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#2E5A8A':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
     alertButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:16},
     arenaCard:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',padding:12,borderRadius:12,marginBottom:12,width:'100%',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.12,shadowRadius:6,elevation:6},
     background:{flex:1,width:'100%',height:'100%'},
@@ -767,8 +847,14 @@ export default function HomeScreen() {
     countdownMini:{fontSize:14,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#0D131F',textAlign:'center',marginBottom:10,opacity:0.9},
     countdownLive:{fontSize:24,fontWeight:'900',color:'#B22222',letterSpacing:2,fontVariant:['tabular-nums']},
     distanceText:{fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
+    dropdownContainer:{width:'100%',marginBottom:12,zIndex:10},
+    dropdownHeader:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:14,paddingHorizontal:18,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:3,borderRadius:16,borderColor:colorScheme==='dark'?'#B55555':'#B22222'},
+    dropdownHeaderText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:17,fontWeight:'600',flex:1,textAlign:'center'},
+    dropdownList:{backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderLeftWidth:3,borderRightWidth:3,borderBottomWidth:3,borderBottomLeftRadius:16,borderBottomRightRadius:16,borderColor:colorScheme==='dark'?'#B55555':'#B22222'},
+    dropdownItem:{paddingVertical:12,paddingHorizontal:18},
+    dropdownItemText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:15,fontWeight:'500',textAlign:'center'},
     header:{fontSize:34,fontWeight:'bold',color:colorScheme==='dark'?'#F5F1E6':'#1D3557',marginTop:10,marginBottom:15,textAlign:'center',textShadowColor:colorScheme==='dark'?'#000000':'#ffffff',textShadowOffset:{width:1,height:1},textShadowRadius:2},
-    hiddenPicker:{width:'100%',height:56,opacity:0},
+    hiddenPicker:{width:'100%',height:56,color:'transparent'},
     favoriteCardText:{fontSize:18,fontWeight:'400'},
     favoriteGameBorder:{borderWidth:3,borderRadius:10,borderColor:'#B22222'},
     filterChip:{backgroundColor:colorScheme==='dark'?'#2E5A8A':'#F5F1E6',paddingVertical:6,paddingHorizontal:12,borderRadius:20,marginRight:8},
@@ -819,9 +905,12 @@ export default function HomeScreen() {
     upgradePrompt:{color:'#B22222',fontSize:18,fontWeight:'bold',textAlign:'center',marginTop:12,paddingHorizontal:16},
   });
 
+  const visibleGames = hasAppAccess
+    ? filteredGames
+    : filteredGames.filter(game => game.league === 'MLB').slice(0, 3);
 
-  if (isLoadingPremium) {
-    return null;
+  if (isLoadingPremium || arenaData.length === 0) {
+    return <LoadingPuck size={120} />;
   }
 
   return (
@@ -857,139 +946,177 @@ export default function HomeScreen() {
             <Text style={styles.header}>MY BASEBALL PASSPORT</Text>
 
             {/* Closest Arenas */}
-            {hasAppAccess ? (
-              <View key="closest-arenas" style={styles.section}>
-                <Text style={styles.sectionTitle}>Closest Ballpark</Text>
-                {location ? getUniqueArenas(arenaData)
-                  .map(arena => ({
-                    ...arena,
-                    distance: getDistance(
-                      location.latitude,
-                      location.longitude,
-                      arena.latitude,
-                      arena.longitude
-                    )
-                  }))
-                  .filter(arena =>
-                    favoriteLeagues.length === 0 || favoriteLeagues.includes(arena.league)
+            <View key="closest-arenas" style={styles.section}>
+              <Text style={styles.sectionTitle}>Closest Ballpark</Text>
+
+              {location ? getUniqueArenas(arenaData)
+                .map(arena => ({
+                  ...arena,
+                  distance: getDistance(
+                    location.latitude,
+                    location.longitude,
+                    arena.latitude,
+                    arena.longitude
                   )
-                  .sort((a, b) => a.distance - b.distance)
-                  .slice(0, 3)
-                  .map((arena, index) => (
-                    <TouchableOpacity key={index} style={styles.arenaCard} onPress={() => router.push({ pathname: '/arenas/[arenaId]', params: { arenaId: `${arena.latitude.toFixed(6)}_${arena.longitude.toFixed(6)}` } })}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={[styles.cardText, { flex: 1 }]}>{arena.arena} – {arena.city}</Text>
-                        <Text style={styles.distanceText}>
-                          {Math.round(arena.distance) === arena.distance ? Math.round(arena.distance) : arena.distance.toFixed(1)} {distanceUnit === 'km' ? 'km' : 'mi'}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )) : <Animated.Text style={[styles.placeholder, { opacity: fadeAnim }]}>Detecting location...</Animated.Text>}
-              </View>
-            ) : (
-              <View key="closest-arenas" style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Closest Ballpark</Text>
+                }))
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, hasAppAccess ? 5 : 2)
+                .map((arena, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.arenaCard}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/arenas/[arenaId]',
+                        params: {
+                          arenaId: `${arena.latitude.toFixed(6)}_${arena.longitude.toFixed(6)}`
+                        }
+                      })
+                    }
+                  >
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Text style={[styles.cardText, { flex: 1 }]}>{arena.arena} – {arena.city}</Text>
+                      <Text style={styles.distanceText}>
+                        {Math.round(arena.distance) === arena.distance ? Math.round(arena.distance) : arena.distance.toFixed(1)} {distanceUnit === 'km' ? 'km' : 'mi'}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))
+                : <Animated.Text style={[styles.placeholder, { opacity: fadeAnim }]}>Detecting location...</Animated.Text>
+              }
+
+              {!hasAppAccess && (
                 <Text style={styles.upgradePrompt}>
-                  Subscribe to see nearby ballparks.
+                  Premium unlocks 5 nearby ballparks.
                 </Text>
-              </View>
-            )}
+              )}
+            </View>
 
             {/* Today's Games */}
-            {hasAppAccess ? (
-              <View key="todays-games" style={styles.section}>
-                <Text style={styles.sectionTitle}>Today's Games</Text>
-                <Text style={[styles.countdownMini, nextPuckDrop.includes(':') && styles.countdownLive]}>
-                  {nextPuckDrop || 'Loading...'}
-                </Text>
+            <View key="todays-games" style={styles.section}>
+              <Text style={styles.sectionTitle}>Today's Games</Text>
+              <Text style={[styles.countdownMini, nextPuckDrop.includes(':') && styles.countdownLive]}>
+                {nextPuckDrop || 'Loading...'}
+              </Text>
 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.leagueFilter}>
-                  <TouchableOpacity onPress={() => { setSelectedLeague(null); setFilterMode('all'); }} style={[styles.filterChip, filterMode === 'all' && styles.filterChipActive]}>
-                    <Text style={[styles.filterChipText, filterMode === 'all' && styles.filterChipTextActive]}>All</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.leagueFilter}>
+                <TouchableOpacity onPress={() => { setSelectedLeague(null); setFilterMode('all'); }} style={[styles.filterChip, filterMode === 'all' && styles.filterChipActive]}>
+                  <Text style={[styles.filterChipText, filterMode === 'all' && styles.filterChipTextActive]}>All</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => { setFilterMode('favorites'); setSelectedLeague(null); }} style={[styles.filterChip, filterMode === 'favorites' && styles.filterChipActive]}>
+                  <Text style={[styles.filterChipText, filterMode === 'favorites' && styles.filterChipTextActive]}>Favorites</Text>
+                </TouchableOpacity>
+
+                {leagueGroups.flatMap(group => group.leagues).map(league => (
+                  <TouchableOpacity key={league.name} onPress={() => { setSelectedLeague(league.name); setFilterMode('league'); }} style={[styles.filterChip, selectedLeague === league.name && styles.filterChipActive]}>
+                    <Text style={[styles.filterChipText, selectedLeague === league.name && styles.filterChipTextActive]}>{league.name}</Text>
                   </TouchableOpacity>
-
-                  <TouchableOpacity onPress={() => { setFilterMode('favorites'); setSelectedLeague(null); }} style={[styles.filterChip, filterMode === 'favorites' && styles.filterChipActive]}>
-                    <Text style={[styles.filterChipText, filterMode === 'favorites' && styles.filterChipTextActive]}>Favorites</Text>
-                  </TouchableOpacity>
-
-                  {leagueGroups.flatMap(group => group.leagues).map(league => (
-                    <TouchableOpacity key={league.name} onPress={() => { setSelectedLeague(league.name); setFilterMode('league'); }} style={[styles.filterChip, selectedLeague === league.name && styles.filterChipActive]}>
-                      <Text style={[styles.filterChipText, selectedLeague === league.name && styles.filterChipTextActive]}>{league.name}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-
-                {filteredGames.length === 0 ? (
-                  <Text style={styles.placeholder}>No games scheduled for today.</Text>
-                ) : filteredGames.map((game, index) => (
-                  <View key={`${game.id}_${index}`} style={styles.gameCard}>
-                    <View>
-                      <Text style={styles.cardText}>{(game.homeTeam || game.team)} vs {game.opponent || game.awayTeam}</Text>
-                      <Text style={styles.cardText}>{game.arena}</Text>
-                      <Text style={styles.cardText}>{format(new Date(game.date), "h:mm a")}</Text>
-                    </View>
-
-                    <View style={styles.buttonsRow}>
-                      <TouchableOpacity style={styles.smallButton} onPress={() => handleDirections(game.arena)}>
-                        <Text style={styles.smallButtonText}>Get Directions</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        style={[styles.smallButton, checkingIn && { opacity: 0.5 }]}
-                        onPress={() => handleCheckIn(game)}
-                        disabled={checkingIn}
-                      >
-                        <Text style={styles.smallButtonText}>Check-in</Text>
-                      </TouchableOpacity>
-
-                    </View>
-                  </View>
                 ))}
-              </View>
-            ) : (
-              <View key="todays-games" style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Today's Games</Text>
-                <Text style={styles.upgradePrompt}>
-                  A Monthly subscription costs less than the hotdog you had at your last game.
-                </Text>
-              </View>
-            )}
+              </ScrollView>
 
-            {/* Explore Leagues */}
-            {hasAppAccess ? (
-              <View key="explore-leagues" style={styles.section}>
-                <Text style={styles.sectionTitle}>Explore Leagues</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker selectedValue={exploreFilterMode === 'favorites' ? 'Favorites' : selectedGroup} onValueChange={itemValue => itemValue === 'Favorites' ? setExploreFilterMode('favorites') : (setExploreFilterMode('all'), setSelectedGroup(itemValue))} mode="dropdown" style={styles.hiddenPicker}>
-                    <Picker.Item label="All Groups" value="All Groups" />
-                    <Picker.Item label="Favorites" value="Favorites" />
-                    {leagueGroups.map(group => <Picker.Item key={group.title} label={group.title} value={group.title} />)}
-                  </Picker>
-                  <View style={styles.pickerOverlayTextContainer}>
-                    <Text style={styles.pickerSelectedText}>{exploreFilterMode === 'favorites' ? 'Favorites' : selectedGroup}</Text>
+              {scheduleLoading ? (
+                <LoadingPuck size={70} />
+              ) : filteredGames.length === 0 ? (
+                <Text style={styles.placeholder}>No games scheduled for today.</Text>
+              ) : visibleGames.map((game, index) => (
+                <View key={`${game.id}_${index}`} style={styles.gameCard}>
+                  <View>
+                    <Text style={styles.cardText}>{(game.homeTeam || game.team)} vs {game.opponent || game.awayTeam}</Text>
+                    <Text style={styles.cardText}>{game.arena}</Text>
+                    <Text style={styles.cardText}>{format(new Date(game.date), "h:mm a")}</Text>
                   </View>
-                  <View style={styles.pickerOverlayArrowContainer}>
-                    <Ionicons name="chevron-down" size={24} style={styles.pickerArrow} />
+
+                  <View style={styles.buttonsRow}>
+                    <TouchableOpacity style={styles.smallButton} onPress={() => handleDirections(game.arena)}>
+                      <Text style={styles.smallButtonText}>Get Directions</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.smallButton, checkingIn && { opacity: 0.5 }]}
+                      onPress={() => handleCheckIn(game)}
+                      disabled={checkingIn}
+                    >
+                      <Text style={styles.smallButtonText}>Check-in</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
+              ))}
 
-                <FlatList data={leaguesToShow} keyExtractor={item => item.name} numColumns={3} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={styles.leagueGrid} renderItem={({ item }) => (
-                  <Pressable style={({ pressed }) => [styles.leagueGridItem, pressed && styles.leagueGridItemPressed]} onPress={() => router.push(`/leagues/${item.name}`)}>
-                    <Image source={item.logo} style={styles.leagueLogo} resizeMode="contain" />
-                    <Text style={styles.leagueName}>
-                      {leaguesData.find(l => l.league === item.name)?.leagueName || item.name}
-                    </Text>
-                  </Pressable>
-                )} />
-              </View>
-            ) : (
-              <View key="explore-leagues" style={[styles.section, styles.blurredSection]}>
-                <Text style={styles.sectionTitle}>Explore Leagues</Text>
+              {!hasAppAccess && (
                 <Text style={styles.upgradePrompt}>
-                  Subscribe to explore all leagues.
+                  Premium unlocks every league schedule.
                 </Text>
+              )}
+            </View>
+
+            {/* Explore Leagues */}
+            <View key="explore-leagues" style={styles.section}>
+              <Text style={styles.sectionTitle}>Explore Leagues</Text>
+              <View style={styles.dropdownContainer}>
+                <TouchableOpacity style={styles.dropdownHeader} onPress={() => setDropdownVisible(prev => !prev)}>
+                  <Text style={styles.dropdownHeaderText}>{exploreFilterMode === 'favorites' ? 'Favorites' : selectedGroup}</Text>
+                  <Ionicons name={dropdownVisible ? 'chevron-up' : 'chevron-down'} size={24} color={colorScheme==='dark'?'#FFFFFF':'#1D3557'} />
+                </TouchableOpacity>
+
+                {dropdownVisible && (
+                  <View style={styles.dropdownList}>
+                    {['All Groups','Favorites',...leagueGroups.map(group => group.title)].map(opt => (
+                      <TouchableOpacity
+                        key={opt}
+                        style={styles.dropdownItem}
+                        onPress={() => {
+                          opt === 'Favorites'
+                            ? setExploreFilterMode('favorites')
+                            : (setExploreFilterMode('all'), setSelectedGroup(opt));
+                          setDropdownVisible(false);
+                        }}
+                      >
+                        <Text style={styles.dropdownItemText}>{opt}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
-            )}
+
+              <FlatList
+                data={leaguesToShow}
+                keyExtractor={item => item.name}
+                numColumns={3}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={false}
+                contentContainerStyle={styles.leagueGrid}
+                renderItem={({ item }) => {
+                  const locked = !hasAppAccess && item.name !== 'MLB';
+
+                  return (
+                    <Pressable
+                      disabled={locked}
+                      style={({ pressed }) => [
+                        styles.leagueGridItem,
+                        pressed && !locked && styles.leagueGridItemPressed,
+                        locked && { opacity: 0.35 }
+                      ]}
+                      onPress={() => {
+                        if (!locked) {
+                          router.push(`/leagues/${item.name}`);
+                        }
+                      }}
+                    >
+                      <Image source={item.logo} style={styles.leagueLogo} resizeMode="contain" />
+                      <Text style={styles.leagueName}>
+                        {leaguesData.find(l => l.league === item.name)?.leagueName || item.name}
+                      </Text>
+                    </Pressable>
+                  );
+                }}
+              />
+              {!hasAppAccess && (
+                <Text style={styles.upgradePrompt}>
+                  Premium unlocks every league worldwide.
+                </Text>
+              )}
+            </View>
 
             {/* Global Leaderboard */}
             <ViewShot

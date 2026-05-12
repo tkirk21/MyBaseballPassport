@@ -3,7 +3,7 @@
     "name": "BaseballPassport",
     "slug": "MyBaseballPassport",
     "scheme": "mybaseballpassport",
-    "version": "1.1.1",
+    "version": "1.3.3",
     "orientation": "portrait",
     "icon": "./assets/images/logo_with_font.png",
     "userInterfaceStyle": "automatic",
@@ -14,11 +14,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+
+
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "buildNumber": "2",
+      "buildNumber": "11",
       "config": {
-        "googleMapsApiKey": "AIzaSyDIryxlJBIgl_ebC6PHu_RfrFfzzotya5Y"
+        "googleMapsApiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.tkirk21.MyBaseballPassport",
@@ -29,19 +31,22 @@
           },
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
-          },
-          {
-            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
-          },
-          {
-            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
         ],
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Used to verify stadium check-ins.",
+        "NSPhotoLibraryUsageDescription": "Users can upload ballpark photos to their profile, check-in history, and shared arena pages for the community.",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.171882071353-nr5q1n4bgphk1a2uk6u76ag4per9p80p"
+            ]
+          }
+        ]
       }
     },
     "android": {
-      "versionCode": 14,
+      "versionCode": 22,
       "edgeToEdgeEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_logo.png",
@@ -55,7 +60,7 @@
           "reservedClientId": "171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com"
         },
         "googleMaps": {
-          "apiKey": "AIzaSyDIryxlJBIgl_ebC6PHu_RfrFfzzotya5Y"
+          "apiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
         }
       },
       "permissions": [
@@ -67,7 +72,7 @@
       "fallbackToCacheTimeout": 0
     },
     "extra": {
-      "EXPO_PUBLIC_FACEBOOK_APP_ID": "763545830068611",
+      "EXPO_PUBLIC_FACEBOOK_APP_ID": "1893308821318057",
       "router": {},
       "eas": {
         "projectId": "4fd5781f-68f9-4e84-8212-feed523e16fc"
@@ -90,10 +95,10 @@
       [
         "react-native-fbsdk-next",
         {
-          "appID": "763545830068611",
+          "appID": "1893308821318057",
           "clientToken": "e4204e738403a32bdc1f05829a641788",
           "displayName": "My Baseball Passport",
-          "isAutoInitEnabled": true,
+          "isAutoInitEnabled": false,
           "autoLogAppEventsEnabled": false,
           "advertiserIDCollectionEnabled": false
         }

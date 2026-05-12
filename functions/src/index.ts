@@ -4,7 +4,7 @@ import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
 
 admin.initializeApp({
-  storageBucket: "myhockeypassport.firebasestorage.app",
+  storageBucket: "mybaseballpassport.firebasestorage.app",
 });
 
 const db = admin.firestore();

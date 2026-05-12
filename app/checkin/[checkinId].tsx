@@ -15,8 +15,10 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 import { getFunctions, httpsCallable } from "firebase/functions";
 import LoadingPuck from "@/components/loadingPuck";
-import arenasData from "@/assets/data/arenas.json";
-import historicalArenasData from '@/assets/data/historicalTeams.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
+import localArenaHistoryData from '@/assets/data/arenaHistory.json';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
 
 const db = getFirestore(firebaseApp);
 const functions = getFunctions(firebaseApp);
@@ -49,6 +51,9 @@ export default function CheckinDetailsScreen() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [friendsMap, setFriendsMap] = useState<{ [name: string]: string }>({});
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [arenasData, setArenasData] = useState<any[]>([]);
+  const [historicalArenasData, setHistoricalArenasData] = useState<any[]>([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState(localArenaHistoryData);
   const viewShotRef = useRef(null);
 
   const fetchCheckin = async () => {
@@ -112,7 +117,7 @@ export default function CheckinDetailsScreen() {
     setAlertVisible(true);
   };
 
-const handleShare = async () => {
+  const handleShare = async () => {
     try {
       await new Promise(r => setTimeout(r, 500));
 
@@ -142,6 +147,27 @@ const handleShare = async () => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const arenas = await loadArenas();
+        setArenasData(arenas);
+
+        const history = await loadArenaHistory();
+        if (history.length > 0) {
+          setArenaHistoryData(history);
+        }
+
+        const historical = await loadHistoricalTeams();
+        setHistoricalArenasData(historical);
+      } catch (e) {
+        console.log('fetchData failed', e);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     fetchCheckin();
   }, [checkinId, userId]);
 
@@ -152,7 +178,6 @@ const handleShare = async () => {
       const friendsRef = collection(db, 'profiles', userId, 'friends');
       const snap = await getDocs(friendsRef);
       const friendIds = snap.docs.map(d => d.id);
-
       const map = {};
 
       await Promise.all(
@@ -169,7 +194,7 @@ const handleShare = async () => {
     loadFriends();
   }, [userId]);
 
-  if (loading) {
+  if (loading || arenasData.length === 0 || historicalArenasData.length === 0) {
     return <LoadingPuck />;
   }
 
@@ -201,37 +226,24 @@ const handleShare = async () => {
   }
 
   let arenaMatch =
-    arenasData.find(
-      (a: any) =>
-        a.arena === checkin.arenaName &&
-        a.league === checkin.league &&
-        a.teamName === checkin.teamName
-    ) ||
-    historicalArenasData.find(
-      (a: any) =>
-        a.arena === checkin.arenaName &&
-        a.league === checkin.league &&
-        a.teamName === checkin.teamName
-    );
+    arenasData.find((a: any) => a.arena === checkin.arenaName) ||
+    historicalArenasData.find((a: any) => a.arena === checkin.arenaName);
 
   if (!arenaMatch) {
-    arenaMatch =
-      arenasData.find(
-        (a: any) =>
-          a.teamName === checkin.teamName &&
-          a.league === checkin.league
-      ) ||
-      historicalArenasData.find(
-        (a: any) =>
-          a.teamName === checkin.teamName &&
-          a.league === checkin.league
-      );
+    const historyMatch = arenaHistoryData.find(h =>
+      h.history.some(old => old.name === checkin.arenaName)
+    );
+
+    if (historyMatch) {
+      arenaMatch =
+        arenasData.find((a: any) => a.arena === historyMatch.currentArena) ||
+        historicalArenasData.find((a: any) => a.arena === historyMatch.currentArena);
+    }
   }
 
   const teamColor = arenaMatch?.colorCode || arenaMatch?.color || "#0A2940";
   const overlayColor = `${teamColor}DD`;
   const borderColor = arenaMatch?.colorCode2 || teamColor;
-
 
   const styles = StyleSheet.create({
     alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
@@ -284,7 +296,6 @@ const handleShare = async () => {
                   setDeleting(true);
 
                   try {
-
                     if (!currentUser || currentUser.uid !== userId) {
                       throw new Error("Unauthorized delete attempt");
                     }
@@ -294,11 +305,8 @@ const handleShare = async () => {
                     if (checkin?.photos && checkin.photos.length > 0) {
 
                       const firstPhotoUrl = checkin.photos[0];
-
                       const encodedPath = firstPhotoUrl.split("/o/")[1].split("?")[0];
-
                       const decodedPath = decodeURIComponent(encodedPath);
-
                       const pathParts = decodedPath.split("/");
 
                       folderName = pathParts[2];
@@ -349,7 +357,6 @@ const handleShare = async () => {
                   if (!currentUser || !checkin) return;
 
                   try {
-
                     const cleanedCompanions = checkin.companions
                       ? checkin.companions
                           .split(',')
@@ -373,7 +380,6 @@ const handleShare = async () => {
 
                     const alreadyExists = existingSnap.docs.some(docSnap => {
                       const data = docSnap.data();
-
                       const existingDate = new Date(data.gameDate);
                       const newDate = new Date(checkin.gameDate);
 
@@ -416,7 +422,6 @@ const handleShare = async () => {
                     setAlertMessage('Failed to add check-in.');
                     setAlertVisible(true);
                   }
-
                 }}
               >
                 <Text style={styles.alertButtonText}>Add</Text>
@@ -428,7 +433,6 @@ const handleShare = async () => {
               >
                 <Text style={styles.alertButtonText}>Cancel</Text>
               </TouchableOpacity>
-
             </View>
           </View>
         </View>
@@ -490,11 +494,25 @@ const handleShare = async () => {
             <View style={[styles.arenaCard, { backgroundColor: teamColor }]}>
               <TouchableOpacity
                 onPress={() => {
-                  const a =
+                  let currentArena =
                     arenasData.find(x => x.arena === checkin.arenaName) ||
                     historicalArenasData.find(x => x.arena === checkin.arenaName);
-                  if (!a || !a.latitude || !a.longitude) return;
-                  router.push(`/arenas/${a.latitude.toFixed(6)}_${a.longitude.toFixed(6)}`);
+
+                  if (!currentArena) {
+                    const historyMatch = arenaHistoryData.find(h =>
+                      h.history.some(old => old.name === checkin.arenaName)
+                    );
+
+                    if (historyMatch) {
+                      currentArena =
+                        arenasData.find(x => x.arena === historyMatch.currentArena) ||
+                        historicalArenasData.find(x => x.arena === historyMatch.currentArena);
+                    }
+                  }
+
+                  if (!currentArena || !currentArena.latitude || !currentArena.longitude) return;
+
+                  router.push(`/arenas/${currentArena.latitude.toFixed(6)}_${currentArena.longitude.toFixed(6)}`);
                 }}
               >
                 <Text style={styles.title}>{checkin.arenaName}</Text>
@@ -599,8 +617,8 @@ const handleShare = async () => {
                   <View style={{ marginBottom: 8 }}>
                     <Text style={styles.label}>Attended with</Text>
                     {checkin.companions
-                      .split(/(,\s*|&\s*|\+\s*|and\s*|or\s*)/i)
-                      .filter(part => part.trim() !== '' && !/^(,\s*|&\s*|\+\s*|and\s*|or\s*)$/i.test(part.trim()))
+                      .split(/,\s*|&\s*|\+\s*|(?=@)/)
+                      .filter(part => part.trim() !== '')
                       .map((part, index) => {
                         const trimmed = part.trim();
                         if (trimmed.startsWith('@')) {
@@ -691,6 +709,13 @@ const handleShare = async () => {
                   <View>
                     <Text style={styles.label}>Parking & Travel Tips</Text>
                     <Text style={styles.value}>{checkin.ParkingAndTravel}</Text>
+                  </View>
+                )}
+
+                {checkin.pregameBar && checkin.pregameBar.trim() !== "" && (
+                  <View>
+                    <Text style={styles.label}>Pre-game Bar Tips</Text>
+                    <Text style={styles.value}>{checkin.pregameBar}</Text>
                   </View>
                 )}
               </View>

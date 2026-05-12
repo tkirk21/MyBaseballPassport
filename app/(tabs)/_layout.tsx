@@ -258,8 +258,7 @@ export default function TabLayout() {
   }
 
   // Trial expired and user not subscribed
-  if (!hasFullAccess && !isInTrial && !isSubscribed) {
-    return <Redirect href="/paywall" />;
+  if (!isLoadingPremium) {
   }
 
   return (

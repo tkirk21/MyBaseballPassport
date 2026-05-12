@@ -16,9 +16,9 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import { usePremium } from '@/context/PremiumContext';
 
-import arenasData from '@/assets/data/arenas.json';
-import arenaHistoryData from '@/assets/data/arenaHistory.json';
-import historicalTeamsData from '@/assets/data/historicalTeams.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
 import LoadingPuck from "../../components/loadingPuck";
 
 const auth = getAuth(firebaseApp);
@@ -27,6 +27,9 @@ const db = getFirestore(firebaseApp);
 export default function MapScreen() {
   const user = auth.currentUser;
   const [pins, setPins] = useState<any[]>([]);
+  const [arenasData, setArenasData] = useState<any[]>([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState<any[]>([]);
+  const [historicalTeamsData, setHistoricalTeamsData] = useState<any[]>([]);
   const { hasFullAccess, isInTrial } = usePremium();
   const colorScheme = useColorScheme();
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -93,9 +96,9 @@ export default function MapScreen() {
       }
 
       const shareText =
-        `Just added another arena to my Hockey Passport 🏒\n` +
-        `Track every rink you visit.\n` +
-        `https://play.google.com/store/apps/details?id=com.mysportspassport`;
+        `Just added another ballpark to my Baseball Passport\n` +
+        `Track every ballpark you visit.\n` +
+        `https://play.google.com/store/apps/details?id=com.tkirk21.MyBaseballPassport`;
 
       await Sharing.shareAsync(fileUri, {
         dialogTitle: 'Share your map',
@@ -124,7 +127,6 @@ export default function MapScreen() {
     seasonEnd?: string
   ) => {
     if (!start) return false;
-
     const checkTime = checkDate.getTime();
     const startTime = new Date(start).getTime();
     const endTime = end ? new Date(end).getTime() : Infinity;
@@ -148,7 +150,9 @@ export default function MapScreen() {
   const visiblePins = useMemo(() => {
     if (selectedLeague === 'Favorites') {
       return pins.filter(pin =>
-        favoriteLeagues.includes(pin.league)
+        favoriteLeagues.some(fav =>
+          fav.toUpperCase() === String(pin.league || '').toUpperCase()
+        )
       );
     }
     return selectedLeague === 'All'
@@ -193,6 +197,21 @@ export default function MapScreen() {
 
     return map;
   }, [allCheckIns]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const arenas = await loadArenas();
+      setArenasData(arenas);
+
+      const history = await loadArenaHistory();
+      const historicalTeams = await loadHistoricalTeams();
+
+      setArenaHistoryData(history);
+      setHistoricalTeamsData(historicalTeams);
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -367,7 +386,7 @@ export default function MapScreen() {
           all.push({ id: doc.id, ...data });
 
           const currentArenaName = getCurrentArenaName(data.arenaName);
-          const key = currentArenaName.toLowerCase().trim();
+          const key = `${data.arenaName}-${data.gameDate}`;
 
           if (seenArenas.has(key)) return;
           seenArenas.add(key);
@@ -405,14 +424,25 @@ export default function MapScreen() {
 
             // First priority: exact arena name match (catches one-offs like LoanDepot perfectly)
             historicalMatch = historicalTeamsData.find((h: any) =>
-              h.teamName === data.teamName && h.arena === data.arenaName
+              norm(h.arena) === norm(data.arenaName) &&
+              isDateInRange(
+                new Date(data.gameDate),
+                h.startDate,
+                h.endDate,
+                h.seasonStart,
+                h.seasonEnd
+              )
             );
 
             if (!historicalMatch && data.teamName && data.gameDate) {
               const gameDateObj = new Date(data.gameDate);
 
               const candidates = historicalTeamsData
-                .filter((h: any) => h.teamName === data.teamName)
+                .filter((h: any) =>
+                  norm(data.teamName).includes(norm(h.teamName)) ||
+                  norm(h.teamName).includes(norm(data.teamName)) &&
+                  norm(h.arena) === norm(data.arenaName)
+                )
                 .sort((a: any, b: any) => {
                   const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate, a.seasonStart, a.seasonEnd) ? -1 : 1;
                   const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate, b.seasonStart, b.seasonEnd) ? -1 : 1;
@@ -431,8 +461,14 @@ export default function MapScreen() {
               lat = historicalMatch.latitude;
               lng = historicalMatch.longitude;
               displayName = historicalMatch.arena || data.arenaName;
-              colorCode = historicalMatch.colorCode || historicalMatch.color || 'red';
+              const currentTeam = arenasData.find(
+                (a: any) =>
+                  a.teamName === historicalMatch.teamName
+              );
+
+              colorCode = historicalMatch.colorCode || 'red';
               teamCode = historicalMatch.teamCode || '';
+
             } else if (data.latitude != null && data.longitude != null) {
               // Final fallback to check-in coords
               lat = data.latitude;
@@ -447,6 +483,7 @@ export default function MapScreen() {
               latitude: lat,
               longitude: lng,
               colorCode,
+              colorCode2: match?.colorCode2,
               teamCode,
               league: data.league,
             });
@@ -469,6 +506,8 @@ export default function MapScreen() {
             let lng = ci.longitude;
 
             const match = (arenasData as any[]).find(
+              (a: any) => a.league === ci.league && a.arena === ci.arenaName
+            ) || (arenasData as any[]).find(
               (a: any) => a.league === ci.league && a.arena === currentName
             );
 
@@ -488,7 +527,10 @@ export default function MapScreen() {
               const gameDateObj = new Date(ci.gameDate);
 
               const candidates = historicalTeamsData
-                .filter((h: any) => h.teamName === ci.teamName)
+                .filter((h: any) =>
+                  h.teamName === ci.teamName &&
+                  norm(h.arena) === norm(ci.arenaName)
+                )
                 .sort((a: any, b: any) => {
                   const aIn = isDateInRange(gameDateObj, a.startDate, a.endDate, a.seasonStart, a.seasonEnd) ? -1 : 1;
                   const bIn = isDateInRange(gameDateObj, b.startDate, b.endDate, b.seasonStart, b.seasonEnd) ? -1 : 1;
@@ -534,7 +576,7 @@ export default function MapScreen() {
     };
 
     loadEverything();
-  }, []);
+  }, [arenasData, arenaHistoryData, historicalTeamsData]);
 
   const styles = StyleSheet.create({
     alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
@@ -543,12 +585,13 @@ export default function MapScreen() {
     alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
     alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
     alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
-    checkInRow:{padding:12,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#ccc'},
+    arenaHeading:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:10},
+    checkInRow:{paddingHorizontal:12,paddingVertical:8,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#ccc'},
     checkInDate:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
     checkInMatchup:{fontSize:14,color:colorScheme==='dark'?'#AFC7E6':'#555'},
     calloutContainer:{paddingVertical:8,paddingHorizontal:12,borderRadius:10,borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
     calloutText:{fontSize:14,fontWeight:'600',textAlign:'center'},
-    closeButton:{marginTop:20,paddingVertical:12,paddingHorizontal:32,backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',alignSelf:'center',alignItems:'center'},
+    closeButton:{marginTop:10,paddingVertical:12,paddingHorizontal:32,backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',alignSelf:'center',alignItems:'center'},
     closeButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontSize:12,fontWeight:'600'},
     dropdownContainer:{position:'absolute',top:55,alignSelf:'center',width:'75%',zIndex:10},
     dropdownHeader:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:14,paddingHorizontal:18,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:3,borderRadius:16,borderColor:colorScheme==='dark'?'#B55555':'#B22222'},
@@ -565,18 +608,20 @@ export default function MapScreen() {
     loggedOutText:{fontSize:18,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center'},
     map:{flex:1},
     markerContainer:{alignItems:'center'},
-    modalContent:{width:'90%',maxHeight:'80%',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,padding:20,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.3,shadowRadius:8,elevation:12},
+    modalContent:{width:'90%',maxHeight:'80%',flexDirection:'column',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,padding:20,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.3,shadowRadius:8,elevation:12},
     modalOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center'},
     pickerSelectedText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:17,fontWeight:'600'},
     pickerArrow:{position:'absolute',right:16},
     pinContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
+    pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
     pinImage:{width:40,height:40},
     shareButton:{position:'absolute',bottom:30,left:20,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',padding:8,borderRadius:24,borderWidth:3,borderColor:colorScheme==='dark'?'#B55555':'#B22222',zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4}},
-    teamCodeText:{position:'absolute',top:6,left:13,color:'white',fontWeight:'bold',fontSize:7},
+    teamCodeText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7},
     travelLinesButton:{position:'absolute',bottom:30,alignSelf:'center',backgroundColor:colorScheme==='dark'?'#243B5A':'#E0E7FF',paddingHorizontal:20,paddingVertical:12,borderRadius:30,zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4},borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68'},
     travelLinesButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'bold',fontSize:16},
-    visitBadge:{backgroundColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',width:15,height:15,borderRadius:30,justifyContent:'center',alignItems:'center',position:'absolute',top:16,right:26,zIndex:2,borderWidth:1,borderColor:'white'},
-    visitBadgeText:{color:'white',fontWeight:'bold',fontSize:6},
+    viewShotContainer:{flex:1},
+    visitBadge: { backgroundColor: '#D32F2F', width: 14, height: 14, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 18, right: 24, zIndex: 2, borderWidth: 1, borderColor: 'white', },
+    visitBadgeText: { color: 'white', fontWeight: '900', fontSize: 4, includeFontPadding: false, },
     upgradeContainer:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#FFFFFF'},
     upgradeButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',paddingVertical:16,paddingHorizontal:32,borderRadius:30},
     upgradeButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontSize:18,fontWeight:'bold'},
@@ -586,7 +631,7 @@ export default function MapScreen() {
 
   if (!user) return null;
 
-  if (loading) {
+  if (loading || arenasData.length === 0) {
     return (
       <View style={styles.loadingOverlay}>
         <LoadingPuck />
@@ -598,7 +643,7 @@ export default function MapScreen() {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
-          No arenas visited yet
+          No ballparks visited yet
         </Text>
       </View>
     );
@@ -633,7 +678,6 @@ export default function MapScreen() {
   };
 
   return (
-    (hasFullAccess || isInTrial) ? (
       <>
         <Modal visible={alertVisible} transparent animationType="fade">
           <View style={styles.alertOverlay}>
@@ -646,38 +690,44 @@ export default function MapScreen() {
             </View>
           </View>
         </Modal>
-        <View style={{ flex: 1 }}>
+
+        <ViewShot ref={viewShotRef} style={styles.viewShotContainer} options={{ format: 'png', quality: 1 }}>
         <Modal visible={modalVisible} transparent={true} animationType="slide">
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <FlatList
-                data={groupedCheckIns}
-                keyExtractor={(group) => group.name}
-                renderItem={({ item: group }) => (
-                  <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.groupTitle}>
-                      {group.name}
-                    </Text>
-                    {group.checkIns.map((ci) => (
-                      <TouchableOpacity
-                        key={ci.id}
-                        style={styles.checkInRow}
-                        onPress={() => {
-                          setModalVisible(false);
+                data={selectedArenaCheckIns}
+                keyExtractor={(ci) => ci.id}
+                style={{ flexGrow: 0 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                renderItem={({ item: ci, index }) => (
+                    <TouchableOpacity
+                      style={styles.checkInRow}
+                      onPress={() => {
+                        setModalVisible(false);
+                        if (hasFullAccess || isInTrial) {
                           router.push(`/checkin/${ci.id}?userId=${auth.currentUser?.uid}`);
-                        }}
-                      >
-                        <Text style={styles.checkInDate}>
-                          {new Date(ci.gameDate).toLocaleDateString()}
+                        } else {
+                          setAlertMessage('Upgrade to Premium to open full check-in details.');
+                          setAlertVisible(true);
+                        }
+                      }}
+                    >
+                      {(index === 0 || selectedArenaCheckIns[index - 1]?.arenaName !== ci.arenaName) && (
+                        <Text style={styles.arenaHeading}>
+                          {ci.arenaName}
                         </Text>
-                        <Text style={styles.checkInMatchup}>
-                          {ci.teamName} vs {ci.opponent}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
-              />
+                      )}
+                      <Text style={styles.checkInDate}>
+                        {new Date(ci.gameDate).toLocaleDateString()}
+                      </Text>
+                      <Text style={styles.checkInMatchup}>
+                        {ci.teamName} vs {ci.opponent}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+
               <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
@@ -686,7 +736,17 @@ export default function MapScreen() {
         </Modal>
 
         <View style={styles.dropdownContainer}>
-          <TouchableOpacity style={styles.dropdownHeader} onPress={() => setDropdownVisible(prev => !prev)}>
+          <TouchableOpacity
+            style={styles.dropdownHeader}
+            onPress={() => {
+              if (hasFullAccess || isInTrial) {
+                setDropdownVisible(prev => !prev);
+              } else {
+                setAlertMessage('Upgrade to Premium to unlock Favorites and advanced map filters.');
+                setAlertVisible(true);
+              }
+            }}
+          >
             <Text style={styles.dropdownHeaderText}>
               {selectedLeague === 'Favorites' ? 'Favorites' : selectedLeague}
             </Text>
@@ -700,6 +760,13 @@ export default function MapScreen() {
                   key={opt}
                   style={styles.dropdownItem}
                   onPress={() => {
+                    if (opt === 'Favorites' && !(hasFullAccess || isInTrial)) {
+                      setAlertMessage('Upgrade to Premium to unlock Favorites.');
+                      setAlertVisible(true);
+                      setDropdownVisible(false);
+                      return;
+                    }
+
                     setSelectedLeague(opt);
                     setDropdownVisible(false);
                   }}
@@ -713,7 +780,14 @@ export default function MapScreen() {
 
         <TouchableOpacity
           style={styles.travelLinesButton}
-          onPress={() => setShowTravelLines(prev => !prev)}
+          onPress={() => {
+            if (hasFullAccess || isInTrial) {
+              setShowTravelLines(prev => !prev);
+            } else {
+              setAlertMessage('Upgrade to Premium to unlock travel lines.');
+              setAlertVisible(true);
+            }
+          }}
         >
           <Text style={styles.travelLinesButtonText}>
             {showTravelLines ? 'Hide' : 'Show'} Travel Lines
@@ -759,7 +833,6 @@ export default function MapScreen() {
             )}
 
             {visiblePins.map(pin => {
-
               const visitCount = visitCountMap.get(norm(pin.title || '')) || 0;
               const checkInsAtArena = checkInsByArena.get(norm(pin.title || '')) || [];
 
@@ -767,6 +840,7 @@ export default function MapScreen() {
                 <Marker
                   key={pin.id}
                   coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
+                  anchor={{ x: 0.5, y: 0.5 }}
                   onPress={() => openCheckInModal(checkInsAtArena)}
                 >
                   <View style={styles.markerContainer}>
@@ -776,16 +850,13 @@ export default function MapScreen() {
                       </View>
                     )}
 
-                    <View style={styles.pinContainer}>
+                    <View style={[styles.pinCircle,{backgroundColor:pin.colorCode,borderColor:pin.colorCode2}]}>
                       <Image
                         source={require('../../assets/images/pin_template.png')}
-                        style={[styles.pinImage, { tintColor: pin.colorCode || 'black' }]}
+                        style={[styles.pinImage,{tintColor:pin.colorCode2}]}
                         resizeMode="contain"
                       />
-                      <Text
-                        key="teamCode"
-                        style={styles.teamCodeText}
-                      >
+                      <Text style={styles.teamCodeText}>
                         {pin.teamCode || ''}
                       </Text>
                     </View>
@@ -799,31 +870,20 @@ export default function MapScreen() {
           <Ionicons name="locate-outline" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Ionicons name="share-social-outline" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
-        </TouchableOpacity>
-      </View>
-    </>
-    ) : (
-      <View style={styles.upgradeContainer}>
-        <Text style={styles.upgradeTitle}>
-          Upgrade to Premium
-        </Text>
-        <Text style={styles.upgradeSubtext}>
-          Unlock the full map, travel lines, sharing, and more! A monthly subscription is way cheaper than rink side parking.
-        </Text>
         <TouchableOpacity
-          style={styles.upgradeButton}
+          style={styles.shareButton}
           onPress={() => {
-            setAlertMessage('Redirecting to subscription...');
-            setAlertVisible(true);
+            if (hasFullAccess || isInTrial) {
+              handleShare();
+            } else {
+              setAlertMessage('Upgrade to Premium to unlock map sharing.');
+              setAlertVisible(true);
+            }
           }}
         >
-          <Text style={styles.upgradeButtonText}>
-            Subscribe Now
-          </Text>
+          <Ionicons name="share-social-outline" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
         </TouchableOpacity>
-      </View>
-    )
+      </ViewShot>
+    </>
   );
 }

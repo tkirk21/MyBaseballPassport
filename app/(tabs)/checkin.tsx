@@ -4,14 +4,14 @@ import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { Alert, Dimensions, Image, Modal, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { getAuth } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { usePremium } from '@/context/PremiumContext';
 
 import LoadingPuck from '@/components/loadingPuck';
-import arenaData from '@/assets/data/arenas.json';
-import mlbSchedule from '@/assets/data/mlbSchedule.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadSchedule } from '@/utils/loadSchedule';
 
 const auth = getAuth();
 
@@ -22,7 +22,8 @@ export default function CheckInScreen() {
     return null;
   }
   const { hasFullAccess, isInTrial, checkInCount } = usePremium();
-  const hasFreeCheckInsRemaining = hasFullAccess || (isInTrial && checkInCount < 3);
+  const hasAppAccess = hasFullAccess || isInTrial;
+  const hasFreeCheckInsRemaining = hasAppAccess || checkInCount < 3;
   const colorScheme = useColorScheme();
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -31,6 +32,73 @@ export default function CheckInScreen() {
   const [upgradeAlertTitle, setUpgradeAlertTitle] = useState('');
   const [upgradeAlertMessage, setUpgradeAlertMessage] = useState('');
   const [alertTitle, setAlertTitle] = useState('');
+  const [arenaData, setArenaData] = useState<any[]>([]);
+  const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadArenas();
+      setArenaData(data);
+
+      const mlb = await loadSchedule('mlbSchedule.json');
+      const il = await loadSchedule('ilSchedule.json');
+      const pcl = await loadSchedule('pclSchedule.json');
+      const el = await loadSchedule('elSchedule.json');
+      const sl = await loadSchedule('slSchedule.json');
+      const tl = await loadSchedule('tlSchedule.json');
+      const mwl = await loadSchedule('mwlSchedule.json');
+      const nwl = await loadSchedule('nwlSchedule.json');
+      const sal = await loadSchedule('salSchedule.json');
+      const fsl = await loadSchedule('fslSchedule.json');
+      const cl = await loadSchedule('clSchedule.json');
+      const cal = await loadSchedule('calSchedule.json');
+      const acl = await loadSchedule('aclSchedule.json');
+      const fcl = await loadSchedule('fclSchedule.json');
+      const dsl = await loadSchedule('dslSchedule.json');
+      const fl = await loadSchedule('flSchedule.json');
+      const alpb = await loadSchedule('alpbSchedule.json');
+      const aapb = await loadSchedule('aapbSchedule.json');
+      const pl = await loadSchedule('plSchedule.json');
+      const npb = await loadSchedule('npbSchedule.json');
+      const kbo = await loadSchedule('kboSchedule.json');
+      const cpbl = await loadSchedule('cpblSchedule.json');
+      const lmb = await loadSchedule('lmbSchedule.json');
+      const abl = await loadSchedule('ablSchedule.json');
+
+      setCombinedSchedule([
+        ...mlb,
+        ...il,
+        ...pcl,
+        ...el,
+        ...sl,
+        ...tl,
+        ...mwl,
+        ...nwl,
+        ...sal,
+        ...fsl,
+        ...cl,
+        ...cal,
+        ...acl,
+        ...fcl,
+        ...dsl,
+        ...fl,
+        ...alpb,
+        ...aapb,
+        ...pl,
+        ...npb,
+        ...kbo,
+        ...cpbl,
+        ...lmb,
+        ...abl,
+      ]);
+    };
+
+    fetchData();
+  }, []);
+
+  if (arenaData.length === 0) {
+    return <LoadingPuck />;
+  }
 
   const showUpgradePrompt = (title: string, message: string) => {
     setUpgradeAlertTitle(title);
@@ -39,14 +107,6 @@ export default function CheckInScreen() {
   };
 
   const handleLiveCheckIn = async () => {
-    if (!hasFreeCheckInsRemaining) {
-      showUpgradePrompt(
-        "Free Limit Reached",
-        "You’ve used your 3 free check-ins. Upgrade to continue logging games."
-      );
-      return;
-    }
-
     setCheckingIn(true);  // ← SHOW LOADING PUCK
 
     try {
@@ -60,16 +120,14 @@ export default function CheckInScreen() {
       }
 
       const { coords } = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Lowest,
+        accuracy: Location.Accuracy.High,
         maximumAge: 10000,
         timeout: 5000,
       });
 
       const now = new Date();
-      const allGamesToday = [
-        ...mlbSchedule.map(g => ({ ...g, league: 'AIHL' })),
-      ].filter(g => {
-        const gameStart = new Date(g.date); // already UTC
+      const allGamesToday = combinedSchedule.filter(g => {
+        const gameStart = new Date(g.date);
         const oneHourBefore = new Date(gameStart.getTime() - 60 * 60 * 1000);
         const fourHoursAfter = new Date(gameStart.getTime() + 4 * 60 * 60 * 1000);
 
@@ -78,8 +136,8 @@ export default function CheckInScreen() {
 
       if (allGamesToday.length === 0) {
         setCheckingIn(false);
-        setAlertTitle('No Games Today');
-        setAlertMessage('There are no games scheduled in any league today.');
+        setAlertTitle('Can Not Check In');
+        setAlertMessage('You are not close enough to any ballpark or you are checking in too early.');
         setAlertVisible(true);
         return;
       }
@@ -108,11 +166,10 @@ export default function CheckInScreen() {
         }
       }
 
-
-      if (!closestGame || closestDistanceMiles > 0.28) {
+      if (!closestGame || closestDistanceMiles > .28) {
         setCheckingIn(false);
         setAlertTitle('Not Close Enough');
-        setAlertMessage('You must be closer to the arena to check-in.');
+        setAlertMessage('You must be closer to the ballpark to check-in.');
         setAlertVisible(true);
         return;
       }
@@ -142,8 +199,8 @@ export default function CheckInScreen() {
         setAlertTitle('Network Error');
         setAlertMessage('Network error. Check your connection.');
       } else {
-        setAlertTitle('Error');
-        setAlertMessage('Unable to complete live check-in.');
+        setAlertTitle('Check-In Unavailable');
+        setAlertMessage('No live game found near your location.')
       }
 
       setAlertVisible(true);
@@ -205,35 +262,38 @@ export default function CheckInScreen() {
 
         <View style={styles.buttons}>
           <TouchableOpacity
-            style={[styles.buttonPrimary, !hasFreeCheckInsRemaining && { opacity: 0.6 }]}
-            onPress={() => {
-              if (!hasFreeCheckInsRemaining) {
-                showUpgradePrompt("Free Limit Reached", "You've used your 3 free check-ins. Subscribe to continue logging games.");
-                return;
-              }
-              handleLiveCheckIn();
-            }}
+            style={styles.buttonPrimary}
+            onPress={handleLiveCheckIn}
           >
-            <Text style={styles.buttonText}>
-              {hasFreeCheckInsRemaining ? 'Live Game' : 'Locked'}
-            </Text>
+            <Text style={styles.buttonText}>Live Game</Text>
           </TouchableOpacity>
 
-          {hasFreeCheckInsRemaining ? (
-            <TouchableOpacity
-              style={styles.buttonSecondary}
-              onPress={() => router.push('/checkin/manual')}
-            >
-              <Text style={styles.buttonText}>Past Game</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={[styles.buttonSecondary, { opacity: 0.6 }]}
-              onPress={() => showUpgradePrompt("Free Limit Reached", "You've used your 3 free check-ins. Subscribe to continue logging games.")}
-            >
-              <Text style={styles.buttonText}>Past Game — Locked</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.buttonSecondary}
+            onPress={async () => {
+              if (false) {
+                router.push('/checkin/manual');
+                return;
+              }
+
+              const today = new Date().toLocaleDateString('en-CA');
+              const profileRef = doc(db, 'profiles', user.uid);
+              const profileSnap = await getDoc(profileRef);
+              const todayCount = profileSnap.data()?.[`dailyCheckInCounts.${today}`] ?? 0;
+
+              if (todayCount >= 3) {
+                showUpgradePrompt(
+                  "Daily Limit Reached",
+                  "You have reached today’s free check-in limit. Upgrade to Premium for unlimited access or come back tomorrow."
+                );
+                return;
+              }
+
+              router.push('/checkin/manual');
+            }}
+          >
+            <Text style={styles.buttonText}>Past Game</Text>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
 
@@ -241,7 +301,7 @@ export default function CheckInScreen() {
       <Modal visible={alertVisible} transparent animationType="fade">
         <View style={styles.alertOverlay}>
           <View style={styles.alertContainer}>
-            <Text style={styles.alertTitle}>Not Close Enough</Text>
+            <Text style={styles.alertTitle}>{alertTitle}</Text>
             <Text style={styles.alertMessage}>{alertMessage}</Text>
             <TouchableOpacity onPress={() => setAlertVisible(false)} style={styles.alertButton}>
               <Text style={styles.alertButtonText}>OK</Text>
@@ -261,7 +321,6 @@ export default function CheckInScreen() {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }

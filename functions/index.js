@@ -4,7 +4,7 @@ const admin = require("firebase-admin");
 const fetch = require("node-fetch");
 
 admin.initializeApp({
-  storageBucket: "myhockeypassport.firebasestorage.app"
+  storageBucket: "mybaseballpassport.firebasestorage.app"
 });
 
 const db = admin.firestore();

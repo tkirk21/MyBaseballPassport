@@ -2,9 +2,8 @@
 import { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createUserWithEmailAndPassword, FacebookAuthProvider, fetchSignInMethodsForEmail, GoogleAuthProvider, OAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
-import { auth, } from '@/firebaseConfig';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { auth, db, iosClientId, webClientId } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -28,8 +27,8 @@ export default function Signup() {
   const [alertMessage, setAlertMessage] = useState('');
   if (!auth) return null;
   const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: '763545830068611',
-    redirectUri: `fb763545830068611://authorize`,
+    clientId: '1893308821318057',
+    redirectUri: `fb1893308821318057://authorize`,
     scopes: ['public_profile', 'email'],
     authType: 'rerequest',
     responseType: 'token',
@@ -72,11 +71,11 @@ export default function Signup() {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com',
+      webClientId,
+      iosClientId,
       offlineAccess: true,
     });
   }, []);
-
 
   useEffect(() => {
     if (fbResponse?.type === 'success') {

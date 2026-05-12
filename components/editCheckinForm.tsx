@@ -6,7 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Checkbox from 'expo-checkbox';
 import { Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import { addDoc, collection, doc, getDoc, getFirestore, onSnapshot, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getFirestore, onSnapshot, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import firebaseApp from "@/firebaseConfig"; // Adjust path if needed
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,12 +17,13 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import LoadingPuck from './loadingPuck';
 
-import arenasData from "@/assets/data/arenas.json";
-import historicalTeamsData from '@/assets/data/historicalTeams.json';
-import arenaHistoryData from "@/assets/data/arenaHistory.json";
+import { loadArenas } from '@/utils/loadArenas';
+import localHistoricalTeamsData from '@/assets/data/historicalTeams.json';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
 
 const db = getFirestore(firebaseApp);
-const storage = getStorage(firebaseApp, 'gs://myhockeypassport.firebasestorage.app');
+const storage = getStorage(firebaseApp, 'gs://mybaseballpassport.firebasestorage.app');
 
 export default function editCheckinForm({ initialData }: { initialData: any }) {
   const router = useRouter();
@@ -39,8 +40,28 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
   const [homeTeamOpen, setHomeTeamOpen] = useState(false);
   const [opponentTeamOpen, setOpponentTeamOpen] = useState(false);
   const [allArenas, setAllArenas] = useState([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState<any[]>([]);
+  const [historicalTeamsData, setHistoricalTeamsData] = useState(localHistoricalTeamsData);
+
+  useEffect(() => {
+    const fetchArenas = async () => {
+      const data = await loadArenas();
+      const history = await loadArenaHistory();
+      const historical = await loadHistoricalTeams();
+
+      setAllArenas(data);
+      setArenaHistoryData(history || []);
+      if (historical.length > 0) {
+        setHistoricalTeamsData(historical);
+      }
+    };
+
+    fetchArenas();
+  }, []);
+
   const [selectedLeague, setSelectedLeague] = useState(initialData.league || null);
   const [selectedArena, setSelectedArena] = useState(initialData.arenaName || null);
+  const [hasLoadedInitialArena, setHasLoadedInitialArena] = useState(false);
   const [selectedHomeTeam, setSelectedHomeTeam] = useState(initialData.teamName || null);
   const [selectedOpponent, setSelectedOpponent] = useState(initialData.opponent || null);
   const [homeScore, setHomeScore] = useState(
@@ -65,7 +86,11 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
   const [filteredFriends, setFilteredFriends] = useState<{ id: string; name: string }[]>([]);
   const [highlights, setHighlights] = useState(initialData.highlights || '');
   const [parkingAndTravel, setParkingAndTravel] = useState(initialData.ParkingAndTravel || '');
+  const [shareParkingTip, setShareParkingTip] = useState(initialData.shareParkingTip || false);
+  const [pregameBar, setPregameBar] = useState(initialData.pregameBar || '');
+  const [sharePregameBar, setSharePregameBar] = useState(initialData.sharePregameBar || false);
   const [images, setImages] = useState<string[]>(initialData.photos?.slice(0, 3) || []);
+  const [sharedPhotos, setSharedPhotos] = useState<number[]>(initialData.sharedPhotos || []);
   const [didBuyMerch, setDidBuyMerch] = useState(Object.keys(initialData.merchBought || {}).some(cat => initialData.merchBought[cat].length > 0));
   const [expandedCategories, setExpandedCategories] = useState({});
   const [merchItems, setMerchItems] = useState(() => {
@@ -161,10 +186,8 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
 
             await uploadBytes(photoRef, blob);
             const url = await getDownloadURL(photoRef);
-            console.log(`Uploaded new edit photo ${index}: ${url}`);
             return { success: true, url };
           } catch (err) {
-            console.error(`New photo upload failed ${index}:`, err);
             return { success: false, url: null };
           }
         });
@@ -197,7 +220,12 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
 
       const match = allArenas.find(
         (arena: any) =>
-          arena.league === selectedLeague && arena.arena === selectedArena
+          arena.league === selectedLeague &&
+          arena.teamName === selectedHomeTeam &&
+          arena.arena === selectedArena
+      ) || allArenas.find(
+        (arena: any) =>
+          arena.arenaId === initialData.arenaId
       );
 
       const docData = {
@@ -221,6 +249,9 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
         companions,
         highlights,
         ParkingAndTravel: parkingAndTravel,
+        shareParkingTip: shareParkingTip && parkingAndTravel.trim() !== '',
+        pregameBar,
+        sharePregameBar: sharePregameBar && pregameBar.trim() !== '',
         merchBought: didBuyMerch
           ? getSelectedItems(merchItems, merchCategories)
           : {},
@@ -229,6 +260,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
           : {},
         gameDate: gameDate.toISOString(),
         photos: finalPhotos,
+        sharedPhotos: sharedPhotos,
         latitude: match?.latitude ?? null,
         longitude: match?.longitude ?? null,
       };
@@ -237,6 +269,36 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
 
       try {
         await updateDoc(checkinRef, docData);
+        await setDoc(
+          doc(
+            db,
+            'arenas',
+            docData.arenaId,
+            'checkins',
+            initialData.id
+          ),
+          {
+            arenaName: docData.arenaName,
+            teamName: docData.teamName,
+            league: docData.league,
+            timestamp: serverTimestamp(),
+            userId: user.uid,
+            totalCheckins: 1,
+            shareParkingTip: docData.shareParkingTip,
+            ParkingAndTravel: docData.ParkingAndTravel,
+            sharePregameBar: docData.sharePregameBar,
+            pregameBar: docData.pregameBar,
+
+            photos: docData.photos.filter((_, index) =>
+              docData.sharedPhotos.includes(index)
+            ),
+
+            sharedPhotoFlags: docData.photos
+              .filter((_, index) => docData.sharedPhotos.includes(index))
+              .map(() => 1),
+          },
+          { merge: true }
+        );
 
         setAlertMessage('Check-in updated!');
         setAlertVisible(true);
@@ -272,11 +334,11 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
   useEffect(() => {
     const selectedDate = gameDate;
 
-    const processed = arenasData
+    const processed = (allArenas || [])
       .filter(arena => !arena.startDate || selectedDate >= new Date(arena.startDate))
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
-    const processedHistorical = historicalTeamsData
+    const processedHistorical = (historicalTeamsData || [])
       .filter(hist => {
         const start = new Date(hist.startDate);
         let end = hist.endDate ? new Date(hist.endDate) : null;
@@ -285,7 +347,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       })
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
-    const allArenasRaw = [...processedHistorical, ...processed];
+    const allArenasRaw = [...processed, ...processedHistorical];
 
     // Filter out anything missing real league
     const allArenas = allArenasRaw.filter(a =>
@@ -294,7 +356,6 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       a.league.trim() !== ''
     );
 
-    setAllArenas(allArenas);
     setArenas(allArenas);
 
     const leagues = [...new Set(allArenas.map(a => a.league))];
@@ -310,11 +371,16 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     }
 
     const date = gameDate;
-
     const arenaOptions: any[] = [];
 
-    for (const a of allArenas) {
+    for (const a of arenas) {
       if (a.league !== selectedLeague) continue;
+
+      const start = a.startDate ? new Date(a.startDate) : new Date(0);
+      const end = a.endDate ? new Date(a.endDate) : null;
+
+      if (date < start) continue;
+      if (end && date > end) continue;
 
       arenaOptions.push({
         label: a.arena,
@@ -328,7 +394,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
 
     setArenaItems(uniqueArenas);
 
-    const validTeams = allArenas.filter(team => {
+    const validTeams = arenas.filter(team => {
       if (team.league !== selectedLeague) return false;
 
       const start = team.startDate ? new Date(team.startDate) : new Date(0);
@@ -352,8 +418,16 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     if (!selectedHomeTeam || !selectedLeague) return;
 
     const teamEntry = allArenas.find(
-      a => a.teamName === selectedHomeTeam && a.league === selectedLeague
+      a =>
+        a.teamName === selectedHomeTeam &&
+        a.league === selectedLeague &&
+        a.arenaId === initialData.arenaId
+    ) || allArenas.find(
+      a =>
+        a.teamName === selectedHomeTeam &&
+        a.league === selectedLeague
     );
+
     if (!teamEntry) return;
 
     const date = gameDate;
@@ -373,8 +447,18 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       if (active) correctName = active.name;
     }
 
-    setArenaItems([{ label: correctName, value: correctName }]);
-    setSelectedArena(correctName);
+    const isOriginalDate =
+      gameDate.toDateString() === new Date(initialData.gameDate).toDateString();
+
+    const displayArena =
+      selectedHomeTeam === initialData.teamName &&
+      selectedLeague === initialData.league &&
+      isOriginalDate
+        ? initialData.arenaName
+        : correctName;
+
+    setArenaItems([{ label: displayArena, value: displayArena }]);
+    setSelectedArena(displayArena);
   }, [selectedHomeTeam, selectedLeague, gameDate, allArenas]);
 
   useEffect(() => {
@@ -431,13 +515,11 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     if (!user) return;
 
     const friendsRef = collection(db, 'profiles', user.uid, 'friends');
-
     const unsub = onSnapshot(
       friendsRef,
       async (snap) => {
         try {
           const friendIds = snap.docs.map(d => d.id);
-
           const profiles = await Promise.all(
             friendIds.map(async (id) => {
               try {
@@ -547,6 +629,8 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     seatLabel: { fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginRight: 6 },
     seatLabelRow: { fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginLeft: 12, marginRight: 6 },
     seatInput: { width: 50, textAlign: 'center', marginBottom: 0 },
+    shareToArenaText: { textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginTop: 24, marginBottom: 12, fontSize: 15, fontWeight: '500', },
+    sharePhotoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 4 },
     submitButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', paddingVertical: 14, borderRadius: 30, width: '60%', alignItems: 'center', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68' },
     submitButtonSaving: { opacity: 0.7 },
     submitText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16, fontWeight: '600' },
@@ -593,6 +677,35 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
           >
             <Text style={styles.dateDisplayText}>{gameDate.toDateString()}</Text>
           </TouchableOpacity>
+
+          {showDatePicker && Platform.OS === 'ios' && (
+            <View
+              style={{
+                backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF',
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 12,
+              }}
+            >
+              <DateTimePicker
+                value={gameDate}
+                mode="date"
+                display="spinner"
+                onChange={(event, selectedDate) => {
+                  if (selectedDate) setGameDate(selectedDate);
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(false)}
+                style={{ alignSelf: 'flex-end', marginTop: 8 }}
+              >
+                <Text style={{ color: '#0066CC', fontWeight: '600', fontSize: 16 }}>
+                  Done
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <DropDownPicker
             open={leagueOpen}
@@ -671,7 +784,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
               onPress={() => {
                 setSelectedLeague(null);
                 setSelectedArena(null);
-                 setSelectedHomeTeam(null);
+                setSelectedHomeTeam(null);
                 setSelectedOpponent(null);
                 setArenaItems([]);
                 setHomeTeamItems([]);
@@ -679,7 +792,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
               }}
             >
               <Text style={styles.choiceButtonTextSelected}>
-                Reset League, ballpark, Home Team, Opponent
+                Reset League, Ballpark, Home Team, Opponent
               </Text>
             </Pressable>
           </View>
@@ -815,13 +928,39 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
                 />
                 <TouchableOpacity
                   style={styles.deleteButton}
-                  onPress={() => setImages(images.filter((_, i) => i !== index))}
+                  onPress={() => {
+                    setImages(prevImages => prevImages.filter((_, i) => i !== index));
+
+                    setSharedPhotos(prev =>
+                      prev
+                        .filter(i => i !== index)
+                        .map(i => (i > index ? i - 1 : i))
+                    );
+                  }}
                 >
                   <Text style={styles.deleteText}>×</Text>
                 </TouchableOpacity>
+
+                <View style={styles.sharePhotoRow}>
+                  <Checkbox
+                    value={sharedPhotos.includes(index)}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setSharedPhotos([...sharedPhotos, index]);
+                      } else {
+                        setSharedPhotos(sharedPhotos.filter(i => i !== index));
+                      }
+                    }}
+                  />
+                  <Text style={styles.checkboxLabel}>Share</Text>
+                </View>
               </View>
             ))}
           </View>
+
+          <Text style={styles.shareToArenaText}>
+            Share to the arena page
+          </Text>
 
           <View style={styles.merchConcessionsContainer}>
             {/* Merch section */}
@@ -987,6 +1126,25 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
             multiline
           />
 
+          <View style={styles.checkboxRow}>
+            <Checkbox value={shareParkingTip} onValueChange={setShareParkingTip} />
+            <Text style={styles.checkboxLabel}>Share this parking/travel tip on the arena page</Text>
+          </View>
+
+          <TextInput
+            placeholder="Pregame Bar (where did you eat or drink before the game?)"
+            placeholderTextColor={styles.Placeholder.color}
+            value={pregameBar}
+            onChangeText={setPregameBar}
+            style={styles.input}
+            multiline
+          />
+
+          <View style={styles.checkboxRow}>
+            <Checkbox value={sharePregameBar} onValueChange={setSharePregameBar} />
+            <Text style={styles.checkboxLabel}>Share this pregame bar tip on the arena page</Text>
+          </View>
+
           <View style={styles.bottomRow}>
             <TouchableOpacity style={styles.backIconButton} onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={28} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
@@ -1016,20 +1174,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
             <DateTimePicker
               value={gameDate}
               mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) setGameDate(selectedDate);
-              }}
-            />
-          )}
-
-          {/* IOS / IPAD — modal picker */}
-          {showDatePicker && Platform.OS === 'ios' && (
-            <DateTimePicker
-              value={gameDate}
-              mode="date"
-              display="default"
+              display="calendar"
               onChange={(event, selectedDate) => {
                 setShowDatePicker(false);
                 if (selectedDate) setGameDate(selectedDate);

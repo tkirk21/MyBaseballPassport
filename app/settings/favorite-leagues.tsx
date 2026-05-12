@@ -9,7 +9,30 @@ import { useColorScheme } from '../../hooks/useColorScheme';
 
 const auth = getAuth();
 const LEAGUES_DATA = [
-  "MAJOR LEAGUE BASEBALL", "INTERNATIONAL LEAGUE", "PACFIC COAST LEAGUE",
+  { label: "MAJOR LEAGUE BASEBALL", value: "MLB" },
+  { label: "INTERNATIONAL LEAGUE", value: "IL" },
+  { label: "PACIFIC COAST LEAGUE", value: "PCL" },
+  { label: "EASTERN LEAGUE", value: "EL" },
+  { label: "SOUTHERN LEAGUE", value: "SL" },
+  { label: "TEXAS LEAGUE", value: "TL" },
+  { label: "MIDWEST LEAGUE", value: "MWL" },
+  { label: "NORTHWEST LEAGUE", value: "NWL" },
+  { label: "SOUTH ATLANTIC LEAGUE", value: "SAL" },
+  { label: "FLORIDA STATE LEAGUE", value: "FSL" },
+  { label: "CAROLINA LEAGUE", value: "CL" },
+  { label: "CALIFORNIA LEAGUE", value: "CAL" },
+  { label: "ARIZONA COMPLEX LEAGUE", value: "ACL" },
+  { label: "FLORIDA COMPLEX LEAGUE", value: "FCL" },
+  { label: "DOMINICAN SUMMER LEAGUE", value: "DSL" },
+  { label: "FRONTIER LEAGUE", value: "FL" },
+  { label: "ATLANTIC LEAGUE OF PROFESSIONAL BASEBALL", value: "ALPB" },
+  { label: "AMERICAN ASSOCIATION OF PROFESSIONAL BASEBALL", value: "AAPB" },
+  { label: "PIONEER LEAGUE", value: "PL" },
+  { label: "NIPPON PROFESSIONAL LEAGUE", value: "NPB" },
+  { label: "KBO LEAGUE", value: "KBO" },
+  { label: "CHINESE PROFESSIONAL BASEBALL LEAGUE", value: "CPBL" },
+  { label: "LIGA MEXICANA DE BEISBOL", value: "LMB" },
+  { label: "AUSTRALIAN BASEBALL LEAGUE", value: "ABL" },
 ];
 
 export default function FavoriteLeaguesScreen() {
@@ -38,7 +61,38 @@ export default function FavoriteLeaguesScreen() {
         const saved = docSnap.data()?.favoriteLeagues;
 
         if (Array.isArray(saved) && saved.length > 0) {
-          setFavoriteLeagues(saved.filter(l => typeof l === 'string' && l.trim() !== ''));
+          const leagueMap: Record<string, string> = {
+            'MAJOR LEAGUE BASEBALL': 'MLB',
+            'INTERNATIONAL LEAGUE': 'IL',
+            'PACIFIC COAST LEAGUE': 'PCL',
+            'EASTERN LEAGUE': 'EL',
+            'SOUTHERN LEAGUE': 'SL',
+            'TEXAS LEAGUE': 'TL',
+            'MIDWEST LEAGUE': 'MWL',
+            'NORTHWEST LEAGUE': 'NWL',
+            'SOUTH ATLANTIC LEAGUE': 'SAL',
+            'FLORIDA STATE LEAGUE': 'FSL',
+            'CAROLINA LEAGUE': 'CL',
+            'CALIFORNIA LEAGUE': 'CAL',
+            'ARIZONA COMPLEX LEAGUE': 'ACL',
+            'FLORIDA COMPLEX LEAGUE': 'FCL',
+            'DOMINICAN SUMMER LEAGUE': 'DSL',
+            'FRONTIER LEAGUE': 'FL',
+            'ATLANTIC LEAGUE OF PROFESSIONAL BASEBALL': 'ALPB',
+            'AMERICAN ASSOCIATION OF PROFESSIONAL BASEBALL': 'AAPB',
+            'PIONEER LEAGUE': 'PL',
+            'NIPPON PROFESSIONAL LEAGUE': 'NPB',
+            'KBO LEAGUE': 'KBO',
+            'CHINESE PROFESSIONAL BASEBALL LEAGUE': 'CPBL',
+            'LIGA MEXICANA DE BEISBOL': 'LMB',
+            'AUSTRALIAN BASEBALL LEAGUE': 'ABL'
+          };
+
+          const normalized = saved
+            .filter(l => typeof l === 'string' && l.trim() !== '')
+            .map(l => leagueMap[l] || l);
+
+          setFavoriteLeagues(normalized);
         } else {
           setFavoriteLeagues([]);
         }
@@ -146,15 +200,17 @@ export default function FavoriteLeaguesScreen() {
       <ScrollView style={{ flex: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <View style={styles.list}>
+
+
             {filteredLeagues.map(league => (
               <TouchableOpacity
-                key={league}
+                key={league.value}
                 style={styles.leagueRow}
-                onPress={() => toggleLeague(league)}
+                onPress={() => toggleLeague(league.value)}
               >
-                <Text style={styles.leagueText}>{league}</Text>
-                {favoriteLeagues.includes(league) && (
-                  <Ionicons name="checkmark" size={24} color={colorScheme === 'dark' ? '#FFFFFF' : '#0A2940'} />
+                <Text style={styles.leagueText}>{league.label}</Text>
+                {favoriteLeagues.includes(league.value) && (
+                  <Ionicons name="checkmark-circle" size={24} color="#2E8B57" />
                 )}
               </TouchableOpacity>
             ))}

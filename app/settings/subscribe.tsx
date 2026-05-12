@@ -16,7 +16,7 @@ export default function SubscribeScreen() {
   const [alertMessage, setAlertMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = async () => {
+  const handleMonthlySubscribe = async () => {
     try {
       setLoading(true);
 
@@ -30,12 +30,19 @@ export default function SubscribeScreen() {
         return;
       }
 
-      const pkg = offerings.current.availablePackages[0];
+      const pkg = offerings.current.monthly;
+
+      if (!pkg) {
+        setLoading(false);
+        setAlertTitle('Unavailable');
+        setAlertMessage('Monthly package not found.');
+        setAlertVisible(true);
+        return;
+      }
 
       const { customerInfo } = await Purchases.purchasePackage(pkg);
-
       const hasPremium =
-        customerInfo.entitlements.active['MY SPORTS PASSPORT LLC Pro'] !== undefined;
+        customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
 
       setLoading(false);
 
@@ -61,21 +68,82 @@ export default function SubscribeScreen() {
     }
   };
 
-  const handleRestorePurchases = async () => {
+  const handleYearlySubscribe = async () => {
     try {
-      const customerInfo = await Purchases.restorePurchases();
+      setLoading(true);
 
+      const offerings = await Purchases.getOfferings();
+
+      if (!offerings.current || offerings.current.availablePackages.length === 0) {
+        setLoading(false);
+        setAlertTitle('Unavailable');
+        setAlertMessage('No subscription packages are available.');
+        setAlertVisible(true);
+        return;
+      }
+
+      const pkg = offerings.current.annual;
+
+      if (!pkg) {
+        setLoading(false);
+        setAlertTitle('Unavailable');
+        setAlertMessage('Yearly package not found.');
+        setAlertVisible(true);
+        return;
+      }
+
+      const { customerInfo } = await Purchases.purchasePackage(pkg);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const refreshedInfo = await Purchases.getCustomerInfo();
       const hasPremium =
-        customerInfo.entitlements.active['MY SPORTS PASSPORT LLC Pro'] !== undefined;
+        refreshedInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
+      setLoading(false);
 
       if (hasPremium) {
-        Alert.alert('Success', 'Purchases restored successfully.');
         router.replace('/(tabs)');
-      } else {
-        Alert.alert('No Purchase Found', 'No active subscription found.');
+        return;
       }
-    } catch (e) {
-      Alert.alert('Error', 'Restore failed.');
+
+      setAlertTitle('Error');
+      setAlertMessage('Purchase completed but entitlement not active.');
+      setAlertVisible(true);
+
+    } catch (e: any) {
+      setLoading(false);
+
+      if (e?.userCancelled) {
+        return;
+      }
+
+      setAlertTitle('Purchase Failed');
+      setAlertMessage(e?.message || 'Unable to complete purchase.');
+      setAlertVisible(true);
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    try {
+      setLoading(true);
+
+      const customerInfo = await Purchases.restorePurchases();
+      const hasPremium =
+        customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
+
+      if (hasPremium) {
+        router.replace('/(tabs)');
+        return;
+      }
+
+      setAlertTitle('No Subscription Found');
+      setAlertMessage('No active subscription could be restored.');
+      setAlertVisible(true);
+
+    } catch (e: any) {
+      setLoading(false);
+
+      setAlertTitle('Restore Failed');
+      setAlertMessage(e?.message || 'Unable to restore purchases.');
+      setAlertVisible(true);
     }
   };
 
@@ -91,9 +159,11 @@ export default function SubscribeScreen() {
     card:{backgroundColor:colorScheme==='dark'?'#132F4F':'#F5F1E6',borderRadius:16,padding:20,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
     headerRow:{flexDirection:'row',alignItems:'center',marginBottom:30},
     headerTitle:{fontSize:28,fontWeight:'700',marginLeft:20,color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
+    linkText: { color: '#B22222', textAlign: 'center', marginTop: 12, fontSize: 15, fontWeight: '600'},
     screen:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',paddingTop:insets.top+10,paddingHorizontal:20},
+    subscriptionDisclosure: { fontSize: 13, lineHeight: 20, textAlign: 'center', marginTop: 20, color: colorScheme === 'dark' ? '#AFC7E6' : '#374151'},
     text:{fontSize:16,lineHeight:22,color:colorScheme==='dark'?'#F5F1E6':'#374151',marginBottom:20},
-    title:{fontSize:22,fontWeight:'700',color:colorScheme==='dark'?'#F5F1E6':'#0A2940',marginBottom:10}
+    title:{fontSize:22,fontWeight:'700', textAlign: 'center', color:colorScheme==='dark'?'#F5F1E6':'#0A2940',marginBottom:10}
   });
 
   return (
@@ -115,13 +185,20 @@ export default function SubscribeScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>My Baseball Passport Premium</Text>
         <Text style={styles.text}>
-          • $2.99 per month after trial{'\n'}
+          • $1.99 per month{'\n'}
+          • $19.99 per year{'\n'}
           • Unlimited check-ins, maps, and stats{'\n'}
-          • Support ongoing development
+          • Full premium access across the app
         </Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubscribe} disabled={loading}>
-          <Text style={styles.buttonText}>Subscribe Now</Text>
+        <TouchableOpacity style={styles.button} onPress={handleMonthlySubscribe} disabled={loading}>
+          <Text style={styles.buttonText}>Subscribe Monthly</Text>
+        </TouchableOpacity>
+
+        <View style={{ height: 12 }} />
+
+        <TouchableOpacity style={styles.button} onPress={handleYearlySubscribe} disabled={loading}>
+          <Text style={styles.buttonText}>Subscribe Yearly</Text>
         </TouchableOpacity>
 
         <View style={{ height: 12 }} />
@@ -129,6 +206,24 @@ export default function SubscribeScreen() {
         <TouchableOpacity style={styles.button} onPress={handleRestorePurchases} disabled={loading}>
           <Text style={styles.buttonText}>Restore Purchases</Text>
         </TouchableOpacity>
+
+        <Text style={styles.subscriptionDisclosure}>
+        Subscription automatically renews unless cancelled at least 24 hours before the end of the current billing period. Your account will be charged for renewal within 24 hours before the end of the current period. You can manage or cancel your subscription anytime in your account settings after purchase.
+        </Text>
+
+        <Text
+          style={styles.linkText}
+          onPress={() => Linking.openURL('https://mysportspassport.app/privacy')}
+        >
+        Privacy Policy
+        </Text>
+
+        <Text
+          style={styles.linkText}
+          onPress={() => Linking.openURL('https://mysportspassport.app/terms')}
+        >
+        Terms of Use
+        </Text>
 
         <Modal visible={alertVisible} transparent animationType="fade">
           <View style={styles.alertOverlay}>

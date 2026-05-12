@@ -6,9 +6,9 @@ import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs
 import { getAuth } from 'firebase/auth';
 import firebaseApp from '@/firebaseConfig';
 import {  Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import arenasData from '@/assets/data/arenas.json';
-import historicalTeamsData from '@/assets/data/historicalTeams.json';
-import arenaHistoryData from '@/assets/data/arenaHistory.json';
+import { loadArenas } from '@/utils/loadArenas';
+import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
+import { loadArenaHistory } from '@/utils/loadArenaHistory';
 import { logCheer } from "@/utils/activityLogger";
 import CheerButton from '@/components/friends/cheerButton';
 import ChirpBox from '@/components/friends/chirpBox';
@@ -65,6 +65,9 @@ export default function UserProfileScreen() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [mostVisitedArena, setMostVisitedArena] = useState<any | null>(null);
   const [allCheckins, setAllCheckins] = useState<any[]>([]);
+  const [arenasData, setArenasData] = useState<any[]>([]);
+  const [historicalTeamsData, setHistoricalTeamsData] = useState<any[]>([]);
+  const [arenaHistoryData, setArenaHistoryData] = useState<any[]>([]);
   const arenasVisited = new Set(
     allCheckins
       .map(c => c.arenaId)
@@ -99,8 +102,9 @@ export default function UserProfileScreen() {
     markerContainer: { alignItems: 'center', },
     markerInner: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center', position: 'relative', },
     markerImage: { width: 36, height: 36, },
-    markerText:{position:'absolute',top:6,left:12,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
+    markerText:{position:'absolute',top:3,left:9,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
     miniMap: { width: '100%', height: 280, borderRadius: 12, overflow: 'hidden', marginTop: 8, },
+    pinCircle:{width:36,height:36,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
     placeholder: { fontSize: 16, color: '#374151', textAlign: 'center' },
     profileImage: { width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
     section: { marginBottom: 20, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, padding: 12, borderWidth: 4, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
@@ -110,7 +114,7 @@ export default function UserProfileScreen() {
     teamsText: {fontSize: 14, fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 6, },
     text: { fontSize: 16, textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 4, },
     title: { fontSize: 34, fontWeight: 'bold', textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginBottom: 16, marginTop: 30, textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
-    visitBadge: { backgroundColor: '#D32F2F', width: 10, height: 10, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 18, right: 26, zIndex: 2, borderWidth: 1, borderColor: 'white', },
+    visitBadge: { backgroundColor: '#D32F2F', width: 12, height: 12, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 16, right: 22, zIndex: 2, borderWidth: 1, borderColor: 'white', },
     visitBadgeText: { color: 'white', fontWeight: '900', fontSize: 4, includeFontPadding: false, },
 
     favouriteTeamsChipsContainer: {
@@ -118,8 +122,7 @@ export default function UserProfileScreen() {
       flexWrap: 'wrap',
       gap: 8,
       justifyContent: 'center',
-      marginTop: 8,
-    },
+      marginTop: 8,},
     favouriteTeamsChip: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -150,6 +153,15 @@ export default function UserProfileScreen() {
 
   useEffect(() => {
     const loadProfileAndCheckins = async () => {
+      const [arenas, historical, history] = await Promise.all([
+        loadArenas(),
+        loadHistoricalTeams(),
+        loadArenaHistory()
+      ]);
+
+      setArenasData(arenas);
+      setHistoricalTeamsData(historical);
+      setArenaHistoryData(history);
       try {
         if (!userId || !currentUser) {
           setLoading(false);
@@ -445,7 +457,7 @@ export default function UserProfileScreen() {
 
                       const teamCode = arenaEntry?.teamCode || '';
                       const colorCode = arenaEntry?.colorCode || '#0D2C42';
-                      const dynamicMarkerTint = { tintColor: colorCode };
+                      const colorCode2 = arenaEntry?.colorCode2 || colorCode;
 
                       const visitCount = allCheckins.filter(
                         c => (c.arenaName || c.arena) === originalArenaName
@@ -469,10 +481,10 @@ export default function UserProfileScreen() {
                               </View>
                             )}
 
-                            <View style={styles.markerInner}>
+                            <View style={[styles.pinCircle,{backgroundColor:colorCode,borderColor:colorCode2}]}>
                               <Image
                                 source={require('@/assets/images/pin_template.png')}
-                                style={[styles.markerImage, dynamicMarkerTint]}
+                                style={[styles.markerImage,{tintColor:colorCode2}]}
                                 resizeMode="contain"
                               />
                               <Text style={styles.markerText}>
@@ -496,7 +508,7 @@ export default function UserProfileScreen() {
                 let resolvedArenaName = arenaName;
 
                 // 🔥 Resolve historical arena names
-                const historyEntry = require('@/assets/data/arenaHistory.json').find(
+                const historyEntry = arenaHistoryData.find(
                   (h: any) =>
                     h.league === item.league &&
                     h.history.some(
