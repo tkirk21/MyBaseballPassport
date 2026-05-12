@@ -38,3 +38,6 @@ yarn-error.*
 *.tsbuildinfo
 
 firebase/*.json
+
+google-services.jsom
+GoogleService-Info.plist
