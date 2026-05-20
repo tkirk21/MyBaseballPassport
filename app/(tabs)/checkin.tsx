@@ -271,7 +271,7 @@ export default function CheckInScreen() {
           <TouchableOpacity
             style={styles.buttonSecondary}
             onPress={async () => {
-              if (false) {
+              if (hasAppAccess) {
                 router.push('/checkin/manual');
                 return;
               }

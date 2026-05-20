@@ -9,7 +9,7 @@ import { addDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot, ser
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import firebaseApp from '../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useColorScheme } from '../../hooks/useColorScheme'
 import { loadArenas } from '@/utils/loadArenas';
@@ -389,7 +389,7 @@ export default function LiveCheckInScreen() {
     lockedInput: { backgroundColor: '#FEE2E2', borderColor: 'red' },
     merchConcessionsContainer: { marginTop: 20, marginBottom: 20, backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F1F5F9', padding: 16, borderRadius: 12 },
     photoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, gap: 8 },
-    photoThumbnailWrapper: { position: 'relative', width: 100, height: 100 },
+    photoThumbnailWrapper: { position: 'relative', width: 100, marginBottom: 70, },
     photoThumbnail: { width: 100, height: 100, borderRadius: 8 },
     Placeholder: { color: colorScheme === 'dark' ? '#BBBBBB' : '#666666' },
     premiumLockText: { textAlign: 'center', marginBottom: 12, color: 'red', fontWeight: '600' },
@@ -431,7 +431,9 @@ export default function LiveCheckInScreen() {
           </View>
         </View>
       </Modal>
+
       <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <Stack.Screen options={{ title: "Live Check-In" }} />
         <ScrollView
           contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
@@ -710,6 +712,101 @@ export default function LiveCheckInScreen() {
               </>
             )}
 
+            {hasAppAccess ? (
+              <>
+                <Text style={styles.buySectionLabel}>Did you buy any merchandise?</Text>
+
+                <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                  <Pressable
+                    style={[
+                      styles.choiceButton,
+                      didBuyMerch === true && styles.choiceButtonSelected,
+                    ]}
+                    onPress={() => setDidBuyMerch(true)}
+                  >
+                    <Text
+                      style={[
+                        styles.choiceButtonText,
+                        didBuyMerch === true && styles.choiceButtonTextSelected,
+                      ]}
+                    >
+                      Yes
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={[
+                      styles.choiceButton,
+                      didBuyMerch === false && styles.choiceButtonSelected,
+                    ]}
+                    onPress={() => setDidBuyMerch(false)}
+                  >
+                    <Text
+                      style={[
+                        styles.choiceButtonText,
+                        didBuyMerch === false && styles.choiceButtonTextSelected,
+                      ]}
+                    >
+                      No
+                    </Text>
+                  </Pressable>
+                </View>
+
+                {didBuyMerch && (
+                  <>
+                    {Object.keys(merchCategories).map((category) => (
+                      <View key={category} style={styles.categoryContainer}>
+                        <Pressable
+                          onPress={() =>
+                            setExpandedCategories((prev) => ({
+                              ...prev,
+                              [category]: !prev[category],
+                            }))
+                          }
+                          style={styles.categoryHeader}
+                        >
+                          <Text style={styles.categoryTitle}>{category}</Text>
+
+                          <AntDesign
+                            name={expandedCategories[category] ? 'up' : 'down'}
+                            size={16}
+                            color={colorScheme === 'dark' ? '#FFFFFF' : '#000000'}
+                          />
+                        </Pressable>
+
+                        {expandedCategories[category] &&
+                          merchCategories[category].map((item) => (
+                            <View key={item} style={styles.checkboxRow}>
+                              <Checkbox
+                                value={merchItems[item] || false}
+                                onValueChange={(v) =>
+                                  setMerchItems((prev) => ({
+                                    ...prev,
+                                    [item]: v,
+                                  }))
+                                }
+                              />
+
+                              <Text style={styles.checkboxLabel}>{item}</Text>
+                            </View>
+                          ))}
+                      </View>
+                    ))}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <View style={[styles.input, styles.lockedInput]}>
+                  <Text style={styles.uploadPhotoText}>Premium only</Text>
+                </View>
+
+                <Text style={styles.premiumLockText}>
+                  Upgrade to Premium to log merchandise purchases.
+                </Text>
+              </>
+            )}
+
 
           {hasAppAccess ? (
             <>
@@ -798,6 +895,7 @@ export default function LiveCheckInScreen() {
             </TouchableOpacity>
           </View>
         </ScrollView>
+      </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );

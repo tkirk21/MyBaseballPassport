@@ -608,6 +608,9 @@ export default function MapScreen() {
     loggedOutText:{fontSize:18,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center'},
     map:{flex:1},
     markerContainer:{alignItems:'center'},
+    modalArenaButton:{paddingVertical:6,paddingHorizontal:14,borderRadius:10,borderWidth:2,borderColor:'#B22222',alignSelf:'center',marginBottom:8,marginTop:-2},
+    modalArenaButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'600',fontSize:12},
+    modalViewText:{fontSize:11,color:colorScheme==='dark'?'#AFC7E6':'#666',textAlign:'center',marginBottom:10},
     modalContent:{width:'90%',maxHeight:'80%',flexDirection:'column',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,padding:20,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.3,shadowRadius:8,elevation:12},
     modalOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center'},
     pickerSelectedText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:17,fontWeight:'600'},
@@ -714,9 +717,38 @@ export default function MapScreen() {
                       }}
                     >
                       {(index === 0 || selectedArenaCheckIns[index - 1]?.arenaName !== ci.arenaName) && (
-                        <Text style={styles.arenaHeading}>
-                          {ci.arenaName}
-                        </Text>
+                        <>
+                          <Text style={styles.arenaHeading}>
+                            {ci.arenaName}
+                          </Text>
+
+                          <TouchableOpacity
+                            style={styles.modalArenaButton}
+                            onPress={() => {
+                              if (hasFullAccess || isInTrial) {
+                                const matchingPin = pins.find(
+                                  p => p.title === ci.arenaName
+                                );
+
+                                if (matchingPin) {
+                                  const arenaId = `${matchingPin.latitude.toFixed(6)}_${matchingPin.longitude.toFixed(6)}`;
+                                  router.push(`/arenas/${arenaId}`);
+                                }
+                              } else {
+                                setAlertMessage('Upgrade to Premium to open ballpark pages.');
+                                setAlertVisible(true);
+                              }
+                            }}
+                          >
+                            <Text style={styles.modalArenaButtonText}>
+                              Go to Ballpark Page
+                            </Text>
+                          </TouchableOpacity>
+
+                          <Text style={styles.modalViewText}>
+                            Click on check-in to view
+                          </Text>
+                        </>
                       )}
                       <Text style={styles.checkInDate}>
                         {new Date(ci.gameDate).toLocaleDateString()}

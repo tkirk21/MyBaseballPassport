@@ -74,6 +74,11 @@ export default function LeagueDetails() {
   }, [selectedArena]);
 
   const styles = StyleSheet.create({
+    arenaCard:{backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF',padding:14,borderTopWidth:2,borderTopColor:'#B22222'},
+    arenaCardTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',marginBottom:4},
+    arenaCardLocation:{fontSize:14,color:colorScheme==='dark'?'#CCCCCC':'#555555',marginBottom:12},
+    arenaButton:{backgroundColor:'#0A2940',paddingVertical:12,borderRadius:10,alignItems:'center'},
+    arenaButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:15},
     backButton:{position:'absolute',left:10,zIndex:10,padding:12},
     blueStrip:{position:'absolute',top:-30,left:0,right:0,height:120,zIndex:5},
     container:{padding:20,paddingBottom:80,alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',flexGrow:1},
@@ -90,7 +95,7 @@ export default function LeagueDetails() {
     markerImage:{width:40,height:40},
     markerText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
     map:{width:310,height:300,borderColor:'#B22222'},
-    mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16},
+    mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16,backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF'},
     pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
     safeArea:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
     scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
@@ -213,19 +218,7 @@ export default function LeagueDetails() {
                         key={`${a.league}-${a.arena}-${idx}`}
                         coordinate={{ latitude: a.latitude, longitude: a.longitude }}
                         anchor={{ x: 0.5, y: 0.5 }}
-                        title={a.arena}
-                        description={a.city || ''}
                         onPress={() => setSelectedArena(a)}
-                        calloutEnabled={true}
-                        onCalloutPress={() => {
-                          try {
-                            const arenaId = `${a.latitude.toFixed(6)}_${a.longitude.toFixed(6)}`;
-                            router.push(`/arenas/${arenaId}`);
-                          } catch {
-                            setAlertMessage('Unable to open arena.');
-                            setAlertVisible(true);
-                          }
-                        }}
                       >
                         <View style={[styles.pinCircle,{backgroundColor:a.colorCode,borderColor:a.colorCode2 || a.colorCode}]}>
                           <Image
@@ -240,6 +233,24 @@ export default function LeagueDetails() {
                       </Marker>
                   ))}
                 </MapView>
+
+                {selectedArena && (
+                  <View style={styles.arenaCard}>
+                    <Text style={styles.arenaCardTitle}>{selectedArena.arena}</Text>
+                    <Text style={styles.arenaCardLocation}>{selectedArena.city}</Text>
+
+                    <TouchableOpacity
+                      style={styles.arenaButton}
+                      onPress={() => {
+                        const arenaId = `${selectedArena.latitude.toFixed(6)}_${selectedArena.longitude.toFixed(6)}`;
+                        router.push(`/arenas/${arenaId}`);
+                      }}
+                    >
+                      <Text style={styles.arenaButtonText}>Go to Ballpark Page</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
               </View>
             </>
           ) : (
