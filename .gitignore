@@ -39,5 +39,4 @@ yarn-error.*
 
 firebase/*.json
 
-google-services.jsom
-GoogleService-Info.plist
+google-services.json
