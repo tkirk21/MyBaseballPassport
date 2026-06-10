@@ -321,6 +321,28 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           </View>
 
+          {/* Referrals */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Referrals</Text>
+
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => router.push('/settings/referrals')}
+            >
+              <Ionicons
+                name="people-outline"
+                size={26}
+                color={styles.rowIcon.color}
+              />
+              <Text style={styles.label}>Invite Friends</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={24}
+                color={styles.rowArrow.color}
+              />
+            </TouchableOpacity>
+          </View>
+
           {/* Subscription */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Subscription</Text>

@@ -240,6 +240,8 @@ export default function ProfileScreen() {
             location,
             favouriteTeams,
             imageUrl: uploadedImageUrl || imageUrl,
+            successfulReferrals: existingData?.successfulReferrals || 0,
+            freeMonthsEarned: existingData?.freeMonthsEarned || 0,
             createdAt: new Date(),
           },
           { merge: true }
