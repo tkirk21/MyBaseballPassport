@@ -43,6 +43,8 @@ export default function Signup() {
         await setDoc(ref, {
           trialStart: new Date(),
           checkInCount: 0,
+          successfulReferrals: 0,
+          freeMonthsEarned: 0,
           createdAt: new Date(),
         });
       } else if (!snap.data()?.trialStart) {
@@ -158,6 +160,14 @@ export default function Signup() {
 
           await ensureTrialStart(cred.user.uid);
 
+          const profileRef = doc(db, 'profiles', cred.user.uid);
+
+          await setDoc(profileRef, {
+            successfulReferrals: 0,
+            freeMonthsEarned: 0,
+            referralCode: '',
+          }, { merge: true });
+
           router.replace('/trial');
         } catch (error: any) {
           setAlertTitle('Facebook Sign-Up Failed');
@@ -182,6 +192,14 @@ export default function Signup() {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
 
       await ensureTrialStart(cred.user.uid);
+
+      const profileRef = doc(db, 'profiles', cred.user.uid);
+
+      await setDoc(profileRef, {
+        successfulReferrals: 0,
+        freeMonthsEarned: 0,
+        referralCode: '',
+      }, { merge: true });
 
       router.replace('/trial');
     } catch (error: any) {
@@ -293,6 +311,14 @@ export default function Signup() {
 
       await ensureTrialStart(cred.user.uid);
 
+      const profileRef = doc(db, 'profiles', cred.user.uid);
+
+      await setDoc(profileRef, {
+        successfulReferrals: 0,
+        freeMonthsEarned: 0,
+        referralCode: '',
+      }, { merge: true });
+
       router.replace('/trial');
     } catch (error: any) {
       if (error?.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -396,6 +422,15 @@ export default function Signup() {
       }
 
       await ensureTrialStart(cred.user.uid);
+
+      const profileRef = doc(db, 'profiles', cred.user.uid);
+
+      await setDoc(profileRef, {
+        successfulReferrals: 0,
+        freeMonthsEarned: 0,
+        referralCode: '',
+      }, { merge: true });
+
       router.replace('/trial');
     } catch (error: any) {
       if (error?.code === 'ERR_CANCELED') {
