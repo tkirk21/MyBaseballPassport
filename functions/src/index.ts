@@ -499,3 +499,50 @@ export const onFriendCheckin = onDocumentCreated(
     }
   }
 );
+
+/* ============================
+   REFERRAL FRIEND
+============================ */
+
+export const onProfileCreated = onDocumentCreated(
+  "profiles/{userId}",
+  async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
+
+    const profile = snapshot.data();
+    const referralCode = profile?.referredBy;
+
+    if (!referralCode) return;
+
+    const referrerSnap = await db
+      .collection("profiles")
+      .where("referralCode", "==", referralCode)
+      .limit(1)
+      .get();
+
+    if (referrerSnap.empty) return;
+
+    const referrerDoc = referrerSnap.docs[0];
+
+    const currentFreeMonths =
+      referrerDoc.data().freeMonthsEarned || 0;
+
+    const currentStartDate =
+      referrerDoc.data().freeMonthStartDate;
+
+    let updates: any = {
+      successfulReferrals:
+        (referrerDoc.data().successfulReferrals || 0) + 1,
+
+      freeMonthsEarned:
+        currentFreeMonths + 1,
+    };
+
+    if (currentStartDate) {
+      updates.freeMonthStartDate = currentStartDate;
+    }
+
+    await referrerDoc.ref.set(updates, { merge: true });
+  }
+);

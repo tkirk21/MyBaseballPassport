@@ -3,7 +3,7 @@
     "name": "BaseballPassport",
     "slug": "MyBaseballPassport",
     "scheme": "mybaseballpassport",
-    "version": "2.0.0",
+    "version": "2.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo_with_font.png",
     "userInterfaceStyle": "automatic",
@@ -14,11 +14,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-
-
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "buildNumber": "12",
+      "buildNumber": "15",
       "config": {
         "googleMapsApiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
       },
@@ -46,7 +44,7 @@
       }
     },
     "android": {
-      "versionCode": 23,
+      "versionCode": 26,
       "edgeToEdgeEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_logo.png",
@@ -55,14 +53,6 @@
       "userInterfaceStyle": "automatic",
       "package": "com.tkirk21.MyBaseballPassport",
       "googleServicesFile": "./google-services.json",
-      "config": {
-        "googleSignIn": {
-          "reservedClientId": "171882071353-dp1c0n12p70kvu4579h22rje79ov2e7o.apps.googleusercontent.com"
-        },
-        "googleMaps": {
-          "apiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
-        }
-      },
       "permissions": [
         "android.permission.INTERNET"
       ]
@@ -80,6 +70,14 @@
     },
     "plugins": [
       "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
       [
         "expo-notifications",
         {

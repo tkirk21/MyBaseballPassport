@@ -1,8 +1,8 @@
 //app/signup.tsx
 import { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { createUserWithEmailAndPassword, FacebookAuthProvider, fetchSignInMethodsForEmail, GoogleAuthProvider, OAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, FacebookAuthProvider, fetchSignInMethodsForEmail, GoogleAuthProvider, OAuthProvider, sendEmailVerification, signInWithCredential, signOut } from 'firebase/auth';
+import { collection, doc, getDoc, getDocs, query, setDoc, serverTimestamp, where } from 'firebase/firestore';
 import { auth, db, iosClientId, webClientId } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -12,6 +12,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
+import LoadingPuck from '@/components/loadingPuck';
 
 WebBrowser.maybeCompleteAuthSession();
 WebBrowser.warmUpAsync();
@@ -21,10 +22,13 @@ export default function Signup() {
   const colorScheme = useColorScheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [enteredReferralCode, setEnteredReferralCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
   if (!auth) return null;
   const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
     clientId: '1893308821318057',
@@ -45,6 +49,9 @@ export default function Signup() {
           checkInCount: 0,
           successfulReferrals: 0,
           freeMonthsEarned: 0,
+          freeMonthStartDate: null,
+          referredBy: enteredReferralCode.trim().toUpperCase() || '',
+          premiumUntil: null,
           createdAt: new Date(),
         });
       } else if (!snap.data()?.trialStart) {
@@ -162,12 +169,6 @@ export default function Signup() {
 
           const profileRef = doc(db, 'profiles', cred.user.uid);
 
-          await setDoc(profileRef, {
-            successfulReferrals: 0,
-            freeMonthsEarned: 0,
-            referralCode: '',
-          }, { merge: true });
-
           router.replace('/trial');
         } catch (error: any) {
           setAlertTitle('Facebook Sign-Up Failed');
@@ -188,21 +189,22 @@ export default function Signup() {
 
 
   const handleSignUp = async () => {
+    setLoading(true);
+
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-
+      await sendEmailVerification(cred.user);
       await ensureTrialStart(cred.user.uid);
-
       const profileRef = doc(db, 'profiles', cred.user.uid);
 
-      await setDoc(profileRef, {
-        successfulReferrals: 0,
-        freeMonthsEarned: 0,
-        referralCode: '',
-      }, { merge: true });
+      setAlertTitle('Verify Email');
+      setAlertMessage('A verification email has been sent. Please verify your email before logging in. If you do not see it, please check your Junk or Spam folder.');
+      setAlertVisible(true);
 
-      router.replace('/trial');
+      await signOut(auth);
+      setLoading(false);
     } catch (error: any) {
+      setLoading(false);
       if (error?.code === 'auth/email-already-in-use') {
         setAlertTitle('Account Exists');
         setAlertMessage('An account already exists with this email. Please go to the Login page.');
@@ -313,12 +315,6 @@ export default function Signup() {
 
       const profileRef = doc(db, 'profiles', cred.user.uid);
 
-      await setDoc(profileRef, {
-        successfulReferrals: 0,
-        freeMonthsEarned: 0,
-        referralCode: '',
-      }, { merge: true });
-
       router.replace('/trial');
     } catch (error: any) {
       if (error?.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -425,15 +421,10 @@ export default function Signup() {
 
       const profileRef = doc(db, 'profiles', cred.user.uid);
 
-      await setDoc(profileRef, {
-        successfulReferrals: 0,
-        freeMonthsEarned: 0,
-        referralCode: '',
-      }, { merge: true });
-
       router.replace('/trial');
     } catch (error: any) {
-      if (error?.code === 'ERR_CANCELED') {
+      if (error?.code === 'ERR_CANCEL]\
+          ED') {
         return;
       } else if (error?.code === 'auth/network-request-failed') {
         setAlertTitle('Network Error');
@@ -443,7 +434,7 @@ export default function Signup() {
         setAlertTitle('Permission Denied');
         setAlertMessage('You do not have permission to complete Apple sign-in.');
         setAlertVisible(true);
-      } else {
+    } else {
         setAlertTitle('Apple Sign-Up Failed');
         setAlertMessage(error?.message || 'Unknown error.');
         setAlertVisible(true);
@@ -532,6 +523,15 @@ export default function Signup() {
               autoCapitalize="none"
             />
 
+            <TextInput
+              style={styles.input}
+              placeholder="Referral Code (Optional)"
+              placeholderTextColor="#AAAAAA"
+              value={enteredReferralCode}
+              onChangeText={setEnteredReferralCode}
+              autoCapitalize="characters"
+            />
+
             <View style={styles.passwordContainer}>
               <TextInput
                 style={styles.passwordInput}
@@ -557,6 +557,7 @@ export default function Signup() {
           </View>
         </View>
       </ScrollView>
+      {loading && <LoadingPuck />}
       <Modal visible={alertVisible} transparent animationType="fade">
         <View style={styles.alertOverlay}>
           <View style={styles.alertContainer}>

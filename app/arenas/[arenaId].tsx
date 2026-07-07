@@ -54,6 +54,10 @@ export default function ArenaScreen() {
   const [historicalArenasData, setHistoricalArenasData] = useState(localHistoricalTeamsData);
   const [arenaHistoryData, setArenaHistoryData] = useState(localArenaHistoryData);
   const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
+  const [giveawayVisible, setGiveawayVisible] = useState(false);
+  const [selectedGiveaway, setSelectedGiveaway] = useState<any>(null);
+  const [fireworksVisible, setFireworksVisible] = useState(false);
+  const [selectedFireworks, setSelectedFireworks] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,31 +76,60 @@ export default function ArenaScreen() {
         setHistoricalArenasData(historical);
       }
 
-      const mlb = await loadSchedule('mlbSchedule.json');
-      const il = await loadSchedule('ilSchedule.json');
-      const pcl = await loadSchedule('pclSchedule.json');
-      const el = await loadSchedule('elSchedule.json');
-      const sl = await loadSchedule('slSchedule.json');
-      const tl = await loadSchedule('tlSchedule.json');
-      const mwl = await loadSchedule('mwlSchedule.json');
-      const nwl = await loadSchedule('nwlSchedule.json');
-      const sal = await loadSchedule('salSchedule.json');
-      const fsl = await loadSchedule('fslSchedule.json');
-      const cl = await loadSchedule('clSchedule.json');
-      const cal = await loadSchedule('calSchedule.json');
-      const acl = await loadSchedule('aclSchedule.json');
-      const fcl = await loadSchedule('fclSchedule.json');
-      const dsl = await loadSchedule('dslSchedule.json');
-      const fl = await loadSchedule('flSchedule.json');
-      const alpb = await loadSchedule('alpbSchedule.json');
-      const aapb = await loadSchedule('aapbSchedule.json');
-      const pl = await loadSchedule('plSchedule.json');
-      const npb = await loadSchedule('npbSchedule.json');
-      const kbo = await loadSchedule('kboSchedule.json');
-      const cpbl = await loadSchedule('cpblSchedule.json');
-      const lmb = await loadSchedule('lmbSchedule.json');
-      const abl = await loadSchedule('ablSchedule.json');
+      const [
+        mlb,
+        il,
+        pcl,
+        el,
+        sl,
+        tl,
+        mwl,
+        nwl,
+        sal,
+        fsl,
+        cl,
+        cal,
+        acl,
+        fcl,
+        dsl,
+        fl,
+        alpb,
+        aapb,
+        pl,
+        npb,
+        kbo,
+        cpbl,
+        lmb,
+        abl,
+      ] = await Promise.all([
+        loadSchedule('mlbSchedule.json'),
+        loadSchedule('ilSchedule.json'),
+        loadSchedule('pclSchedule.json'),
+        loadSchedule('elSchedule.json'),
+        loadSchedule('slSchedule.json'),
+        loadSchedule('tlSchedule.json'),
+        loadSchedule('mwlSchedule.json'),
+        loadSchedule('nwlSchedule.json'),
+        loadSchedule('salSchedule.json'),
+        loadSchedule('fslSchedule.json'),
+        loadSchedule('clSchedule.json'),
+        loadSchedule('calSchedule.json'),
+        loadSchedule('aclSchedule.json'),
+        loadSchedule('fclSchedule.json'),
+        loadSchedule('dslSchedule.json'),
+        loadSchedule('flSchedule.json'),
+        loadSchedule('alpbSchedule.json'),
+        loadSchedule('aapbSchedule.json'),
+        loadSchedule('plSchedule.json'),
+        loadSchedule('npbSchedule.json'),
+        loadSchedule('kboSchedule.json'),
+        loadSchedule('cpblSchedule.json'),
+        loadSchedule('lmbSchedule.json'),
+        loadSchedule('ablSchedule.json'),
+      ]);
 
+      const now = Date.now();
+      const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
       const allSchedules = [
         ...mlb,
         ...il,
@@ -122,7 +155,10 @@ export default function ArenaScreen() {
         ...cpbl,
         ...lmb,
         ...abl,
-      ];
+      ].filter((game) => {
+        const gameTime = new Date(game.date).getTime();
+        return !isNaN(gameTime) && gameTime >= thirtyDaysAgo;
+      });
 
       setCombinedSchedule(
         allSchedules.map((game) => ({
@@ -445,17 +481,19 @@ export default function ArenaScreen() {
     }
   };
 
-  // Filter & sort upcoming games at this arena
-  let upcomingGames = combinedSchedule
-    .filter((game) => {
-      if (!game?.date) return false;
-      if (game.arena !== arena.arena) return false;
+   // Filter & sort upcoming games at this arena
+   let upcomingGames = combinedSchedule
+     .filter((game) => {
+       if (!arena) return false;
+       if (!game?.date) return false;
+       if (game.arena !== arena.arena) return false;
 
-      const gameDate = new Date(game.date);
-      if (isNaN(gameDate.getTime())) return false;
+       const gameDate = new Date(game.date);
+       if (isNaN(gameDate.getTime())) return false;
 
-      return gameDate.getTime() > Date.now();
-    })
+       return gameDate.getTime() > Date.now();
+     })
+
     .sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
@@ -708,9 +746,9 @@ export default function ArenaScreen() {
   };
 
   const styles = StyleSheet.create({
-    alertButton: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666666' : '#2F4F68', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 30 },
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#F5F1E6',borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
     alertButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#1F2937', fontWeight: '700', fontSize: 16 },
-    alertContainer: { backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#FFFFFF', borderRadius: 16, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 3, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 16 },
+    alertContainer:{backgroundColor:colorScheme==='dark'?'#0A2940':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
     alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
     alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
     alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
@@ -739,6 +777,7 @@ export default function ArenaScreen() {
     gameCard: { marginBottom: 12, },
     gameText: { fontSize: 14, color: colorScheme === 'dark' ? '#FFFFFF' : '#1F2937', textAlign: 'center' },
     gameTextBold: { fontSize: 16, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center' },
+    giveawayEmoji:{fontSize:24},
     header: { padding: 34, alignItems: 'center', fontWeight: 'bold', color: '#0D2C42', marginBottom: 15, textAlign: 'center', },
     infoBox: { backgroundColor: 'rgba(255,255,255,0.95)', margin: 4, padding: 16, marginHorizontal: 20, borderRadius: 12, borderWidth: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, alignItems: 'center', },
     label: { fontSize: 14, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: 'bold', marginTop: 12 },
@@ -759,6 +798,8 @@ export default function ArenaScreen() {
     statCard: { marginHorizontal: 20, marginTop: 8, marginBottom: 8, paddingVertical: 20, borderRadius: 60, alignItems: 'center', width: 120, alignSelf: 'center', borderWidth: 4, borderColor: colorScheme === 'dark' ? lightColor : (arena.colorCode || '#0D2C42') },
     statLabel: { marginTop: 4, fontSize: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#334155', letterSpacing: 0.3 },
     statNumber: { fontSize: 24, fontWeight: '800', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', lineHeight: 24 },
+    timeGiveawayButton:{marginLeft:8},
+    timeRow:{flexDirection:'row',justifyContent:'center',alignItems:'center'},
     tipCard: { width: '100%', backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.65)', borderRadius: 10, padding: 12, marginBottom: 14 },
     tipUserName: { color: '#fff', fontSize: 13, textAlign: 'center', marginTop: 6 },
     tipUserRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, marginBottom: 6 },
@@ -789,6 +830,62 @@ export default function ArenaScreen() {
                 <Text style={styles.alertButtonText}>OK</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={giveawayVisible} transparent animationType="fade">
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            {(selectedGiveaway
+              ? (Array.isArray(selectedGiveaway) ? selectedGiveaway : [selectedGiveaway])
+              : []
+            ).map((giveaway: any, index: number) => (
+              <View key={index} style={{ marginBottom: 16 }}>
+                <Text style={styles.alertTitle}>
+                  {giveaway.title}
+                </Text>
+
+                <Text style={styles.alertMessage}>
+                  {giveaway.details}
+                </Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.alertButton}
+              onPress={() => setGiveawayVisible(false)}
+            >
+              <Text style={styles.alertButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={fireworksVisible} transparent animationType="fade">
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            {(selectedFireworks
+              ? (Array.isArray(selectedFireworks) ? selectedFireworks : [selectedFireworks])
+              : []
+            ).map((fireworks: any, index: number) => (
+              <View key={index} style={{ marginBottom: 16 }}>
+                <Text style={styles.alertTitle}>
+                  {fireworks.title}
+                </Text>
+
+                <Text style={styles.alertMessage}>
+                  {fireworks.details}
+                </Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.alertButton}
+              onPress={() => setFireworksVisible(false)}
+            >
+              <Text style={styles.alertButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -936,13 +1033,13 @@ export default function ArenaScreen() {
           <Text style={styles.label}>Teams</Text>
           {(
             arenaData.filter(a =>
-              a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+              (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
             ).length > 0
               ? arenaData.filter(a =>
-                  a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+                  (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
                 )
               : historicalArenasData.filter(a =>
-                  a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+                  (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
                 )
           ).map((a, index) => (
             <Text key={index} style={styles.value}>
@@ -955,13 +1052,13 @@ export default function ArenaScreen() {
             ...new Set(
               (
                 arenaData.filter(a =>
-                  a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+                  (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
                 ).length > 0
                   ? arenaData.filter(a =>
-                      a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+                      (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
                     )
                   : historicalArenasData.filter(a =>
-                      a.arena.trim().toLowerCase() === arena.arena.trim().toLowerCase()
+                      (a.arena ?? '').trim().toLowerCase() === (arena.arena ?? '').trim().toLowerCase()
                     )
               ).map(a => a.league)
             )
@@ -1035,9 +1132,36 @@ export default function ArenaScreen() {
                 <Text style={styles.gameTextBold}>
                   {game.homeTeam} vs {game.awayTeam}
                 </Text>
-                <Text style={styles.gameText}>
-                  {format(new Date(game.date), 'EEE, MMM d – h:mm a')}
-                </Text>
+
+                <View style={styles.timeRow}>
+                  {hasAppAccess && game.fireworks && (
+                    <TouchableOpacity
+                      style={styles.timeGiveawayButton}
+                      onPress={() => {
+                        setSelectedFireworks(game.fireworks);
+                        setFireworksVisible(true);
+                      }}
+                    >
+                      <Text style={styles.giveawayEmoji}>🎆 </Text>
+                    </TouchableOpacity>
+                  )}
+
+                  <Text style={styles.gameText}>
+                    {format(new Date(game.date), 'EEE, MMM d – h:mm a')}
+                  </Text>
+
+                  {hasAppAccess && game.giveaway && (
+                    <TouchableOpacity
+                      style={styles.timeGiveawayButton}
+                      onPress={() => {
+                        setSelectedGiveaway(game.giveaway);
+                        setGiveawayVisible(true);
+                      }}
+                    >
+                      <Text style={styles.giveawayEmoji}>🎁</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             ))}
           </View>
@@ -1278,12 +1402,19 @@ export default function ArenaScreen() {
         )}
 
         <TouchableOpacity
-          style={styles.button}
+          style={[
+            styles.button,
+            { opacity: combinedSchedule.length === 0 ? 0.5 : 1 }
+          ]}
           onPress={handleCheckIn}
-          disabled={checkingIn}
+          disabled={checkingIn || combinedSchedule.length === 0}
         >
           <Text style={styles.buttonText}>
-            {checkingIn ? 'Checking in...' : 'Check-in to live game'}
+            {combinedSchedule.length === 0
+              ? 'Loading Schedule...'
+              : checkingIn
+                ? 'Checking in...'
+                : 'Check-in to live game'}
           </Text>
         </TouchableOpacity>
       </ScrollView>

@@ -121,8 +121,8 @@ export default function ProfileScreen() {
   const [leagues, setLeagues] = useState<any[]>([]);
 
   const [recentCheckIns, setRecentCheckIns] = useState<any[]>([]);
-  const [arenasVisited, setArenasVisited] = useState(0);
-  const [teamsWatched, setTeamsWatched] = useState(0);
+  const [arenasVisited, setArenasVisited] = useState<number | null>(null);
+  const [teamsWatched, setTeamsWatched] = useState<number | null>(null);
   const [mostWatchedTeams, setMostWatchedTeams] = useState<
     { team: string; count: number }[]
   >([]);
@@ -240,9 +240,13 @@ export default function ProfileScreen() {
             location,
             favouriteTeams,
             imageUrl: uploadedImageUrl || imageUrl,
+            checkInCount: existingData?.checkInCount || 0,
             successfulReferrals: existingData?.successfulReferrals || 0,
             freeMonthsEarned: existingData?.freeMonthsEarned || 0,
-            createdAt: new Date(),
+            premiumUntil: existingData?.premiumUntil || null,
+            referralCode: existingData?.referralCode || '',
+            referredBy: existingData?.referredBy || '',
+            createdAt: existingData?.createdAt || new Date(),
           },
           { merge: true }
         );
@@ -976,12 +980,12 @@ export default function ProfileScreen() {
             <View style={styles.statsRow}>
               <View style={styles.statSection}>
                 <Text style={styles.sectionTitle}>Ballparks Visited</Text>
-                <Text style={styles.cardTextBold}>{arenasVisited}</Text>
+                <Text style={styles.cardTextBold}>{arenasVisited ?? '—'}</Text>
               </View>
               {hasAppAccess ? (
                 <View style={styles.statSection}>
                   <Text style={styles.sectionTitle}>Teams Watched</Text>
-                  <Text style={styles.cardTextBold}>{teamsWatched}</Text>
+                  <Text style={styles.cardTextBold}>{teamsWatched ?? '—'}</Text>
                 </View>
               ) : (
                 <View style={[styles.statSection, styles.blurredSection]}>

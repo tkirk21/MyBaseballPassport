@@ -266,7 +266,18 @@ export default function Login() {
     setLoading(true);
     try {
       await AsyncStorage.setItem('activeLogin', 'true');
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+      if (!userCredential.user.emailVerified) {
+        await signOut(auth);
+
+        setAlertTitle('Email Not Verified');
+        setAlertMessage('Please verify your email before logging in.');
+        setAlertVisible(true);
+
+        setLoading(false);
+        return;
+      }
 
       if (stayLoggedIn) {
         await AsyncStorage.setItem('stayLoggedIn', 'true');
@@ -671,7 +682,6 @@ export default function Login() {
                 style={{ width: 40, height: 40 }}
                 onPress={handleAppleSignIn}
               />
-
             </View>
 
             <TextInput

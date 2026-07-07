@@ -619,7 +619,7 @@ export default function MapScreen() {
     pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
     pinImage:{width:40,height:40},
     shareButton:{position:'absolute',bottom:30,left:20,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',padding:8,borderRadius:24,borderWidth:3,borderColor:colorScheme==='dark'?'#B55555':'#B22222',zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4}},
-    teamCodeText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7},
+    teamCodeText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     travelLinesButton:{position:'absolute',bottom:30,alignSelf:'center',backgroundColor:colorScheme==='dark'?'#243B5A':'#E0E7FF',paddingHorizontal:20,paddingVertical:12,borderRadius:30,zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4},borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68'},
     travelLinesButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'bold',fontSize:16},
     viewShotContainer:{flex:1},
@@ -726,8 +726,9 @@ export default function MapScreen() {
                             style={styles.modalArenaButton}
                             onPress={() => {
                               if (hasFullAccess || isInTrial) {
+                                const currentArenaName = getCurrentArenaName(ci.arenaName);
                                 const matchingPin = pins.find(
-                                  p => p.title === ci.arenaName
+                                  p => norm(p.title) === norm(currentArenaName)
                                 );
 
                                 if (matchingPin) {

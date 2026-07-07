@@ -102,7 +102,7 @@ export default function UserProfileScreen() {
     markerContainer: { alignItems: 'center', },
     markerInner: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center', position: 'relative', },
     markerImage: { width: 36, height: 36, },
-    markerText:{position:'absolute',top:3,left:9,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
+    markerText:{position:'absolute',top:3,left:9,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     miniMap: { width: '100%', height: 280, borderRadius: 12, overflow: 'hidden', marginTop: 8, },
     pinCircle:{width:36,height:36,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
     placeholder: { fontSize: 16, color: '#374151', textAlign: 'center' },

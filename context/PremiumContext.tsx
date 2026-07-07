@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { auth, db } from '@/firebaseConfig';
-import { doc, getDoc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import Purchases from 'react-native-purchases';
 
 type PremiumContextType = {
@@ -11,6 +11,8 @@ type PremiumContextType = {
   isSubscribed: boolean;
   isLoadingPremium: boolean;
   checkInCount: number;
+  customerInfo: any;
+  subscriptionExpirationDate: string | null;
 };
 
 const PremiumContext = createContext<PremiumContextType | undefined>(undefined);
@@ -21,6 +23,8 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [isLoadingPremium, setIsLoadingPremium] = useState(true);
     const [checkInCount, setCheckInCount] = useState(0);
+    const [customerInfo, setCustomerInfo] = useState<any>(null);
+    const [subscriptionExpirationDate, setSubscriptionExpirationDate] = useState<string | null>(null);
 
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
 
@@ -102,7 +106,12 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
 
           await setDoc(
             profileRef,
-            { trialStart: serverTimestamp(), checkInCount: 0 },
+            {
+              trialStart: serverTimestamp(),
+              checkInCount: 0,
+              freeMonthsEarned: 0,
+              freeMonthStartDate: null,
+            },
             { merge: true }
           );
 
@@ -114,6 +123,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         }
 
         const data = profileSnap.data();
+
         const today = new Date().toLocaleDateString('en-CA');
         setCheckInCount(data?.[`dailyCheckInCounts.${today}`] ?? 0);
 
@@ -126,9 +136,25 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         });
         // unsubscribeProfile now handles live updates
 
+        let expirationDate: Date | null = null;
+
         // STEP 2A: REVENUECAT ENTITLEMENT
         try {
           const customerInfo = await Purchases.getCustomerInfo();
+          console.log('RC CUSTOMER INFO:', JSON.stringify(customerInfo, null, 2));
+          setCustomerInfo(customerInfo);
+
+          const entitlement =
+            customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'];
+
+          setSubscriptionExpirationDate(
+            entitlement?.expirationDate ?? null
+          );
+
+          expirationDate =
+            entitlement?.expirationDate
+              ? new Date(entitlement.expirationDate)
+              : null;
 
           const hasPremium =
             customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
@@ -140,19 +166,80 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
              setIsLoadingPremium(false);
               return;
            } else {
-            setIsSubscribed(false);
-          }
+             setIsSubscribed(false);
+
+
+           }
         } catch (e) {
           setIsSubscribed(false);
         }
 
         removeRcListener = Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+          setCustomerInfo(customerInfo);
+
+          const entitlement =
+            customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'];
+
+          setSubscriptionExpirationDate(
+            entitlement?.expirationDate ?? null
+          );
+
           const hasPremium =
             customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
 
           setIsSubscribed(hasPremium);
           setHasFullAccess(hasPremium);
         });
+
+        if (
+          !data?.freeMonthStartDate &&
+          (data?.freeMonthsEarned || 0) > 0 &&
+          (
+            expirationDate === null ||
+            expirationDate <= new Date()
+          )
+        ) {
+          await updateDoc(profileRef, {
+            freeMonthStartDate: serverTimestamp(),
+          });
+
+          setHasFullAccess(true);
+          setIsInTrial(false);
+          setIsSubscribed(false);
+          setIsLoadingPremium(false);
+          return;
+        }
+
+        if (data?.freeMonthStartDate) {
+          const startDate = data.freeMonthStartDate?.toDate
+            ? data.freeMonthStartDate.toDate()
+            : new Date(data.freeMonthStartDate);
+
+          const expired =
+            Date.now() - startDate.getTime() >
+            30 * 24 * 60 * 60 * 1000;
+
+          if (!expired) {
+            setHasFullAccess(true);
+            setIsInTrial(false);
+            setIsSubscribed(false);
+            setIsLoadingPremium(false);
+            return;
+          }
+
+          if ((data?.freeMonthsEarned || 0) > 0) {
+            await updateDoc(profileRef, {
+              freeMonthsEarned: (data.freeMonthsEarned || 0) - 1,
+              freeMonthStartDate: serverTimestamp(),
+            });
+
+            setHasFullAccess(true);
+            setIsInTrial(false);
+            setIsSubscribed(false);
+            setIsLoadingPremium(false);
+            return;
+          }
+        }
 
         // STEP 2B: TRIAL
         if (!data?.trialStart) {
@@ -198,7 +285,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
   }, [currentUser?.uid]);
 
   return (
-    <PremiumContext.Provider value={{ hasFullAccess, isInTrial, isSubscribed, isLoadingPremium, checkInCount }}>
+    <PremiumContext.Provider value={{ hasFullAccess, isInTrial, isSubscribed, isLoadingPremium, checkInCount, customerInfo, subscriptionExpirationDate }}>
       {children}
     </PremiumContext.Provider>
   );

@@ -50,6 +50,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       const historical = await loadHistoricalTeams();
 
       setAllArenas(data);
+      setArenas(data);
       setArenaHistoryData(history || []);
       if (historical.length > 0) {
         setHistoricalTeamsData(historical);
@@ -334,7 +335,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
   useEffect(() => {
     const selectedDate = gameDate;
 
-    const processed = (allArenas || [])
+    const processed = arenas
       .filter(arena => !arena.startDate || selectedDate >= new Date(arena.startDate))
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
@@ -347,7 +348,7 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       })
       .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
 
-    const allArenasRaw = [...processed, ...processedHistorical];
+    const allArenasRaw = [...processedHistorical, ...processed];
 
     // Filter out anything missing real league
     const allArenas = allArenasRaw.filter(a =>
@@ -356,11 +357,29 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
       a.league.trim() !== ''
     );
 
+    setAllArenas(allArenas);
     setArenas(allArenas);
 
     const leagues = [...new Set(allArenas.map(a => a.league))];
-    setLeagueItems(leagues.map(l => ({ label: l, value: l })));
-  }, [gameDate]);
+
+    let leagueOptions = leagues.map(l => ({ label: l, value: l }));
+
+    if (
+      selectedLeague &&
+      !leagueOptions.some(l => l.value === selectedLeague)
+    ) {
+      leagueOptions.push({
+        label: selectedLeague,
+        value: selectedLeague
+      });
+    }
+
+    leagueOptions.sort((a, b) =>
+      a.label.localeCompare(b.label)
+    );
+
+    setLeagueItems(leagueOptions);
+  }, [gameDate, selectedLeague]);
 
   // League + Date → populate arenas & teams
   useEffect(() => {
@@ -591,9 +610,10 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     categoryContainer: { marginBottom: 14 },
     categoryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, backgroundColor: colorScheme === 'dark' ? '#334155' : '#E0E7FF', paddingHorizontal: 16, borderRadius: 8 },
     categoryTitle: { fontSize: 16, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
-    checkboxLabel: { marginLeft: 12, fontSize: 15, color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42' },
+    label: { fontSize: 16, fontWeight: '600', marginTop: 18, marginBottom: 6, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
     checkboxRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingHorizontal: 16 },
     choiceButton: { borderWidth: 0, borderRadius: 30, paddingVertical: 8, paddingHorizontal: 16, marginRight: 10 },
+    checkboxLabel:{marginLeft:8,fontSize:16,color:colorScheme==='dark'?'#FFFFFF':'#000000'},
     choiceButtonSelected: { backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#E0E7FF', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#5E819F' : '#0D2C42' },
     choiceButtonText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontSize: 16, fontWeight: '600' },
     choiceButtonTextSelected: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: '700' },

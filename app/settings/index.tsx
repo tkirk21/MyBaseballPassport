@@ -528,7 +528,7 @@ export default function SettingsScreen() {
 
           <View style={styles.version}>
             <Text style={styles.versionText}>
-              Version {Constants.expoConfig?.version || '2.0.0'}
+              Version {Constants.expoConfig?.version || '2.2.0'}
             </Text>
           </View>
 

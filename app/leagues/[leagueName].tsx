@@ -77,8 +77,8 @@ export default function LeagueDetails() {
     arenaCard:{backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF',padding:14,borderTopWidth:2,borderTopColor:'#B22222'},
     arenaCardTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',marginBottom:4},
     arenaCardLocation:{fontSize:14,color:colorScheme==='dark'?'#CCCCCC':'#555555',marginBottom:12},
-    arenaButton:{backgroundColor:'#0A2940',paddingVertical:12,borderRadius:10,alignItems:'center'},
-    arenaButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:15},
+    arenaButton:{backgroundColor:colorScheme==='dark'?'#0D2C42':'#0A2940',paddingVertical:12,paddingHorizontal:20,borderRadius:30,alignItems:'center',borderWidth:2,borderColor:'#B22222',alignSelf:'center',minWidth:220},
+    arenaButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:16},
     backButton:{position:'absolute',left:10,zIndex:10,padding:12},
     blueStrip:{position:'absolute',top:-30,left:0,right:0,height:120,zIndex:5},
     container:{padding:20,paddingBottom:80,alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',flexGrow:1},
@@ -93,7 +93,7 @@ export default function LeagueDetails() {
     logoImage:{width:170,height:170,marginTop:-101},
     markerContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
     markerImage:{width:40,height:40},
-    markerText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center'},
+    markerText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     map:{width:310,height:300,borderColor:'#B22222'},
     mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16,backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF'},
     pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
@@ -101,6 +101,14 @@ export default function LeagueDetails() {
     scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
     title:{fontSize:26,fontWeight:'bold',marginBottom:12,textAlign:'center',color:colorScheme==='dark'?'#FFFFFF':'#0A2940'}
   });
+
+  if (loading || leagues.length === 0) {
+    return (
+      <View style={styles.loadingContainer}>
+        <LoadingPuck size={320} />
+      </View>
+    );
+  }
 
   if (!league) {
     return (
@@ -132,11 +140,7 @@ export default function LeagueDetails() {
     );
   }
 
-  return loading ? (
-    <View style={styles.loadingContainer}>
-      <LoadingPuck size={320} />
-    </View>
-  ) : (
+  return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#0A2940' : '#EDEEF0' }}>
       <View style={styles.fullContainer}>
         <View

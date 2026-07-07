@@ -40,30 +40,57 @@ export default function CheckInScreen() {
       const data = await loadArenas();
       setArenaData(data);
 
-      const mlb = await loadSchedule('mlbSchedule.json');
-      const il = await loadSchedule('ilSchedule.json');
-      const pcl = await loadSchedule('pclSchedule.json');
-      const el = await loadSchedule('elSchedule.json');
-      const sl = await loadSchedule('slSchedule.json');
-      const tl = await loadSchedule('tlSchedule.json');
-      const mwl = await loadSchedule('mwlSchedule.json');
-      const nwl = await loadSchedule('nwlSchedule.json');
-      const sal = await loadSchedule('salSchedule.json');
-      const fsl = await loadSchedule('fslSchedule.json');
-      const cl = await loadSchedule('clSchedule.json');
-      const cal = await loadSchedule('calSchedule.json');
-      const acl = await loadSchedule('aclSchedule.json');
-      const fcl = await loadSchedule('fclSchedule.json');
-      const dsl = await loadSchedule('dslSchedule.json');
-      const fl = await loadSchedule('flSchedule.json');
-      const alpb = await loadSchedule('alpbSchedule.json');
-      const aapb = await loadSchedule('aapbSchedule.json');
-      const pl = await loadSchedule('plSchedule.json');
-      const npb = await loadSchedule('npbSchedule.json');
-      const kbo = await loadSchedule('kboSchedule.json');
-      const cpbl = await loadSchedule('cpblSchedule.json');
-      const lmb = await loadSchedule('lmbSchedule.json');
-      const abl = await loadSchedule('ablSchedule.json');
+      const [
+        mlb,
+        il,
+        pcl,
+        el,
+        sl,
+        tl,
+        mwl,
+        nwl,
+        sal,
+        fsl,
+        cl,
+        cal,
+        acl,
+        fcl,
+        dsl,
+        fl,
+        alpb,
+        aapb,
+        pl,
+        npb,
+        kbo,
+        cpbl,
+        lmb,
+        abl,
+      ] = await Promise.all([
+        loadSchedule('mlbSchedule.json'),
+        loadSchedule('ilSchedule.json'),
+        loadSchedule('pclSchedule.json'),
+        loadSchedule('elSchedule.json'),
+        loadSchedule('slSchedule.json'),
+        loadSchedule('tlSchedule.json'),
+        loadSchedule('mwlSchedule.json'),
+        loadSchedule('nwlSchedule.json'),
+        loadSchedule('salSchedule.json'),
+        loadSchedule('fslSchedule.json'),
+        loadSchedule('clSchedule.json'),
+        loadSchedule('calSchedule.json'),
+        loadSchedule('aclSchedule.json'),
+        loadSchedule('fclSchedule.json'),
+        loadSchedule('dslSchedule.json'),
+        loadSchedule('flSchedule.json'),
+        loadSchedule('alpbSchedule.json'),
+        loadSchedule('aapbSchedule.json'),
+        loadSchedule('plSchedule.json'),
+        loadSchedule('npbSchedule.json'),
+        loadSchedule('kboSchedule.json'),
+        loadSchedule('cpblSchedule.json'),
+        loadSchedule('lmbSchedule.json'),
+        loadSchedule('ablSchedule.json'),
+      ]);
 
       setCombinedSchedule([
         ...mlb,
@@ -262,10 +289,16 @@ export default function CheckInScreen() {
 
         <View style={styles.buttons}>
           <TouchableOpacity
-            style={styles.buttonPrimary}
+            style={[
+              styles.buttonPrimary,
+              { opacity: combinedSchedule.length === 0 ? 0.5 : 1 }
+            ]}
             onPress={handleLiveCheckIn}
+            disabled={combinedSchedule.length === 0}
           >
-            <Text style={styles.buttonText}>Live Game</Text>
+            <Text style={styles.buttonText}>
+              {combinedSchedule.length === 0 ? 'Loading Schedule...' : 'Live Game'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity

@@ -592,7 +592,6 @@ export default function FriendsTab() {
         const q = query(
           collection(db, 'profiles'),
           orderBy('name'),
-          limit(20)
         );
 
         const snap = await getDocs(q);
@@ -959,7 +958,7 @@ export default function FriendsTab() {
                     style={[styles.tabButton, activeTab === 'arenas' && styles.tabActive]}
                   >
                     <Text style={[styles.tabText, activeTab === 'arenas' && styles.tabTextActive]}>
-                      Arenas Visited
+                      Ballparks Visited
                     </Text>
                   </TouchableOpacity>
 

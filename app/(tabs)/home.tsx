@@ -56,6 +56,10 @@ export default function HomeScreen() {
   const [leaguesData, setLeaguesData] = useState<any[]>([]);
   const leaderboardShotRef = useRef<ViewShot>(null);
   const [dropdownVisible,setDropdownVisible]=useState(false);
+  const [giveawayVisible, setGiveawayVisible] = useState(false);
+  const [selectedGiveaway, setSelectedGiveaway] = useState<any>(null);
+  const [fireworksVisible, setFireworksVisible] = useState(false);
+  const [selectedFireworks, setSelectedFireworks] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,30 +70,57 @@ export default function HomeScreen() {
       const leagues = await loadLeagues();
       setLeaguesData(leagues);
 
-      const mlb = await loadSchedule('mlbSchedule.json');
-      const il = await loadSchedule('ilSchedule.json');
-      const pcl = await loadSchedule('pclSchedule.json');
-      const el = await loadSchedule('elSchedule.json');
-      const sl = await loadSchedule('slSchedule.json');
-      const tl = await loadSchedule('tlSchedule.json');
-      const mwl = await loadSchedule('mwlSchedule.json');
-      const nwl = await loadSchedule('nwlSchedule.json');
-      const sal = await loadSchedule('salSchedule.json');
-      const fsl = await loadSchedule('fslSchedule.json');
-      const cl = await loadSchedule('clSchedule.json');
-      const cal = await loadSchedule('calSchedule.json');
-      const acl = await loadSchedule('aclSchedule.json');
-      const fcl = await loadSchedule('fclSchedule.json');
-      const dsl = await loadSchedule('dslSchedule.json');
-      const fl = await loadSchedule('flSchedule.json');
-      const alpb = await loadSchedule('alpbSchedule.json');
-      const aapb = await loadSchedule('aapbSchedule.json');
-      const pl = await loadSchedule('plSchedule.json');
-      const npb = await loadSchedule('npbSchedule.json');
-      const kbo = await loadSchedule('kboSchedule.json');
-      const cpbl = await loadSchedule('cpblSchedule.json');
-      const lmb = await loadSchedule('lmbSchedule.json');
-      const abl = await loadSchedule('ablSchedule.json');
+      const [
+        mlb,
+        il,
+        pcl,
+        el,
+        sl,
+        tl,
+        mwl,
+        nwl,
+        sal,
+        fsl,
+        cl,
+        cal,
+        acl,
+        fcl,
+        dsl,
+        fl,
+        alpb,
+        aapb,
+        pl,
+        npb,
+        kbo,
+        cpbl,
+        lmb,
+        abl,
+      ] = await Promise.all([
+        loadSchedule('mlbSchedule.json'),
+        loadSchedule('ilSchedule.json'),
+        loadSchedule('pclSchedule.json'),
+        loadSchedule('elSchedule.json'),
+        loadSchedule('slSchedule.json'),
+        loadSchedule('tlSchedule.json'),
+        loadSchedule('mwlSchedule.json'),
+        loadSchedule('nwlSchedule.json'),
+        loadSchedule('salSchedule.json'),
+        loadSchedule('fslSchedule.json'),
+        loadSchedule('clSchedule.json'),
+        loadSchedule('calSchedule.json'),
+        loadSchedule('aclSchedule.json'),
+        loadSchedule('fclSchedule.json'),
+        loadSchedule('dslSchedule.json'),
+        loadSchedule('flSchedule.json'),
+        loadSchedule('alpbSchedule.json'),
+        loadSchedule('aapbSchedule.json'),
+        loadSchedule('plSchedule.json'),
+        loadSchedule('npbSchedule.json'),
+        loadSchedule('kboSchedule.json'),
+        loadSchedule('cpblSchedule.json'),
+        loadSchedule('lmbSchedule.json'),
+        loadSchedule('ablSchedule.json'),
+      ]);
 
       setCombinedSchedule([
         ...mlb,
@@ -839,9 +870,10 @@ export default function HomeScreen() {
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
     alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
     alertButton:{backgroundColor:colorScheme==='dark'?'#2E5A8A':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
-    alertButtonText:{color:'#FFFFFF',fontWeight:'700',fontSize:16},
+    alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontWeight:'700',fontSize:16},
     arenaCard:{backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',padding:12,borderRadius:12,marginBottom:12,width:'100%',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.12,shadowRadius:6,elevation:6},
     background:{flex:1,width:'100%',height:'100%'},
+    blurredSection:{opacity:0.75},
     buttonsRow:{flexDirection:'row',justifyContent:'space-between',marginTop:8},
     cardText:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#0D131F',textAlign:'center'},
     countdownMini:{fontSize:14,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#0D131F',textAlign:'center',marginBottom:10,opacity:0.9},
@@ -862,6 +894,8 @@ export default function HomeScreen() {
     filterChipText:{fontSize:14,color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
     filterChipTextActive:{color:'#FFFFFF',fontWeight:'700'},
     gameCard:{flexDirection:'column',backgroundColor:colorScheme==='dark'?'#243B5A':'#F0F4F8',padding:12,borderRadius:10,marginBottom:10,width:'100%'},
+    giveawayButton:{backgroundColor:'#FFD54A',width:40,height:40,borderRadius:20,borderWidth:2,borderColor:'#B22222',alignItems:'center',justifyContent:'center',marginHorizontal:6,marginTop:6},
+    giveawayEmoji:{fontSize:24},
     innerContainer:{paddingTop:Constants.statusBarHeight+40,paddingHorizontal:20,minHeight:Dimensions.get('window')},
     lbAvatar:{width:36,height:36,borderRadius:18,marginRight:10},
     lbEmptyText:{textAlign:'center',color:colorScheme==='dark'?'#F5F1E6':'#C9D1D9',paddingVertical:20},
@@ -888,7 +922,7 @@ export default function HomeScreen() {
     pickerOverlayArrowContainer:{position:'absolute',right:12,top:0,bottom:0,justifyContent:'center',pointerEvents:'none'},
     pickerSelectedText:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontSize:16},
     pickerArrow:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557'},
-    placeholder:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#374151',textAlign:'center'},
+    placeholder:{fontSize:16,color:colorScheme==='dark'?'#F5F1E6':'#1D3557',textAlign:'center'},
     rank:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#F5F1E6':'#4B5563',width:50},
     rankGold:{color:colorScheme==='dark'?'#F5F1E6':'#1D3557',fontWeight:'bold'},
     scrollContainer:{flexGrow:1},
@@ -901,7 +935,8 @@ export default function HomeScreen() {
     tabText:{fontSize:12,color:colorScheme==='dark'?'#F5F1E6':'#000000',fontWeight:'600',textAlign:'center'},
     tabTextActive:{color:'#F5F1E6',fontWeight:'700'},
     tabRow:{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:8,marginBottom:16},
-    blurredSection:{opacity:0.75},
+    timeRow:{flexDirection:'row',justifyContent:'center',alignItems:'center'},
+    timeGiveawayButton:{marginLeft:8},
     upgradePrompt:{color:'#B22222',fontSize:18,fontWeight:'bold',textAlign:'center',marginTop:12,paddingHorizontal:16},
   });
 
@@ -935,6 +970,62 @@ export default function HomeScreen() {
             <Text style={styles.alertMessage}>{alertMessage}</Text>
             <TouchableOpacity onPress={() => setAlertVisible(false)} style={styles.alertButton}>
               <Text style={styles.alertButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={giveawayVisible} transparent animationType="fade">
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            {(selectedGiveaway
+              ? (Array.isArray(selectedGiveaway) ? selectedGiveaway : [selectedGiveaway])
+              : []
+            ).map((item: any, index: number) => (
+              <View key={index} style={{ marginBottom: 16 }}>
+                <Text style={styles.alertTitle}>
+                  {item.title}
+                </Text>
+
+                <Text style={styles.alertMessage}>
+                  {item.details}
+                </Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              onPress={() => setGiveawayVisible(false)}
+              style={styles.alertButton}
+            >
+              <Text style={styles.alertButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={fireworksVisible} transparent animationType="fade">
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            {(selectedFireworks
+              ? (Array.isArray(selectedFireworks) ? selectedFireworks : [selectedFireworks])
+              : []
+            ).map((item: any, index: number) => (
+              <View key={index} style={{ marginBottom: 16 }}>
+                <Text style={styles.alertTitle}>
+                  {item.title}
+                </Text>
+
+                <Text style={styles.alertMessage}>
+                  {item.details}
+                </Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              onPress={() => setFireworksVisible(false)}
+              style={styles.alertButton}
+            >
+              <Text style={styles.alertButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1000,12 +1091,12 @@ export default function HomeScreen() {
               </Text>
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.leagueFilter}>
-                <TouchableOpacity onPress={() => { setSelectedLeague(null); setFilterMode('all'); }} style={[styles.filterChip, filterMode === 'all' && styles.filterChipActive]}>
-                  <Text style={[styles.filterChipText, filterMode === 'all' && styles.filterChipTextActive]}>All</Text>
-                </TouchableOpacity>
-
                 <TouchableOpacity onPress={() => { setFilterMode('favorites'); setSelectedLeague(null); }} style={[styles.filterChip, filterMode === 'favorites' && styles.filterChipActive]}>
                   <Text style={[styles.filterChipText, filterMode === 'favorites' && styles.filterChipTextActive]}>Favorites</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => { setSelectedLeague(null); setFilterMode('all'); }} style={[styles.filterChip, filterMode === 'all' && styles.filterChipActive]}>
+                  <Text style={[styles.filterChipText, filterMode === 'all' && styles.filterChipTextActive]}>All</Text>
                 </TouchableOpacity>
 
                 {leagueGroups.flatMap(group => group.leagues).map(league => (
@@ -1022,15 +1113,51 @@ export default function HomeScreen() {
               ) : visibleGames.map((game, index) => (
                 <View key={`${game.id}_${index}`} style={styles.gameCard}>
                   <View>
-                    <Text style={styles.cardText}>{(game.homeTeam || game.team)} vs {game.opponent || game.awayTeam}</Text>
-                    <Text style={styles.cardText}>{game.arena}</Text>
-                    <Text style={styles.cardText}>{format(new Date(game.date), "h:mm a")}</Text>
+                    <Text style={styles.cardText}>
+                      {(game.homeTeam || game.team)} vs {game.opponent || game.awayTeam}
+                    </Text>
+
+                    <Text style={styles.cardText}>
+                      {game.arena}
+                    </Text>
+
+                    <View style={styles.timeRow}>
+                      {hasAppAccess && game.fireworks && (
+                        <TouchableOpacity
+                          style={styles.timeGiveawayButton}
+                          onPress={() => {
+                            setSelectedFireworks(game.fireworks);
+                            setFireworksVisible(true);
+                          }}
+                        >
+                          <Text style={styles.giveawayEmoji}>🎆 </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      <Text style={styles.cardText}>
+                        {format(new Date(game.date), "h:mm a")}
+                      </Text>
+
+                      {hasAppAccess && game.giveaway && (
+                        <TouchableOpacity
+                          style={styles.timeGiveawayButton}
+                          onPress={() => {
+                            setSelectedGiveaway(game.giveaway);
+                            setGiveawayVisible(true);
+                          }}
+                        >
+                          <Text style={styles.giveawayEmoji}>🎁</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
 
                   <View style={styles.buttonsRow}>
                     <TouchableOpacity style={styles.smallButton} onPress={() => handleDirections(game.arena)}>
                       <Text style={styles.smallButtonText}>Get Directions</Text>
                     </TouchableOpacity>
+
+
 
                     <TouchableOpacity
                       style={[styles.smallButton, checkingIn && { opacity: 0.5 }]}
@@ -1245,7 +1372,7 @@ export default function HomeScreen() {
                             {score}
                           </Text>
                           <Text style={styles.lbScoreLabel}>
-                            {activeTab === 'arenas' ? 'arenas' : 'teams'}
+                            {activeTab === 'arenas' ? 'ballparks' : 'teams'}
                           </Text>
                         </View>
                       </View>
