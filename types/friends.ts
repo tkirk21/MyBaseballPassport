@@ -1,4 +1,4 @@
-//types/friends.ts
+//baseball//types/friends.ts
 import { Timestamp } from "firebase/firestore";
 
 export interface Profile {

@@ -1,3 +1,4 @@
+//baseball//index.tsx
 import { Redirect, Stack } from 'expo-router';
 import { onAuthStateChanged, getAuth, signOut } from 'firebase/auth';
 import firebaseApp from '@/firebaseConfig';
@@ -5,12 +6,14 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 const auth = getAuth(firebaseApp);
 
 export default function Index() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -85,8 +88,8 @@ export default function Index() {
     return (
       <>
         <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#ffffff" />
+        <View style={[styles.loadingContainer, { backgroundColor: colorScheme === 'dark' ? '#0D131F' : '#F5F1E6' }]}>
+          <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42'} />
         </View>
       </>
     );
@@ -101,5 +104,5 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0A2940', },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', },
 });

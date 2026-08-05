@@ -1,3 +1,4 @@
+//baseball/loadLeagues.ts
 export async function loadLeagues() {
   try {
     const response = await fetch(

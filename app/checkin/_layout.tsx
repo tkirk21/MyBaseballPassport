@@ -1,4 +1,4 @@
-//app/checkin/_layout.tsx
+//baseball//app/checkin/_layout.tsx
 import { Stack } from 'expo-router';
 
 export default function CheckinLayout() {

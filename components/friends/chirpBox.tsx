@@ -1,4 +1,4 @@
-// components/friends/chirpBox.tsx
+//baseball// components/friends/chirpBox.tsx
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { addDoc, collection, doc, deleteDoc, getDoc, getFirestore, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';

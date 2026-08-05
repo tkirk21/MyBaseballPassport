@@ -1,4 +1,4 @@
-//app/checkin/manual.tsx
+//baseball//app/checkin/manual.tsx
 import Checkbox from 'expo-checkbox';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useRouter } from "expo-router";

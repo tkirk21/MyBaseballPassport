@@ -1,10 +1,11 @@
-// utils/pushNotifications.ts
+//baseball// utils/pushNotifications.ts
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { getAuth } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -13,6 +14,13 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
+
+if (Platform.OS === 'android') {
+  Notifications.setNotificationChannelAsync('default', {
+    name: 'default',
+    importance: Notifications.AndroidImportance.MAX,
+  });
+}
 
 export async function registerForPushNotificationsAsync() {
   const auth = getAuth();

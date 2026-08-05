@@ -1,4 +1,4 @@
-// app/(tabs)/_layout.tsx
+//baseball// app/(tabs)/_layout.tsx
 import { getAuth } from 'firebase/auth';
 import { collection, doc, getDoc, getDocs, getFirestore, limit, onSnapshot, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
 import firebaseApp from '@/firebaseConfig';

@@ -1,7 +1,9 @@
-//app/signup.tsx
+//baseball//app/signup.tsx
 import { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createUserWithEmailAndPassword, FacebookAuthProvider, fetchSignInMethodsForEmail, GoogleAuthProvider, OAuthProvider, sendEmailVerification, signInWithCredential, signOut } from 'firebase/auth';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import firebaseApp from '@/firebaseConfig';
 import { collection, doc, getDoc, getDocs, query, setDoc, serverTimestamp, where } from 'firebase/firestore';
 import { auth, db, iosClientId, webClientId } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
@@ -193,7 +195,10 @@ export default function Signup() {
 
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(cred.user);
+      const functions = getFunctions(firebaseApp);
+      const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmail');
+      await sendVerificationEmail();
+
       await ensureTrialStart(cred.user.uid);
       const profileRef = doc(db, 'profiles', cred.user.uid);
 
@@ -423,8 +428,7 @@ export default function Signup() {
 
       router.replace('/trial');
     } catch (error: any) {
-      if (error?.code === 'ERR_CANCEL]\
-          ED') {
+      if (error?.code === 'ERR_CANCELED') {
         return;
       } else if (error?.code === 'auth/network-request-failed') {
         setAlertTitle('Network Error');

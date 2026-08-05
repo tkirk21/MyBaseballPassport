@@ -1,3 +1,4 @@
+//baseball/trial.tsx
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { useColorScheme } from '../hooks/useColorScheme';

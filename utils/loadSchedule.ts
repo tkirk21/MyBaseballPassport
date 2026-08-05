@@ -1,3 +1,4 @@
+//baseball//loadschedule.ts
 export async function loadSchedule(fileName: string) {
   const response = await fetch(
     `https://raw.githubusercontent.com/tkirk21/mybaseballpassport-data/main/${fileName}?t=${Date.now()}`

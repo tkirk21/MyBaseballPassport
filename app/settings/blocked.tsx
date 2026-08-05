@@ -1,3 +1,4 @@
+//baseball//blocked.tsx
 import { useRouter, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -134,7 +135,7 @@ export default function BlockedUsersScreen() {
     alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68'},
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
     alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
-    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B222222':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
+    alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
     alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
     avatar:{width:40,height:40,borderRadius:20},
     backArrow:{color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},

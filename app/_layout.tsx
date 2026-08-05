@@ -1,4 +1,4 @@
-//app/_layout.tsx
+//baseball//app/_layout.tsx
 import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -10,37 +10,65 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { useTheme } from '@/context/ThemeContext';
 import * as Application from 'expo-application';
 import { Alert, Linking, Platform } from 'react-native';
+import mobileAds from 'react-native-google-mobile-ads';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  const REQUIRED_VERSION = '2.2.0';
+  useEffect(() => {
+    mobileAds()
+      .initialize()
+      .then(() => {
+        console.log('AdMob initialized');
+      });
+  }, []);
 
   useEffect(() => {
-    const currentVersion = Application.nativeApplicationVersion;
+    const checkForUpdate = async () => {
+      try {
+        const response = await fetch(
+          `https://raw.githubusercontent.com/tkirk21/mybaseballpassport-data/main/version.json?t=${Date.now()}`
+        );
+        const { minVersion } = await response.json();
 
-    console.log('Current Version:', currentVersion);
+        const currentVersion = Application.nativeApplicationVersion || '0.0.0';
 
-    if (currentVersion !== REQUIRED_VERSION) {
-      Alert.alert(
-        'Update Required',
-        'A new version of My Baseball Passport is available.\n\nPlease update the app from your App Store to continue.',
-        [
-          {
-            text: 'Update',
-            onPress: () =>
-              Linking.openURL(
-                Platform.OS === 'ios'
-                  ? 'https://apps.apple.com/us/app/my-baseball-passport/id6760553713'
-                  : 'https://play.google.com/store/apps/details?id=com.tkirk21.MyBaseballPassport'
-              ),
-          },
-        ],
-        { cancelable: false }
-      );
-    }
+        const isOlder = (current: string, required: string) => {
+          const c = current.split('.').map(Number);
+          const r = required.split('.').map(Number);
+          for (let i = 0; i < r.length; i++) {
+            if ((c[i] || 0) < r[i]) return true;
+            if ((c[i] || 0) > r[i]) return false;
+          }
+          return false;
+        };
+
+        if (isOlder(currentVersion, minVersion)) {
+          Alert.alert(
+            'Update Required',
+            'A new version of My Baseball Passport is available.\n\nPlease update the app from your App Store to continue.',
+            [
+              {
+                text: 'Update',
+                onPress: () =>
+                  Linking.openURL(
+                    Platform.OS === 'ios'
+                      ? 'https://apps.apple.com/us/app/my-baseball-passport/id6760553713'
+                      : 'https://play.google.com/store/apps/details?id=com.tkirk21.MyBaseballPassport'
+                  ),
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+      } catch (error) {
+        console.error('Version check failed:', error);
+      }
+    };
+
+    checkForUpdate();
   }, []);
 
   useEffect(() => {

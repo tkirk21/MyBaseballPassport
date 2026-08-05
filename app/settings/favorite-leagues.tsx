@@ -1,3 +1,4 @@
+//baseball//favorite-leagues.tsx
 import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View,  } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import React, { useState, useEffect } from 'react';

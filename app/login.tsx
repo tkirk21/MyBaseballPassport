@@ -1,7 +1,8 @@
-//app/login.tsx
+//baseball//app/login.tsx
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Easing, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, signInWithCredential, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, OAuthProvider, FacebookAuthProvider, signInWithCredential, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { auth, db, iosClientId, webClientId } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
@@ -320,25 +321,18 @@ export default function Login() {
       return;
     }
     try {
-      await sendPasswordResetEmail(auth, email);
+      const functions = getFunctions(auth.app);
+      const sendPasswordResetEmailCustom = httpsCallable(functions, 'sendPasswordResetEmailCustom');
+      await sendPasswordResetEmailCustom({ email });
+
       setAlertTitle('Password Reset');
       setAlertMessage('Check your email for reset instructions.');
       setAlertVisible(true);
     } catch (error: any) {
       let message = 'Unable to send reset email.';
 
-      if (error.code === 'auth/invalid-email') {
-        message = 'Invalid email address.';
-      } else if (error.code === 'auth/user-not-found') {
-        message = 'Email not found.';
-      } else if (error.code === 'auth/user-token-expired') {
-        message = 'Your session has expired. Please log in again.';
-      } else if (error.code === 'auth/requires-recent-login') {
-        message = 'Please log in again to continue.';
-      } else if (error.code === 'auth/network-request-failed') {
+      if (error.code === 'auth/network-request-failed') {
         message = 'Network unavailable. Please check your connection.';
-      } else if (error.code === 'permission-denied') {
-        message = 'You do not have permission to reset this password.';
       } else if (error?.message) {
         message = error.message;
       }

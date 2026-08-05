@@ -1,4 +1,4 @@
-// app/userprofile/[userId].tsx
+//baseball// app/userprofile/[userId].tsx
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View,  } from 'react-native';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
@@ -101,10 +101,10 @@ export default function UserProfileScreen() {
     loadMoreText: { color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: "bold", fontSize: 14 },
     markerContainer: { alignItems: 'center', },
     markerInner: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center', position: 'relative', },
-    markerImage: { width: 36, height: 36, },
-    markerText:{position:'absolute',top:3,left:9,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    markerImage: { width: 30, height: 30, },
+    markerText:{position:'absolute',top:2,left:8,color:'white',fontWeight:'bold',fontSize:4,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     miniMap: { width: '100%', height: 280, borderRadius: 12, overflow: 'hidden', marginTop: 8, },
-    pinCircle:{width:36,height:36,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
+    pinCircle:{width:28,height:28,justifyContent:'center',alignItems:'center',borderWidth:2,borderRadius:50},
     placeholder: { fontSize: 16, color: '#374151', textAlign: 'center' },
     profileImage: { width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16, borderWidth: 2, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
     section: { marginBottom: 20, backgroundColor: colorScheme === 'dark' ? 'rgba(10,41,64,0.9)' : 'rgba(255,255,255,0.85)', borderRadius: 12, padding: 12, borderWidth: 4, borderColor: colorScheme === 'dark' ? '#666' : '#2F4F68', },
@@ -114,7 +114,7 @@ export default function UserProfileScreen() {
     teamsText: {fontSize: 14, fontWeight: '500', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 6, },
     text: { fontSize: 16, textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 4, },
     title: { fontSize: 34, fontWeight: 'bold', textAlign: 'center', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginBottom: 16, marginTop: 30, textShadowColor: colorScheme === 'dark' ? '#000000' : '#ffffff', textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 2, },
-    visitBadge: { backgroundColor: '#D32F2F', width: 12, height: 12, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 16, right: 22, zIndex: 2, borderWidth: 1, borderColor: 'white', },
+    visitBadge: { backgroundColor: '#D32F2F', width: 12, height: 12, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 14, right: -2, zIndex: 2, borderWidth: 1, borderColor: 'white', },
     visitBadgeText: { color: 'white', fontWeight: '900', fontSize: 4, includeFontPadding: false, },
 
     favouriteTeamsChipsContainer: {
@@ -472,7 +472,6 @@ export default function UserProfileScreen() {
                           }}
                           title={originalArenaName}
                           anchor={{ x: 0.5, y: 0.5 }}
-                          centerOffset={{ x: 0, y: -20 }}
                         >
                           <View style={styles.markerContainer}>
                             {visitCount >= 1 && (

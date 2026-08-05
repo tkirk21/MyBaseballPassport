@@ -1,4 +1,4 @@
-//app/checkin/edit/[checkinId].tsx
+//basebal//app/checkin/edit/[checkinId].tsx
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";

@@ -1,4 +1,4 @@
-//app/settings/index.tsx
+//baseball//app/settings/index.tsx
 import { Linking, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import React, { useState, useEffect } from 'react';

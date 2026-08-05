@@ -1,4 +1,4 @@
-//app/leagues/[leagueName].tsx
+//baseball//app/leagues/[leagueName].tsx
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Modal } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -19,7 +19,6 @@ export default function LeagueDetails() {
   const { leagueName } = useLocalSearchParams();
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
-  if (!leagueName || typeof leagueName !== 'string') return null;
   const [selectedArena, setSelectedArena] = useState(null);
   const [arenas, setArenas] = useState<any[]>([]);
   const [leagues, setLeagues] = useState<any[]>([]);
@@ -33,17 +32,13 @@ export default function LeagueDetails() {
   }, [leagueCode, arenas]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [leagueName]);
-
-  useEffect(() => {
     const fetchArenas = async () => {
       const data = await loadArenas();
       setArenas(data);
 
       const leaguesData = await loadLeagues();
       setLeagues(leaguesData);
+      setLoading(false);
     };
 
     fetchArenas();
@@ -73,6 +68,8 @@ export default function LeagueDetails() {
     }
   }, [selectedArena]);
 
+  if (!leagueName || typeof leagueName !== 'string') return null;
+
   const styles = StyleSheet.create({
     arenaCard:{backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF',padding:14,borderTopWidth:2,borderTopColor:'#B22222'},
     arenaCardTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',marginBottom:4},
@@ -91,12 +88,12 @@ export default function LeagueDetails() {
     logoContainer:{top:10,left:-10,alignSelf:'center',width:136,height:136,zIndex:20},
     logoInnerCircle:{width:168,height:94,borderWidth:16,borderBottomWidth:0,borderColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',borderTopLeftRadius:84,borderTopRightRadius:84,backgroundColor:'transparent',justifyContent:'center',alignItems:'center',marginTop:30},
     logoImage:{width:170,height:170,marginTop:-101},
-    markerContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
-    markerImage:{width:40,height:40},
-    markerText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    markerContainer:{width:48,height:48,alignItems:'center',justifyContent:'center'},
+    markerImage:{width:30,height:30},
+    markerText:{position:'absolute',top:4,left:9,color:'white',fontWeight:'bold',fontSize:4,textAlign:'center',textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     map:{width:310,height:300,borderColor:'#B22222'},
     mapWrapper:{borderWidth:4,borderColor:'#B22222',borderRadius:12,overflow:'hidden',marginBottom:16,backgroundColor:colorScheme==='dark'?'#1E293B':'#FFFFFF'},
-    pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
+    pinCircle:{width:32,height:32,justifyContent:'center',alignItems:'center',borderWidth:2,borderRadius:50},
     safeArea:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6'},
     scrollContainer:{padding:20,paddingTop:60,paddingBottom:170,alignItems:'center'},
     title:{fontSize:26,fontWeight:'bold',marginBottom:12,textAlign:'center',color:colorScheme==='dark'?'#FFFFFF':'#0A2940'}

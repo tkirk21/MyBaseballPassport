@@ -1,4 +1,4 @@
-// components/friends/cheerButton.tsx
+//soccer// components/friends/cheerButton.tsx
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, serverTimestamp, setDoc } from 'firebase/firestore';

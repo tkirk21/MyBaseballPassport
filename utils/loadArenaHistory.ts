@@ -1,3 +1,4 @@
+//baseball/loadArenaHistory.ts
 export async function loadArenaHistory() {
   const response = await fetch(
     `https://raw.githubusercontent.com/tkirk21/mybaseballpassport-data/main/arenaHistory.json?t=${Date.now()}`

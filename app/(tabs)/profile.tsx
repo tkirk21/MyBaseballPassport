@@ -1,4 +1,4 @@
-//app/(tabs)/profile.tsx
+//baseball//app/(tabs)/profile.tsx
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';

@@ -1,4 +1,4 @@
-// app/(tabs)/index.tsx
+//baseball//app/(tabs)/index.tsx
 import { Redirect } from 'expo-router';
 import { Image, View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react';

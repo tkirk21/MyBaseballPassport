@@ -1,4 +1,4 @@
-// app/(tabs)/friends.tsx
+//baseball// app/(tabs)/friends.tsx
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, ImageBackground, KeyboardAvoidingView, Modal, Platform, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';

@@ -1,4 +1,4 @@
-// components/editCheckinForm.tsx
+//baseball// components/editCheckinForm.tsx
 import React, { useState, useEffect } from 'react';
 import { Image, KeyboardAvoidingView, Modal, Platform, StyleSheet, ScrollView as RNScrollView, ScrollView, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { getAuth } from 'firebase/auth';
@@ -606,7 +606,6 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     bottomRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32, marginTop: 24, marginBottom: 40 },
     buySectionLabel: { fontSize: 16, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0D2C42', marginBottom: 12 },
     container: { padding: 20, backgroundColor: colorScheme === 'dark' ? '#0D2C42' : '#FFFFFF' },
-    categoryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8, },
     categoryContainer: { marginBottom: 14 },
     categoryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, backgroundColor: colorScheme === 'dark' ? '#334155' : '#E0E7FF', paddingHorizontal: 16, borderRadius: 8 },
     categoryTitle: { fontSize: 16, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
@@ -632,7 +631,6 @@ export default function editCheckinForm({ initialData }: { initialData: any }) {
     deleteText: { color: 'white', fontSize: 16 },
     Placeholder: { color: colorScheme === 'dark' ? '#BBBBBB' : '#666666' },
     input: { borderWidth: 2, borderColor: colorScheme === 'dark' ? '#334155' : '#0D2C42', borderRadius: 8, padding: 12, marginBottom: 12, fontSize: 16, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#FFFFFF' },
-    label: { fontSize: 16, fontWeight: '600', marginTop: 18, marginBottom: 6, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940' },
     merchConcessionsContainer: { marginTop: 20, marginBottom: 20, backgroundColor: colorScheme === 'dark' ? '#1E293B' : '#F1F5F9', padding: 16, borderRadius: 12 },
     photoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, gap: 8 },
     photoThumbnailWrapper: { position: 'relative', width: 100, height: 100 },

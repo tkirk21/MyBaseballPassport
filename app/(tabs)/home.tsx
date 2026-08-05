@@ -1,4 +1,4 @@
-//(tabs)/home.tsx
+//baseball//(tabs)/home.tsx
 import { format } from 'date-fns';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -15,6 +15,7 @@ import { useColorScheme } from '../../hooks/useColorScheme';
 import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
 import { usePremium } from '@/context/PremiumContext';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 import LoadingPuck from '@/components/loadingPuck';
 import { loadArenas } from '@/utils/loadArenas';
@@ -366,11 +367,10 @@ export default function HomeScreen() {
       const now = new Date().getTime();
       const start = new Date(game.date).getTime();
 
-      const oneHourBefore = start - (60 * 60 * 1000);
-      const threeHourGame = start + (3 * 60 * 60 * 1000);
-      const oneHourAfter = threeHourGame + (60 * 60 * 1000);
+      const twoHoursBefore = start - (2 * 60 * 60 * 1000);
+      const fourHoursAfter = start + (4 * 60 * 60 * 1000);
 
-      const insideLiveWindow = now >= oneHourBefore && now <= oneHourAfter;
+      const insideLiveWindow = now >= twoHoursBefore && now <= fourHoursAfter;
 
       if (!insideLiveWindow) {
         setCheckingIn(false);
@@ -865,6 +865,7 @@ export default function HomeScreen() {
   }, []);
 
   const styles = StyleSheet.create({
+    adContainer:{width:Dimensions.get('window').width-20,alignSelf:'center',alignItems:'center',marginBottom:16},
     alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
     alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
@@ -943,6 +944,8 @@ export default function HomeScreen() {
   const visibleGames = hasAppAccess
     ? filteredGames
     : filteredGames.filter(game => game.league === 'MLB').slice(0, 3);
+
+  const bannerAdUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-9072339875136281/1375549001';
 
   if (isLoadingPremium || arenaData.length === 0) {
     return <LoadingPuck size={120} />;
@@ -1035,6 +1038,15 @@ export default function HomeScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.innerContainer}>
             <Text style={styles.header}>MY BASEBALL PASSPORT</Text>
+            <View style={styles.adContainer}>
+              <BannerAd
+                unitId={bannerAdUnitId}
+                size={BannerAdSize.BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: false,
+                }}
+              />
+            </View>
 
             {/* Closest Arenas */}
             <View key="closest-arenas" style={styles.section}>

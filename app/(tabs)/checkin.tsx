@@ -1,4 +1,4 @@
-// app/(tabs)/checkin.tsx
+//baseball// app/(tabs)/checkin.tsx
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
@@ -34,6 +34,7 @@ export default function CheckInScreen() {
   const [alertTitle, setAlertTitle] = useState('');
   const [arenaData, setArenaData] = useState<any[]>([]);
   const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,6 +119,7 @@ export default function CheckInScreen() {
         ...lmb,
         ...abl,
       ]);
+      setScheduleLoading(false);
     };
 
     fetchData();
@@ -153,53 +155,56 @@ export default function CheckInScreen() {
       });
 
       const now = new Date();
-      const allGamesToday = combinedSchedule.filter(g => {
-        const gameStart = new Date(g.date);
-        const oneHourBefore = new Date(gameStart.getTime() - 60 * 60 * 1000);
-        const fourHoursAfter = new Date(gameStart.getTime() + 4 * 60 * 60 * 1000);
+        // Find nearest arena regardless of game timing
+        let nearestArena = null;
+        let nearestDistanceMiles = Infinity;
 
-        return now >= oneHourBefore && now <= fourHoursAfter;
-      });
+        for (const arena of arenaData) {
+          const distanceMiles = getDistanceMiles(
+            coords.latitude,
+            coords.longitude,
+            arena.latitude,
+            arena.longitude
+          );
 
-      if (allGamesToday.length === 0) {
-        setCheckingIn(false);
-        setAlertTitle('Can Not Check In');
-        setAlertMessage('You are not close enough to any ballpark or you are checking in too early.');
-        setAlertVisible(true);
-        return;
-      }
-
-      let closestGame = null;
-      let closestDistanceMiles = Infinity;
-
-      for (const game of allGamesToday) {
-        const arena = arenaData.find(a =>
-          (a.arena === game.arena || a.arena === game.location) &&
-          a.league === game.league
-        );
-
-        if (!arena) continue;
-
-        const distanceMiles = getDistanceMiles(
-          coords.latitude,
-          coords.longitude,
-          arena.latitude,
-          arena.longitude
-        );
-
-        if (distanceMiles < closestDistanceMiles) {
-          closestDistanceMiles = distanceMiles;
-          closestGame = { ...game, arena };
+          if (distanceMiles < nearestDistanceMiles) {
+            nearestDistanceMiles = distanceMiles;
+            nearestArena = arena;
+          }
         }
-      }
 
-      if (!closestGame || closestDistanceMiles > .28) {
-        setCheckingIn(false);
-        setAlertTitle('Not Close Enough');
-        setAlertMessage('You must be closer to the ballpark to check-in.');
-        setAlertVisible(true);
-        return;
-      }
+        if (!nearestArena || nearestDistanceMiles > .28) {
+          setCheckingIn(false);
+          setAlertTitle('Not Close Enough');
+          setAlertMessage('You must be closer to the ballpark to check-in.');
+          setAlertVisible(true);
+          return;
+        }
+
+        // We are close enough to an arena — now check if a game there is within the check-in window
+        const nearbyGamesToday = combinedSchedule.filter(g => {
+          const arenaMatch =
+            (g.arena === nearestArena.arena || g.location === nearestArena.arena) &&
+            g.league === nearestArena.league;
+
+          if (!arenaMatch) return false;
+
+          const gameStart = new Date(g.date);
+          const twoHoursBefore = new Date(gameStart.getTime() - 2 * 60 * 60 * 1000);
+          const fourHoursAfter = new Date(gameStart.getTime() + 4 * 60 * 60 * 1000);
+
+          return now >= twoHoursBefore && now <= fourHoursAfter;
+        });
+
+        if (nearbyGamesToday.length === 0) {
+          setCheckingIn(false);
+          setAlertTitle('Too Early to Check In');
+          setAlertMessage('Check-in opens 2 hours before first pitch.');
+          setAlertVisible(true);
+          return;
+        }
+
+        const closestGame = { ...nearbyGamesToday[0], arena: nearestArena };
 
       setCheckingIn(false);
       router.push({
@@ -291,13 +296,13 @@ export default function CheckInScreen() {
           <TouchableOpacity
             style={[
               styles.buttonPrimary,
-              { opacity: combinedSchedule.length === 0 ? 0.5 : 1 }
+              { opacity: scheduleLoading ? 0.5 : 1 }
             ]}
             onPress={handleLiveCheckIn}
-            disabled={combinedSchedule.length === 0}
+            disabled={scheduleLoading}
           >
             <Text style={styles.buttonText}>
-              {combinedSchedule.length === 0 ? 'Loading Schedule...' : 'Live Game'}
+              {scheduleLoading ? 'Loading Schedule...' : 'Live Game'}
             </Text>
           </TouchableOpacity>
 

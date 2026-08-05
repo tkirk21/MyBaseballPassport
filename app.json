@@ -3,11 +3,11 @@
     "name": "BaseballPassport",
     "slug": "MyBaseballPassport",
     "scheme": "mybaseballpassport",
-    "version": "2.2.0",
+    "version": "2.2.2",
     "orientation": "portrait",
     "icon": "./assets/images/logo_with_font.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./splash.png",
       "resizeMode": "contain",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "buildNumber": "15",
+      "buildNumber": "16",
       "config": {
         "googleMapsApiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
       },
@@ -44,7 +44,7 @@
       }
     },
     "android": {
-      "versionCode": 26,
+      "versionCode": 35,
       "edgeToEdgeEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_logo.png",
@@ -53,6 +53,11 @@
       "userInterfaceStyle": "automatic",
       "package": "com.tkirk21.MyBaseballPassport",
       "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
+        }
+      },
       "permissions": [
         "android.permission.INTERNET"
       ]
@@ -75,6 +80,9 @@
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "kotlinVersion": "2.1.20"
           }
         }
       ],
@@ -99,6 +107,13 @@
           "isAutoInitEnabled": false,
           "autoLogAppEventsEnabled": false,
           "advertiserIDCollectionEnabled": false
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-9072339875136281~5401443986",
+          "iosAppId": "ca-app-pub-9072339875136281~2764386361"
         }
       ]
     ],

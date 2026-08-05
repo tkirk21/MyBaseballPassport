@@ -1,3 +1,4 @@
+//baseball//subscribe.tsx
 import { Alert, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import Purchases from 'react-native-purchases';
@@ -159,7 +160,7 @@ export default function SubscribeScreen() {
     card:{backgroundColor:colorScheme==='dark'?'#132F4F':'#F5F1E6',borderRadius:16,padding:20,borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
     headerRow:{flexDirection:'row',alignItems:'center',marginBottom:30},
     headerTitle:{fontSize:28,fontWeight:'700',marginLeft:20,color:colorScheme==='dark'?'#F5F1E6':'#0A2940'},
-    linkText: { color: '#B22222', textAlign: 'center', marginTop: 12, fontSize: 15, fontWeight: '600'},
+    linkText: { color: colorScheme === 'dark' ? '#AFC7E6' : '#B22222', textAlign: 'center', marginTop: 12, fontSize: 15, fontWeight: '600'},
     screen:{flex:1,backgroundColor:colorScheme==='dark'?'#0D131F':'#F5F1E6',paddingTop:insets.top+10,paddingHorizontal:20},
     subscriptionDisclosure: { fontSize: 13, lineHeight: 20, textAlign: 'center', marginTop: 20, color: colorScheme === 'dark' ? '#AFC7E6' : '#374151'},
     text:{fontSize:16,lineHeight:22,color:colorScheme==='dark'?'#F5F1E6':'#374151',marginBottom:20},

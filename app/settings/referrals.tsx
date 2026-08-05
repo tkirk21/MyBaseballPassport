@@ -1,4 +1,4 @@
-//referrals.tsx
+//baseball//referrals.tsx
 import React, { useEffect } from 'react';
 import { Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -86,8 +86,8 @@ export default function ReferralsScreen() {
     referralCode: { fontSize: 18, marginTop: 8, color: colorScheme === 'dark' ? '#F5F1E6' : '#0D2C42', fontWeight: '700', textAlign: 'center', },
     referralDescription: { marginTop: 10, textAlign: 'center', color: colorScheme === 'dark' ? '#F5F1E6' : '#0D2C42', lineHeight: 18, },
     referralLabel: { fontSize: 16, marginTop: 20, color: colorScheme === 'dark' ? '#F5F1E6' : '#0D2C42', fontWeight: '600', textAlign: 'center', },
-    referralStat: { fontSize: 16, color: '#0D2C42', textAlign: 'center', marginTop: 10, },
-    referralStatValue: { fontSize: 20, color: '#0D2C42', fontWeight: '700', textAlign: 'center', marginBottom: 10, },
+    referralStat: { fontSize: 16, color: colorScheme === 'dark' ? '#F5F1E6' : '#0D2C42', textAlign: 'center', marginTop: 10, },
+    referralStatValue: { fontSize: 20, color: colorScheme === 'dark' ? '#F5F1E6' : '#0D2C42', fontWeight: '700', textAlign: 'center', marginBottom: 10, },
     shareButton: { marginTop: 12, backgroundColor: colorScheme === 'dark' ? '#243B5A' : '#0D2C42', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 20, },
     shareButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '700', },
     statsContainer: { marginTop: 20, alignItems: 'center' },

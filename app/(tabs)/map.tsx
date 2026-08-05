@@ -1,4 +1,4 @@
-// app/(tabs)/map.tsx
+//baseball// app/(tabs)/map.tsx
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
@@ -49,6 +49,7 @@ export default function MapScreen() {
   const [showTravelLines, setShowTravelLines] = useState(false);
   const [travelAnimValue, setTravelAnimValue] = useState(0);
   const showTravel = showTravelLines && travelCoords.length > 1;
+  const [modalTeam, setModalTeam] = useState<any>(null);
 
   const handleShare = async () => {
     if (!user) return;
@@ -484,6 +485,7 @@ export default function MapScreen() {
               longitude: lng,
               colorCode,
               colorCode2: match?.colorCode2,
+              colorCode3: match?.colorCode3,
               teamCode,
               league: data.league,
             });
@@ -585,14 +587,14 @@ export default function MapScreen() {
     alertMessage:{fontSize:15,color:colorScheme==='dark'?'#AFC7E6':'#374151',textAlign:'center',marginBottom:24,lineHeight:22},
     alertButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#B22222',paddingVertical:12,paddingHorizontal:32,borderRadius:30},
     alertButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'700',fontSize:16},
-    arenaHeading:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:10},
-    checkInRow:{paddingHorizontal:12,paddingVertical:8,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#ccc'},
-    checkInDate:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557'},
-    checkInMatchup:{fontSize:14,color:colorScheme==='dark'?'#AFC7E6':'#555'},
+    arenaHeading:{fontSize:20,fontWeight:'800',color:colorScheme==='dark'?'#FFFFFF':(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode),textAlign:'center',marginBottom:10},
+    checkInRow:{paddingHorizontal:12,paddingVertical:8,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?(modalTeam?.colorCode==='#FFFFFF'?modalTeam?.colorCode:modalTeam?.colorCode2):(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode)},
+    checkInDate:{fontSize:16,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode2)},
+    checkInMatchup:{fontSize:14,color:colorScheme==='dark'?'#FFFFFF':modalTeam?.colorCode2??'#1D3557'},
     calloutContainer:{paddingVertical:8,paddingHorizontal:12,borderRadius:10,borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222'},
     calloutText:{fontSize:14,fontWeight:'600',textAlign:'center'},
-    closeButton:{marginTop:10,paddingVertical:12,paddingHorizontal:32,backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',borderRadius:30,borderWidth:2,borderColor:colorScheme==='dark'?'#4A6FA5':'#2F4F68',alignSelf:'center',alignItems:'center'},
-    closeButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontSize:12,fontWeight:'600'},
+    closeButton:{marginTop:10,paddingVertical:12,paddingHorizontal:32,backgroundColor:colorScheme==='dark'?(modalTeam?.colorCode?.toUpperCase()==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2??'#243B5A'):modalTeam?.colorCode2):(modalTeam?.colorCode??'#F5F1E6'),borderRadius:30,borderWidth:2,borderColor:modalTeam?.colorCode2??'#B22222',alignSelf:'center',alignItems:'center'},
+    closeButtonText:{color:colorScheme==='dark'?'#FFFFFF':modalTeam?.colorCode2??'#1D3557',fontSize:12,fontWeight:'600'},
     dropdownContainer:{position:'absolute',top:55,alignSelf:'center',width:'75%',zIndex:10},
     dropdownHeader:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:14,paddingHorizontal:18,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',borderWidth:3,borderRadius:16,borderColor:colorScheme==='dark'?'#B55555':'#B22222'},
     dropdownHeaderText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:17,fontWeight:'600',textAlign:'center',flex:1},
@@ -608,22 +610,24 @@ export default function MapScreen() {
     loggedOutText:{fontSize:18,fontWeight:'600',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center'},
     map:{flex:1},
     markerContainer:{alignItems:'center'},
-    modalArenaButton:{paddingVertical:6,paddingHorizontal:14,borderRadius:10,borderWidth:2,borderColor:'#B22222',alignSelf:'center',marginBottom:8,marginTop:-2},
-    modalArenaButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'600',fontSize:12},
-    modalViewText:{fontSize:11,color:colorScheme==='dark'?'#AFC7E6':'#666',textAlign:'center',marginBottom:10},
-    modalContent:{width:'90%',maxHeight:'80%',flexDirection:'column',backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:12,padding:20,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.3,shadowRadius:8,elevation:12},
+    modalArenaButton:{paddingVertical:6,paddingHorizontal:14,borderRadius:10,borderWidth:2,alignSelf:'center',marginBottom:8,marginTop:-2},
+    modalArenaButtonDynamic:{backgroundColor:colorScheme==='dark'?(modalTeam?.colorCode?.toUpperCase()==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2??'#243B5A'):modalTeam?.colorCode2):(modalTeam?.colorCode??'#F5F1E6'),borderColor:modalTeam?.colorCode2??'#B22222'},
+    modalArenaButtonText:{color:colorScheme==='dark'?'#FFFFFF':(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode2),fontWeight:'600',fontSize:12},
+    modalViewText:{fontSize:11,color:colorScheme==='dark'?'#FFFFFF':(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode2),textAlign:'center',marginBottom:10},
+    modalContent:{width:'90%',maxHeight:'80%',flexDirection:'column',backgroundColor:colorScheme==='dark'?'#243B5A':'#FFFFFF',borderRadius:12,padding:20,shadowColor:'#000',shadowOffset:{width:0,height:4},shadowOpacity:0.3,shadowRadius:8,elevation:12},
+    modalContentDynamic:{borderWidth:3},
     modalOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center'},
     pickerSelectedText:{color:colorScheme==='dark'?'#FFFFFF':'#1D3557',fontSize:17,fontWeight:'600'},
     pickerArrow:{position:'absolute',right:16},
     pinContainer:{width:40,height:40,justifyContent:'center',alignItems:'center',position:'relative'},
-    pinCircle:{width:40,height:40,justifyContent:'center',alignItems:'center',borderWidth:3,borderRadius:50},
-    pinImage:{width:40,height:40},
+    pinCircle:{width:32,height:32,justifyContent:'center',alignItems:'center',borderWidth:2,borderRadius:50},
+    pinImage:{width:36,height:36},
     shareButton:{position:'absolute',bottom:30,left:20,backgroundColor:colorScheme==='dark'?'#243B5A':'#F5F1E6',padding:8,borderRadius:24,borderWidth:3,borderColor:colorScheme==='dark'?'#B55555':'#B22222',zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4}},
-    teamCodeText:{position:'absolute',top:4,left:11,color:'white',fontWeight:'bold',fontSize:7,textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
+    teamCodeText:{position:'absolute',top:2,left:9,color:'white',fontWeight:'bold',fontSize:5,textShadowColor:'#000',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     travelLinesButton:{position:'absolute',bottom:30,alignSelf:'center',backgroundColor:colorScheme==='dark'?'#243B5A':'#E0E7FF',paddingHorizontal:20,paddingVertical:12,borderRadius:30,zIndex:10,elevation:8,shadowColor:'#000',shadowOpacity:0.3,shadowRadius:6,shadowOffset:{width:0,height:4},borderWidth:2,borderColor:colorScheme==='dark'?'#B22222':'#2F4F68'},
     travelLinesButtonText:{color:colorScheme==='dark'?'#FFFFFF':'#0A2940',fontWeight:'bold',fontSize:16},
     viewShotContainer:{flex:1},
-    visitBadge: { backgroundColor: '#D32F2F', width: 14, height: 14, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 18, right: 24, zIndex: 2, borderWidth: 1, borderColor: 'white', },
+    visitBadge: { backgroundColor: '#D32F2F', width: 14, height: 14, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 20, right: -2, zIndex: 2, borderWidth: 1, borderColor: 'white', },
     visitBadgeText: { color: 'white', fontWeight: '900', fontSize: 4, includeFontPadding: false, },
     upgradeContainer:{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:colorScheme==='dark'?'#0D131F':'#FFFFFF'},
     upgradeButton:{backgroundColor:colorScheme==='dark'?'#1B3F68':'#E0E7FF',paddingVertical:16,paddingHorizontal:32,borderRadius:30},
@@ -653,7 +657,18 @@ export default function MapScreen() {
   }
 
   const openCheckInModal = (checkIns: any[]) => {
-    setSelectedArenaCheckIns(checkIns.sort((a, b) => new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime()));
+    const sorted = [...checkIns].sort(
+      (a, b) => new Date(b.gameDate).getTime() - new Date(a.gameDate).getTime()
+    );
+
+    const currentArena = getCurrentArenaName(sorted[0].arenaName);
+
+    const match = arenasData.find(
+      (a: any) => norm(a.arena) === norm(currentArena)
+    );
+
+    setModalTeam(match || null);
+    setSelectedArenaCheckIns(sorted);
     setModalVisible(true);
   };
 
@@ -697,7 +712,12 @@ export default function MapScreen() {
         <ViewShot ref={viewShotRef} style={styles.viewShotContainer} options={{ format: 'png', quality: 1 }}>
         <Modal visible={modalVisible} transparent={true} animationType="slide">
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
+            <View
+              style={[styles.modalContent,styles.modalContentDynamic,{
+                  backgroundColor:colorScheme==='dark'?(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode):'#FFFFFF',
+                  borderColor:colorScheme==='dark'?(modalTeam?.colorCode==='#FFFFFF'?modalTeam?.colorCode:modalTeam?.colorCode2):(modalTeam?.colorCode==='#FFFFFF'?(modalTeam?.colorCode3??modalTeam?.colorCode2):modalTeam?.colorCode),
+              }]}
+            >
               <FlatList
                 data={selectedArenaCheckIns}
                 keyExtractor={(ci) => ci.id}
@@ -723,7 +743,7 @@ export default function MapScreen() {
                           </Text>
 
                           <TouchableOpacity
-                            style={styles.modalArenaButton}
+                            style={[styles.modalArenaButton,styles.modalArenaButtonDynamic]}
                             onPress={() => {
                               if (hasFullAccess || isInTrial) {
                                 const currentArenaName = getCurrentArenaName(ci.arenaName);
@@ -875,6 +895,7 @@ export default function MapScreen() {
                   coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
                   anchor={{ x: 0.5, y: 0.5 }}
                   onPress={() => openCheckInModal(checkInsAtArena)}
+                  tracksViewChanges={true}
                 >
                   <View style={styles.markerContainer}>
                     {visitCount > 1 && (

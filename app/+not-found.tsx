@@ -1,4 +1,4 @@
-//+not-found.tsx
+//baseball//+not-found.tsx
 import { Stack } from 'expo-router';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';

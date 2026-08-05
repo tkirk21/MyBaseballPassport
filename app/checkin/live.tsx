@@ -1,4 +1,4 @@
-// app/checkin/live.tsx
+//baseball// app/checkin/live.tsx
 import Checkbox from 'expo-checkbox';
 import { AntDesign } from '@expo/vector-icons';
 import Ionicons from '@expo/vector-icons/Ionicons';

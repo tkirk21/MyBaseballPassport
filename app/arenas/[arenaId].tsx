@@ -1,4 +1,4 @@
-//[arenaId.tsx]
+//baseball//[arenaId.tsx]
 import { format } from 'date-fns';
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -54,6 +54,7 @@ export default function ArenaScreen() {
   const [historicalArenasData, setHistoricalArenasData] = useState(localHistoricalTeamsData);
   const [arenaHistoryData, setArenaHistoryData] = useState(localArenaHistoryData);
   const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
   const [giveawayVisible, setGiveawayVisible] = useState(false);
   const [selectedGiveaway, setSelectedGiveaway] = useState<any>(null);
   const [fireworksVisible, setFireworksVisible] = useState(false);
@@ -173,9 +174,11 @@ export default function ArenaScreen() {
             )?.teamName || game.opponent,
         }))
       );
+      setScheduleLoading(false);
     };
 
     fetchData();
+
   }, []);
 
   const arena =
@@ -584,11 +587,10 @@ export default function ArenaScreen() {
         if (isNaN(startDate.getTime())) return false;
 
         const start = startDate.getTime();
-        const oneHourBefore = start - (60 * 60 * 1000);
-        const threeHourGame = start + (3 * 60 * 60 * 1000);
-        const oneHourAfter = threeHourGame + (60 * 60 * 1000);
+        const twoHoursBefore = start - (2 * 60 * 60 * 1000);
+        const fourHoursAfter = start + (4 * 60 * 60 * 1000);
 
-        return now >= oneHourBefore && now <= oneHourAfter;
+        return now >= twoHoursBefore && now <= fourHoursAfter;
       });
 
       if (!liveWindowGame) {
@@ -706,11 +708,21 @@ export default function ArenaScreen() {
   if (!arena) return null;
 
 
-  const lightColor = `${arena.colorCode}66`;
+  const displayColor =
+      colorScheme === 'dark' && arena.colorCode?.toUpperCase() === '#FFFFFF'
+        ? (arena.colorCode3 || arena.colorCode2 || arena.colorCode)
+        : arena.colorCode;
+
+    const lightColor = `${displayColor}66`;
+
     const borderColor =
       colorScheme === 'dark'
-        ? '#FFFFFF'
-        : (arena.colorCode2 || arena.colorCode);
+        ? (
+            arena.colorCode?.toUpperCase() === '#FFFFFF'
+              ? arena.colorCode
+              : (arena.colorCode2 || displayColor || '#FFFFFF')
+          )
+        : (arena.colorCode2 || arena.colorCode || '#0A2940');
 
   const handlePhotoCheer = async (photoId: string) => {
     const alreadyCheered = cheeredPhotos.includes(photoId);
@@ -752,9 +764,9 @@ export default function ArenaScreen() {
     alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
     alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
     alertTitle: { fontSize: 18, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center', marginBottom: 12 },
-    arenaName: { fontSize: 28, top: 10, fontWeight: 'bold', color: '#fff', textAlign: 'center', },
+    arenaName: { fontSize: 28, top: 10, fontWeight: 'bold', color: colorScheme==='dark'?'#FFFFFF':(arena.colorCode2 || arena.colorCode || '#0A2940'), textAlign: 'center', },
     backButton: { position: 'absolute', left: 10, zIndex: 10, borderRadius: 20, padding: 8, },
-    bannerStatCard: { marginHorizontal: 20, marginTop: 20, marginBottom: 10, height: 120, width: 120, borderRadius: 60, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', borderWidth: 4, zIndex: 2, borderColor: colorScheme === 'dark' ? lightColor : (arena.colorCode || '#2F5D50') },
+    bannerStatCard: { marginHorizontal: 20, marginTop: 20, marginBottom: 10, height: 120, width: 120, borderRadius: 60, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', borderWidth: 4, zIndex: 2, borderColor: colorScheme === 'dark' ? lightColor : (arena.colorCode?.toUpperCase() === '#FFFFFF' ? (arena.colorCode3 || arena.colorCode2 || '#2F5D50') : (arena.colorCode || '#2F5D50')) },
     bannerWrapper: { marginHorizontal: 20, marginBottom: 20 },
     bannerImage: { height: 220, borderRadius: 12, overflow: 'hidden' },
     bannerImageRadius: { borderRadius: 12 },
@@ -779,7 +791,7 @@ export default function ArenaScreen() {
     gameTextBold: { fontSize: 16, fontWeight: 'bold', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', textAlign: 'center' },
     giveawayEmoji:{fontSize:24},
     header: { padding: 34, alignItems: 'center', fontWeight: 'bold', color: '#0D2C42', marginBottom: 15, textAlign: 'center', },
-    infoBox: { backgroundColor: 'rgba(255,255,255,0.95)', margin: 4, padding: 16, marginHorizontal: 20, borderRadius: 12, borderWidth: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, alignItems: 'center', },
+    infoBox: { backgroundColor: 'transparent', margin: 4, padding: 16, marginHorizontal: 20, borderRadius: 12, borderWidth: 4, alignItems: 'center', overflow: 'hidden', },
     label: { fontSize: 14, color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', fontWeight: 'bold', marginTop: 12 },
     lastVisitText: { marginTop: 0, fontSize: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#475569' },
     loadingOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 999, justifyContent: 'center', alignItems: 'center', },
@@ -793,7 +805,7 @@ export default function ArenaScreen() {
     rankDivider: { width: 1, height: 36, backgroundColor: '#FFFFFF55' },
     rankNumber: { fontSize: 22, fontWeight: '800', color: colorScheme === 'dark' ? '#FFFFFF' : '#16221D' },
     rankLabel: { fontSize: 12, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#334155', marginTop: 4 },
-    section: { marginTop: 30, marginHorizontal: 20, padding: 16, backgroundColor: '#FFFFFF', borderRadius: 12, borderWidth: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 2 }, },
+    section: { marginTop: 30, marginHorizontal: 20, padding: 16, backgroundColor: 'transparent', borderRadius: 12, borderWidth: 4, overflow: 'hidden', },
     sectionTitle: { fontSize: 18, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#0A2940', marginBottom: 12, textAlign: 'center' },
     statCard: { marginHorizontal: 20, marginTop: 8, marginBottom: 8, paddingVertical: 20, borderRadius: 60, alignItems: 'center', width: 120, alignSelf: 'center', borderWidth: 4, borderColor: colorScheme === 'dark' ? lightColor : (arena.colorCode || '#0D2C42') },
     statLabel: { marginTop: 4, fontSize: 12, color: colorScheme === 'dark' ? '#FFFFFF' : '#334155', letterSpacing: 0.3 },
@@ -904,10 +916,20 @@ export default function ArenaScreen() {
           ]}
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          <Ionicons name="arrow-back" size={28} color={colorScheme==='dark'?'#FFFFFF':(arena.colorCode2 || arena.colorCode || '#0A2940')} />
         </TouchableOpacity>
 
-        <View style={[styles.header, { backgroundColor: arena.colorCode || '#0A2940' }]}>
+        <View
+          style={[
+            styles.header,
+            {
+              backgroundColor:
+                colorScheme === 'dark'
+                  ? (displayColor || '#0A2940')
+                  : (arena.colorCode || '#0A2940'),
+            },
+          ]}
+        >
           <Text style={styles.arenaName}>{arena.arena}</Text>
         </View>
 
@@ -929,7 +951,7 @@ export default function ArenaScreen() {
           <View style={styles.bannerStatCard}>
             <View style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+              backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
               borderRadius: 60,
             }} />
             <View style={{
@@ -941,7 +963,7 @@ export default function ArenaScreen() {
               marginTop: -4,
               marginLeft: -4,
               borderWidth: colorScheme === 'dark' ? 4 : 0.1,
-              borderColor: '#FFFFFF',
+              borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
             }} />
             <View style={{
               ...StyleSheet.absoluteFillObject,
@@ -971,7 +993,7 @@ export default function ArenaScreen() {
         <View style={[styles.rankStrip, { borderColor }]}>
           <View style={{
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+            backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
             borderRadius: 12,
           }} />
           <View style={{
@@ -1010,7 +1032,7 @@ export default function ArenaScreen() {
         {/* Solid background */}
           <View style={{
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+            backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
             borderRadius: 12,
           }} />
           {/* White border layer in dark mode */}
@@ -1019,7 +1041,7 @@ export default function ArenaScreen() {
             backgroundColor: 'transparent',
             borderRadius: 12,
             borderWidth: colorScheme === 'dark' ? 1 : 0,
-            borderColor: '#FFFFFF',
+            borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
           }} />
           {/* Light tint overlay on top */}
           <View style={{
@@ -1077,7 +1099,7 @@ export default function ArenaScreen() {
           <View style={[styles.section, { borderColor }]}>
             <View style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+              backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
               borderRadius: 12,
             }} />
             <View style={{
@@ -1091,7 +1113,7 @@ export default function ArenaScreen() {
           </View>
         )}
 
-        {combinedSchedule.length === 0 ? (
+        {scheduleLoading ? (
           <View style={[styles.section, { borderColor }]}>
             <LoadingPuck size={80} />
           </View>
@@ -1100,7 +1122,7 @@ export default function ArenaScreen() {
           {/* Solid background */}
             <View style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+              backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
               borderRadius: 12,
             }} />
 
@@ -1110,7 +1132,7 @@ export default function ArenaScreen() {
               backgroundColor: 'transparent',
               borderRadius: 12,
               borderWidth: colorScheme === 'dark' ? 1 : 0,
-              borderColor: '#FFFFFF',
+              borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
             }} />
 
             {/* Light tint overlay on top */}
@@ -1122,7 +1144,17 @@ export default function ArenaScreen() {
             }} />
             <Text style={styles.sectionTitle}>Upcoming Games</Text>
 
-            <View style={[styles.countdownBox, { backgroundColor: arena.colorCode || "#0A2940" }]}>
+            <View
+              style={[
+                styles.countdownBox,
+                {
+                  backgroundColor:
+                    colorScheme === 'dark'
+                      ? (displayColor || '#0A2940')
+                      : (arena.colorCode?.toUpperCase() === '#FFFFFF' ? (arena.colorCode3 || arena.colorCode2 || '#0A2940') : (arena.colorCode || '#0A2940')),
+                },
+              ]}
+            >
               <Text style={styles.countdownNumber}>{timeLeft}</Text>
               <Text style={styles.countdownLabel}>until next first pitch</Text>
             </View>
@@ -1176,7 +1208,7 @@ export default function ArenaScreen() {
             <View style={[styles.section, { borderColor }]}>
               <View style={{
                 ...StyleSheet.absoluteFillObject,
-                backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+                backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
                 borderRadius: 12,
               }} />
 
@@ -1185,7 +1217,7 @@ export default function ArenaScreen() {
                 backgroundColor: 'transparent',
                 borderRadius: 12,
                 borderWidth: colorScheme === 'dark' ? 1 : 0,
-                borderColor: '#FFFFFF',
+                borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
               }} />
 
               <View style={{
@@ -1221,7 +1253,7 @@ export default function ArenaScreen() {
             <View style={[styles.section, { borderColor }]}>
               <View style={{
                 ...StyleSheet.absoluteFillObject,
-                backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+                backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
                 borderRadius: 12,
               }} />
 
@@ -1230,7 +1262,7 @@ export default function ArenaScreen() {
                 backgroundColor: 'transparent',
                 borderRadius: 12,
                 borderWidth: colorScheme === 'dark' ? 1 : 0,
-                borderColor: '#FFFFFF',
+                borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
               }} />
 
               <View style={{
@@ -1248,7 +1280,7 @@ export default function ArenaScreen() {
           <View style={[styles.section, { borderColor }]}>
             <View style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+              backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
               borderRadius: 12,
             }} />
 
@@ -1257,7 +1289,7 @@ export default function ArenaScreen() {
               backgroundColor: 'transparent',
               borderRadius: 12,
               borderWidth: colorScheme === 'dark' ? 1 : 0,
-              borderColor: '#FFFFFF',
+              borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
             }} />
 
             <View style={{
@@ -1281,7 +1313,7 @@ export default function ArenaScreen() {
             <View style={[styles.section, { borderColor }]}>
               <View style={{
                 ...StyleSheet.absoluteFillObject,
-                backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+                backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
                 borderRadius: 12,
               }} />
 
@@ -1290,7 +1322,7 @@ export default function ArenaScreen() {
                 backgroundColor: 'transparent',
                 borderRadius: 12,
                 borderWidth: colorScheme === 'dark' ? 1 : 0,
-                borderColor: '#FFFFFF',
+                borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
               }} />
 
               <View style={{
@@ -1350,7 +1382,7 @@ export default function ArenaScreen() {
             <View style={[styles.section, { borderColor }]}>
               <View style={{
                 ...StyleSheet.absoluteFillObject,
-                backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+                backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
                 borderRadius: 12,
               }} />
 
@@ -1359,7 +1391,7 @@ export default function ArenaScreen() {
                 backgroundColor: 'transparent',
                 borderRadius: 12,
                 borderWidth: colorScheme === 'dark' ? 1 : 0,
-                borderColor: '#FFFFFF',
+                borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
               }} />
 
               <View style={{
@@ -1377,7 +1409,7 @@ export default function ArenaScreen() {
           <View style={[styles.section, { borderColor }]}>
             <View style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: colorScheme === 'dark' ? (arena.colorCode || '#0D2C42') : '#FFFFFF',
+              backgroundColor: colorScheme === 'dark' ? (displayColor || '#0A2940') : '#FFFFFF',
               borderRadius: 12,
             }} />
 
@@ -1386,7 +1418,7 @@ export default function ArenaScreen() {
               backgroundColor: 'transparent',
               borderRadius: 12,
               borderWidth: colorScheme === 'dark' ? 1 : 0,
-              borderColor: '#FFFFFF',
+              borderColor: arena.colorCode2 || displayColor || '#FFFFFF',
             }} />
 
             <View style={{
@@ -1404,13 +1436,13 @@ export default function ArenaScreen() {
         <TouchableOpacity
           style={[
             styles.button,
-            { opacity: combinedSchedule.length === 0 ? 0.5 : 1 }
+            { opacity: scheduleLoading ? 0.5 : 1 }
           ]}
           onPress={handleCheckIn}
-          disabled={checkingIn || combinedSchedule.length === 0}
+          disabled={checkingIn || scheduleLoading}
         >
           <Text style={styles.buttonText}>
-            {combinedSchedule.length === 0
+            {scheduleLoading
               ? 'Loading Schedule...'
               : checkingIn
                 ? 'Checking in...'

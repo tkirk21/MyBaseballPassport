@@ -1,7 +1,14 @@
-//functions/src/index.tsx
+//baseball//functions/src/index.tsx
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
+import { Resend } from "resend";
+import { welcomeEmailHtml } from "./welcomeEmail";
+import { verificationEmailHtml } from "./verificationEmail";
+import { passwordResetEmailHtml } from "./passwordResetEmail";
+
+const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 
 admin.initializeApp({
   storageBucket: "mybaseballpassport.firebasestorage.app",
@@ -544,5 +551,147 @@ export const onProfileCreated = onDocumentCreated(
     }
 
     await referrerDoc.ref.set(updates, { merge: true });
+  }
+);
+
+/* ============================
+   WELCOME EMAIL TRIGGER
+============================ */
+export const sendWelcomeEmail = onDocumentCreated(
+  { document: "profiles/{userId}", secrets: [RESEND_API_KEY] },
+  async (event) => {
+    const uid = event.params.userId;
+
+    try {
+      const userRecord = await admin.auth().getUser(uid);
+      const email = userRecord.email;
+
+      if (!email) {
+        console.log("No email on user, skipping.");
+        return;
+      }
+
+      const profileRef = db.collection("profiles").doc(uid);
+      const profileSnap = await profileRef.get();
+
+      if (profileSnap.exists && profileSnap.data()?.welcomeEmailSent) {
+        console.log("Welcome email already sent, skipping.");
+        return;
+      }
+
+      const resend = new Resend(RESEND_API_KEY.value());
+
+      await resend.emails.send({
+        from: "My Sports Passport <admin@mysportspassport.app>",
+        to: email,
+        subject: "Welcome to My Baseball Passport",
+        html: welcomeEmailHtml(userRecord.displayName || "there"),
+      });
+
+      await profileRef.set(
+        {
+          welcomeEmailSent: true,
+          welcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      console.log("Welcome email sent to:", email);
+
+    } catch (error) {
+      console.error("sendWelcomeEmail failed:", error);
+    }
+  }
+);
+
+/* ============================
+   SEND CUSTOM VERIFICATION EMAIL
+============================ */
+export const sendVerificationEmail = onCall(
+  { secrets: [RESEND_API_KEY] },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "User must be authenticated.");
+    }
+
+    const uid = request.auth.uid;
+
+    try {
+      const userRecord = await admin.auth().getUser(uid);
+      const email = userRecord.email;
+
+      if (!email) {
+        throw new HttpsError("failed-precondition", "No email on account.");
+      }
+
+      const actionCodeSettings = {
+        url: "https://mysportspassport.app",
+      };
+
+      const verificationLink = await admin
+        .auth()
+        .generateEmailVerificationLink(email, actionCodeSettings);
+
+      const resend = new Resend(RESEND_API_KEY.value());
+
+      await resend.emails.send({
+        from: "My Sports Passport <admin@mysportspassport.app>",
+        to: email,
+        subject: "Verify your email — My Baseball Passport",
+        html: verificationEmailHtml(userRecord.displayName || "there", verificationLink),
+      });
+
+      return { success: true };
+
+    } catch (error: any) {
+      console.error("sendVerificationEmail failed:", error);
+      throw new HttpsError("internal", "Failed to send verification email.");
+    }
+  }
+);
+
+/* ============================
+   SEND CUSTOM PASSWORD RESET EMAIL
+============================ */
+export const sendPasswordResetEmailCustom = onCall(
+  { secrets: [RESEND_API_KEY] },
+  async (request) => {
+    const { email } = request.data;
+
+    if (!email) {
+      throw new HttpsError("invalid-argument", "Email is required.");
+    }
+
+    try {
+      const userRecord = await admin.auth().getUserByEmail(email);
+
+      const actionCodeSettings = {
+        url: "https://mysportspassport.app",
+      };
+
+      const resetLink = await admin
+        .auth()
+        .generatePasswordResetLink(email, actionCodeSettings);
+
+      const resend = new Resend(RESEND_API_KEY.value());
+
+      await resend.emails.send({
+        from: "My Sports Passport <admin@mysportspassport.app>",
+        to: email,
+        subject: "Reset your password — My Baseball Passport",
+        html: passwordResetEmailHtml(userRecord.displayName || "there", resetLink),
+      });
+
+      return { success: true };
+
+    } catch (error: any) {
+      console.error("sendPasswordResetEmailCustom failed:", error);
+
+      if (error.code === "auth/user-not-found") {
+        return { success: true };
+      }
+
+      throw new HttpsError("internal", "Failed to send password reset email.");
+    }
   }
 );

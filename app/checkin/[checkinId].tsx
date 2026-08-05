@@ -1,4 +1,4 @@
-//app/checkin/[checkinId].tsx
+//baseball//app/checkin/[checkinId].tsx
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import firebaseApp from "@/firebaseConfig";
@@ -132,7 +132,7 @@ export default function CheckinDetailsScreen() {
       const fileUri = FileSystem.cacheDirectory + `checkin_${Date.now()}.png`;
       await FileSystem.copyAsync({ from: uri, to: fileUri });
 
-      const shareText = `Check out this check-in on my Hockey Passport! 🏒\nTrack every arena you visit.\nhttps://mysportspassport.com`;
+      const shareText = `Check out this check-in on my Baseball Passport! ⚾\nTrack every ballpark you visit.\nhttps://play.google.com/store/apps/details?id=com.tkirk21.MyBaseballPassport`;
 
       await Sharing.shareAsync(fileUri, {
         dialogTitle: 'Share your check-in',
@@ -241,7 +241,10 @@ export default function CheckinDetailsScreen() {
     }
   }
 
-  const teamColor = arenaMatch?.colorCode || arenaMatch?.color || "#0A2940";
+  const rawColor = arenaMatch?.colorCode || arenaMatch?.color || "#0A2940";
+  const teamColor = rawColor.toUpperCase() === '#FFFFFF'
+    ? (arenaMatch?.colorCode3 || arenaMatch?.colorCode2 || "#0A2940")
+    : rawColor;
   const overlayColor = `${teamColor}DD`;
   const borderColor = arenaMatch?.colorCode2 || teamColor;
 

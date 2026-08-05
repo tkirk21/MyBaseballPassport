@@ -1,4 +1,4 @@
-//utils/activityLogger.ts
+//baseball//utils/activityLogger.ts
 import { collection, doc, setDoc, serverTimestamp, getFirestore, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import firebaseApp from "@/firebaseConfig";

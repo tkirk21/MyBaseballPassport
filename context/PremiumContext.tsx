@@ -1,4 +1,4 @@
-//context/PremiumContext.tsx
+//baseball//context/PremiumContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { auth, db } from '@/firebaseConfig';
