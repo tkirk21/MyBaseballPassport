@@ -16,6 +16,7 @@ import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
 import { usePremium } from '@/context/PremiumContext';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { Platform } from 'react-native';
 
 import LoadingPuck from '@/components/loadingPuck';
 import { loadArenas } from '@/utils/loadArenas';
@@ -366,10 +367,8 @@ export default function HomeScreen() {
 
       const now = new Date().getTime();
       const start = new Date(game.date).getTime();
-
       const twoHoursBefore = start - (2 * 60 * 60 * 1000);
       const fourHoursAfter = start + (4 * 60 * 60 * 1000);
-
       const insideLiveWindow = now >= twoHoursBefore && now <= fourHoursAfter;
 
       if (!insideLiveWindow) {
@@ -420,7 +419,6 @@ export default function HomeScreen() {
 
     try {
       const leaderboardSnap = await getDocs(collection(db, 'publicLeaderboard'));
-
       const leaderboard = leaderboardSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -945,7 +943,12 @@ export default function HomeScreen() {
     ? filteredGames
     : filteredGames.filter(game => game.league === 'MLB').slice(0, 3);
 
-  const bannerAdUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-9072339875136281/1375549001';
+  const bannerAdUnitId = __DEV__
+    ? TestIds.BANNER
+    : Platform.select({
+        ios: 'ca-app-pub-9072339875136281/7636725087',
+        android: 'ca-app-pub-9072339875136281/1375549001',
+      });
 
   if (isLoadingPremium || arenaData.length === 0) {
     return <LoadingPuck size={120} />;

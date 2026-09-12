@@ -439,36 +439,74 @@ const ManualCheckIn = () => {
   // League dropdown
   useEffect(() => {
     const selectedDate = gameDate;
-    const processed = rawArenas.filter(arena => {
-        const start = arena.startDate ? new Date(arena.startDate) : new Date(0);
-        const end = arena.endDate ? new Date(arena.endDate) : null;
+
+    const processed = rawArenas
+      .filter(arena => {
+        const start = arena.startDate
+          ? new Date(arena.startDate)
+          : new Date(0);
+
+        const end = arena.endDate
+          ? new Date(arena.endDate)
+          : null;
+
         if (end) end.setHours(23, 59, 59, 999);
 
-        return selectedDate >= start && (!end || selectedDate <= end) && isSeasonValid(arena, selectedDate);
+        return (
+          selectedDate >= start &&
+          (!end || selectedDate <= end) &&
+          isSeasonValid(arena, selectedDate)
+        );
       })
-      .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
+      .map(arena => ({
+        ...arena,
+        league: arena.league?.trim() || null,
+      }));
 
     const processedHistorical = historicalTeamsData
       .filter(hist => {
-        const start = new Date(hist.startDate);
-        const end = hist.endDate ? new Date(hist.endDate) : null;
+        const start = hist.startDate
+          ? new Date(hist.startDate)
+          : new Date(0);
+
+        const end = hist.endDate
+          ? new Date(hist.endDate)
+          : null;
+
         if (end) end.setHours(23, 59, 59, 999);
 
-        return selectedDate >= start && (!end || selectedDate <= end) && isSeasonValid(hist, selectedDate);
+        return (
+          selectedDate >= start &&
+          (!end || selectedDate <= end) &&
+          isSeasonValid(hist, selectedDate)
+        );
       })
-      .map(arena => ({ ...arena, league: arena.league?.trim() || null }));
+      .map(hist => ({
+        ...hist,
+        league: hist.league?.trim() || null,
+      }));
 
-    const allArenasRaw = [...processed, ...processedHistorical];
-    const allArenasFiltered = allArenasRaw.filter(a =>
-      a.league && typeof a.league === 'string' && a.league.trim() !== ''
+    const allArenasFiltered = [...processed, ...processedHistorical].filter(
+      item =>
+        item.league &&
+        typeof item.league === 'string' &&
+        item.league.trim() !== ''
     );
 
     setAllArenas(allArenasFiltered);
+    setArenas(allArenasFiltered);
 
-    const leagues = [...new Set(allArenasFiltered.map(a => a.league))];
-    setLeagueItems(leagues.map(l => ({ label: l, value: l })));
+    const leagues = [
+      ...new Set(allArenasFiltered.map(item => item.league))
+    ].sort();
 
-  }, [gameDate]);
+    setLeagueItems(
+      leagues.map(league => ({
+        label: league,
+        value: league,
+      }))
+    );
+  }, [gameDate, rawArenas, historicalTeamsData]);
 
   // League → set arenas & teams (uses historicalTeams.json via allArenas)
   useEffect(() => {
@@ -957,7 +995,7 @@ const ManualCheckIn = () => {
             Can't find your league, ballpark or team?
           </Text>
           <TouchableOpacity
-            onPress={() => Linking.openURL('mailto:support@mysportspassport.com?subject=Request%20New%20League%2FArena%2FTeam')}
+            onPress={() => Linking.openURL('mailto:support@mysportspassport.app?subject=Request%20New%20League%2FArena%2FTeam')}
           >
             <Text style={styles.requestLinkText}>
               Request it here

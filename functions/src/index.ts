@@ -1,6 +1,6 @@
 //baseball//functions/src/index.tsx
 import { onCall, HttpsError } from "firebase-functions/v2/https";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 import { Resend } from "resend";
@@ -511,16 +511,15 @@ export const onFriendCheckin = onDocumentCreated(
    REFERRAL FRIEND
 ============================ */
 
-export const onProfileCreated = onDocumentCreated(
+export const onProfileCreated = onDocumentWritten(
   "profiles/{userId}",
   async (event) => {
-    const snapshot = event.data;
-    if (!snapshot) return;
+    const after = event.data?.after.data();
+    if (!after) return;
 
-    const profile = snapshot.data();
-    const referralCode = profile?.referredBy;
-
+    const referralCode = after.referredBy;
     if (!referralCode) return;
+    if (after.referralCredited === true) return;
 
     const referrerSnap = await db
       .collection("profiles")
@@ -531,26 +530,14 @@ export const onProfileCreated = onDocumentCreated(
     if (referrerSnap.empty) return;
 
     const referrerDoc = referrerSnap.docs[0];
+    if (referrerDoc.id === event.params.userId) return;
 
-    const currentFreeMonths =
-      referrerDoc.data().freeMonthsEarned || 0;
+    await referrerDoc.ref.set({
+      successfulReferrals: (referrerDoc.data().successfulReferrals || 0) + 1,
+      freeMonthsEarned: (referrerDoc.data().freeMonthsEarned || 0) + 1,
+    }, { merge: true });
 
-    const currentStartDate =
-      referrerDoc.data().freeMonthStartDate;
-
-    let updates: any = {
-      successfulReferrals:
-        (referrerDoc.data().successfulReferrals || 0) + 1,
-
-      freeMonthsEarned:
-        currentFreeMonths + 1,
-    };
-
-    if (currentStartDate) {
-      updates.freeMonthStartDate = currentStartDate;
-    }
-
-    await referrerDoc.ref.set(updates, { merge: true });
+    await event.data!.after.ref.set({ referralCredited: true }, { merge: true });
   }
 );
 

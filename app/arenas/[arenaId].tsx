@@ -50,7 +50,8 @@ export default function ArenaScreen() {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertTitle, setAlertTitle] = useState('');
-  const [arenaData, setArenaData] = useState(localArenaData);
+  const [arenaData, setArenaData] = useState<any[]>([]);
+  const [arenaDataLoading, setArenaDataLoading] = useState(true);
   const [historicalArenasData, setHistoricalArenasData] = useState(localHistoricalTeamsData);
   const [arenaHistoryData, setArenaHistoryData] = useState(localArenaHistoryData);
   const [combinedSchedule, setCombinedSchedule] = useState<any[]>([]);
@@ -63,9 +64,8 @@ export default function ArenaScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const arenas = await loadArenas();
-      if (arenas.length > 0) {
-        setArenaData(arenas);
-      }
+      setArenaData(arenas);
+      setArenaDataLoading(false);
 
       const history = await loadArenaHistory();
       if (history.length > 0) {
@@ -178,7 +178,6 @@ export default function ArenaScreen() {
     };
 
     fetchData();
-
   }, []);
 
   const arena =
@@ -704,7 +703,9 @@ export default function ArenaScreen() {
     return () => clearInterval(interval);
   }, [upcomingGames]);
 
-  if (isLoadingPremium) return <LoadingPuck size={120} />;
+  if (isLoadingPremium || arenaDataLoading) {
+    return <LoadingPuck size={120} />;
+  }
   if (!arena) return null;
 
 
@@ -726,9 +727,7 @@ export default function ArenaScreen() {
 
   const handlePhotoCheer = async (photoId: string) => {
     const alreadyCheered = cheeredPhotos.includes(photoId);
-
     const realDocId = photoId.split('-')[0];
-
     const photoRef = doc(db, 'arenas', arena.arenaId, 'checkins', realDocId);
 
     await updateDoc(photoRef, {

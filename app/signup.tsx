@@ -44,6 +44,7 @@ export default function Signup() {
     try {
       const ref = doc(db, 'profiles', uid);
       const snap = await getDoc(ref);
+      const code = enteredReferralCode.trim().toUpperCase();
 
       if (!snap.exists()) {
         await setDoc(ref, {
@@ -52,13 +53,14 @@ export default function Signup() {
           successfulReferrals: 0,
           freeMonthsEarned: 0,
           freeMonthStartDate: null,
-          referredBy: enteredReferralCode.trim().toUpperCase() || '',
+          referredBy: code,
           premiumUntil: null,
           createdAt: new Date(),
         });
-      } else if (!snap.data()?.trialStart) {
+      } else {
         await setDoc(ref, {
-          trialStart: new Date(),
+          ...(snap.data()?.trialStart ? {} : { trialStart: new Date() }),
+          ...(code ? { referredBy: code } : {}),
         }, { merge: true });
       }
     } catch (error: any) {

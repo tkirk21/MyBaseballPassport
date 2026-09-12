@@ -18,11 +18,23 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    mobileAds()
-      .initialize()
-      .then(() => {
-        console.log('AdMob initialized');
-      });
+    const initAdsWithConsent = async () => {
+      const { AdsConsent } = require('react-native-google-mobile-ads');
+
+      const consentInfo = await AdsConsent.requestInfoUpdate();
+
+      if (
+        consentInfo.isConsentFormAvailable &&
+        consentInfo.status === 1 // AdsConsentStatus.REQUIRED
+      ) {
+        await AdsConsent.showForm();
+      }
+
+      await mobileAds().initialize();
+      console.log('AdMob initialized');
+    };
+
+    initAdsWithConsent();
   }, []);
 
   useEffect(() => {

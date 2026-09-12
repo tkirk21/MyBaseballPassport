@@ -1,4 +1,4 @@
-//baseball// app/userprofile/[userId].tsx
+//footy//baseball// app/userprofile/[userId].tsx
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View,  } from 'react-native';
 import MapView, { Marker, UrlTile } from 'react-native-maps';

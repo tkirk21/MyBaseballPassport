@@ -36,7 +36,6 @@
     "expo-image-picker": "~17.0.10",
     "expo-linking": "~8.0.10",
     "expo-location": "~19.0.8",
-    "expo-media-library": "~18.2.1",
     "expo-modules-core": "~3.0.29",
     "expo-notifications": "~0.32.16",
     "expo-router": "~6.0.19",

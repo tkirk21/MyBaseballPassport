@@ -44,7 +44,7 @@
       }
     },
     "android": {
-      "versionCode": 35,
+      "versionCode": 37,
       "edgeToEdgeEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_logo.png",
@@ -79,7 +79,11 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "extraPods": [
+              { "name": "GoogleUtilities", "modular_headers": true },
+              { "name": "RecaptchaInterop", "modular_headers": true },
+              { "name": "AppCheckCore", "modular_headers": true }
+            ]
           },
           "android": {
             "kotlinVersion": "2.1.20"

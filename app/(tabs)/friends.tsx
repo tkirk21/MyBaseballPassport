@@ -414,7 +414,6 @@ export default function FriendsTab() {
               )
             );
           }
-
         });
       });
       unsubs.push(unsubActivity);
@@ -551,8 +550,6 @@ export default function FriendsTab() {
     return blockedFriends.includes(userId);
   };
 
-
-
   const handleFriendLeaderboardShare = async () => {
     try {
       const uri = await friendsLeaderboardRef.current?.capture();
@@ -562,7 +559,6 @@ export default function FriendsTab() {
         setAlertVisible(true);
         return;
       }
-
 
       await Sharing.shareAsync(uri, {
         mimeType: 'image/png',

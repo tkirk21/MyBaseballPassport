@@ -175,8 +175,6 @@ export default function ReferralsScreen() {
           To use your earned months, cancel your subscription in your App Store subscription settings before your next renewal date.
           Once your earned months are exhausted, you can resubscribe at any time.
         </Text>
-
-
       </View>
     </View>
   );

@@ -5,100 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24a29cdc-4e55-4adc-b865-3b4d3c71e0e8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/functions/src/passwordResetEmail.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/src/verificationEmail.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/src/welcomeEmail.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/debug.keystore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/google-services.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/proguard-rules.pro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/debug/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/debugOptimized/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/tkirk21/MyBaseballPassport/MainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/tkirk21/MyBaseballPassport/MainApplication.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/notification_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-hdpi/splashscreen_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/notification_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-mdpi/splashscreen_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/notification_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xhdpi/splashscreen_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/notification_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxhdpi/splashscreen_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/notification_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable-xxxhdpi/splashscreen_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/rn_edit_text_material.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values-night/colors.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/colors.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/settings.gradle" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/friends.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/map.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/map.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/+not-found.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/+not-found.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/checkin/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/checkin/edit/[checkinId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/edit/[checkinId].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/checkin/live.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/live.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/checkin/manual.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/manual.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/paywall.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/paywall.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/blocked.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/blocked.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/change-email.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/change-email.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/change-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/change-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/favorite-leagues.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/favorite-leagues.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/settings/referrals.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/referrals.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings/subscribe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/subscribe.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/signup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/signup.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/trial.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/trial.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/userprofile/[userId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/userprofile/[userId].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/userprofile/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/userprofile/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/1.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/icon_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/icon_logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_no_font.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_no_font.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_with_font.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_with_font_dark.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/logo_with_font_dark.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_with_font_facebook.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/notification-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/notification-icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/build.tar.gz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/.firebaserc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/.gitignore" beforeDir="false" />
@@ -300,17 +215,9 @@
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/pushNotifications.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/revenuecat.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/themePersistence.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/TeamPin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TeamPin.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/editCheckinForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/editCheckinForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/friends/cheerButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/friends/cheerButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/friends/chirpBox.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/friends/chirpBox.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/loadingPuck.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/loadingPuck.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context/PremiumContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/context/PremiumContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/functions/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/functions/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useColorScheme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useColorScheme.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect" beforeDir="false" afterPath="$PROJECT_DIR$/inspect" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/.firebaserc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/.gitignore" beforeDir="false" />
@@ -514,18 +421,6 @@
       <change beforePath="$PROJECT_DIR$/inspect/utils/themePersistence.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/splash.png" beforeDir="false" afterPath="$PROJECT_DIR$/splash.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/friends.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/friends.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/activityLogger.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/activityLogger.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loadArenaHistory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loadArenaHistory.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loadArenas.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loadArenas.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loadHistoricalTeams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loadHistoricalTeams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loadLeagues.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loadLeagues.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loadSchedule.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loadSchedule.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/notifications.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/notifications.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/pushNotifications.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/pushNotifications.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/revenuecat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/revenuecat.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/themePersistence.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/themePersistence.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

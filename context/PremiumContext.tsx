@@ -201,6 +201,7 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         ) {
           await updateDoc(profileRef, {
             freeMonthStartDate: serverTimestamp(),
+            freeMonthsEarned: (data.freeMonthsEarned || 0) - 1,
           });
 
           setHasFullAccess(true);
