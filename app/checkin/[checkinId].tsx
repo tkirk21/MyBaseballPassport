@@ -255,6 +255,7 @@ export default function CheckinDetailsScreen() {
     alertMessage: { fontSize: 15, color: colorScheme === 'dark' ? '#CCCCCC' : '#374151', textAlign: 'center', marginBottom: 24, lineHeight: 22 },
     alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
     arenaCard: { padding: 16, borderRadius: 12, marginBottom: 16, marginTop: -10, marginHorizontal: 10, },
+    arenaLinkText:{textDecorationLine:'underline',textDecorationColor:'#FFFFFF'},
     background: { flex: 1, width: "100%", height: "100%", },
     category: { fontSize: 15, fontWeight: "600", color: "#fff", marginBottom: 4, },
     centered: { flex: 1, justifyContent: "center", alignItems: "center", },

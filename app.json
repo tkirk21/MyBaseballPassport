@@ -3,7 +3,7 @@
     "name": "BaseballPassport",
     "slug": "MyBaseballPassport",
     "scheme": "mybaseballpassport",
-    "version": "2.2.2",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo_with_font.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "usesAppleSignIn": true,
-      "buildNumber": "16",
+      "buildNumber": "17",
       "config": {
         "googleMapsApiKey": "AIzaSyBVu-bB9Ci4gZiSvfjEa177Mbe3v8jyTbQ"
       },
@@ -44,7 +44,7 @@
       }
     },
     "android": {
-      "versionCode": 37,
+      "versionCode": 38,
       "edgeToEdgeEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon_logo.png",

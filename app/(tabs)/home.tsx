@@ -96,6 +96,7 @@ export default function HomeScreen() {
         kbo,
         cpbl,
         lmb,
+        cbl,
         abl,
       ] = await Promise.all([
         loadSchedule('mlbSchedule.json'),
@@ -121,6 +122,7 @@ export default function HomeScreen() {
         loadSchedule('kboSchedule.json'),
         loadSchedule('cpblSchedule.json'),
         loadSchedule('lmbSchedule.json'),
+        loadSchedule('cblSchedule.json'),
         loadSchedule('ablSchedule.json'),
       ]);
 
@@ -148,6 +150,7 @@ export default function HomeScreen() {
         ...kbo,
         ...cpbl,
         ...lmb,
+        ...cbl,
         ...abl,
       ]);
 
@@ -269,6 +272,7 @@ export default function HomeScreen() {
         { name: 'KBOL', logo: require('@/assets/images/ball_logo_kbol.png') },
         { name: 'CPBL', logo: require('@/assets/images/ball_logo_cpbl.png') },
         { name: 'LMB', logo: require('@/assets/images/ball_logo_lmb.png') },
+        { name: 'CBL', logo: require('@/assets/images/ball_logo_cbl.png') },
         { name: 'ABL', logo: require('@/assets/images/ball_logo_abl.png') },
       ],
     },
@@ -863,7 +867,7 @@ export default function HomeScreen() {
   }, []);
 
   const styles = StyleSheet.create({
-    adContainer:{width:Dimensions.get('window').width-20,alignSelf:'center',alignItems:'center',marginBottom:16},
+    adContainer:{width:Dimensions.get('window').width-20,alignSelf:'center',alignItems:'center',marginTop: -12, marginBottom: 12 },
     alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
     alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#1D3557',textAlign:'center',marginBottom:12},
@@ -1041,15 +1045,7 @@ export default function HomeScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.innerContainer}>
             <Text style={styles.header}>MY BASEBALL PASSPORT</Text>
-            <View style={styles.adContainer}>
-              <BannerAd
-                unitId={bannerAdUnitId}
-                size={BannerAdSize.BANNER}
-                requestOptions={{
-                  requestNonPersonalizedAdsOnly: false,
-                }}
-              />
-            </View>
+
 
             {/* Closest Arenas */}
             <View key="closest-arenas" style={styles.section}>
@@ -1097,6 +1093,8 @@ export default function HomeScreen() {
                 </Text>
               )}
             </View>
+
+            <View style={styles.adContainer}><BannerAd unitId={bannerAdUnitId} size={BannerAdSize.BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: false }} /></View>
 
             {/* Today's Games */}
             <View key="todays-games" style={styles.section}>
@@ -1259,6 +1257,8 @@ export default function HomeScreen() {
                 </Text>
               )}
             </View>
+
+            <View style={styles.adContainer}><BannerAd unitId={bannerAdUnitId} size={BannerAdSize.BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: false }} /></View>
 
             {/* Global Leaderboard */}
             <ViewShot

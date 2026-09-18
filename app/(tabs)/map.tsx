@@ -904,10 +904,10 @@ export default function MapScreen() {
                       </View>
                     )}
 
-                    <View style={[styles.pinCircle,{backgroundColor:pin.colorCode,borderColor:pin.colorCode2}]}>
+                    <View style={[styles.pinCircle,{backgroundColor:pin.colorCode2?.toUpperCase()==='#FFFFFF'?pin.colorCode2:pin.colorCode,borderColor:pin.colorCode2?.toUpperCase()==='#FFFFFF'?pin.colorCode:pin.colorCode2||pin.colorCode}]}>
                       <Image
                         source={require('../../assets/images/pin_template.png')}
-                        style={[styles.pinImage,{tintColor:pin.colorCode2}]}
+                        style={[styles.pinImage,{tintColor:pin.colorCode2?.toUpperCase()==='#FFFFFF'?pin.colorCode:pin.colorCode2||pin.colorCode}]}
                         resizeMode="contain"
                       />
                       <Text style={styles.teamCodeText}>

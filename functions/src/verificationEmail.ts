@@ -1,3 +1,4 @@
+//baseball/functions/src/verifactionEmail.ts
 export const verificationEmailHtml = (name: string, verificationLink: string) => `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #000;">
   <div style="text-align: center;">

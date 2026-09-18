@@ -6,15 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="24a29cdc-4e55-4adc-b865-3b4d3c71e0e8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/checkin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/friends.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/map.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/map.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/arenas/[arenaId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/[checkinId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/edit/[checkinId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/edit/[checkinId].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/checkin/live.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/live.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/checkin/manual.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/checkin/manual.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/paywall.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/paywall.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/leagues/[leagueName].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/settings/referrals.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings/referrals.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/signup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/signup.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/userprofile/[userId].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/userprofile/[userId].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/build.tar.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/leagueLogos.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/leagueLogos.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/.firebaserc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/.idea/MyBaseBallPassport.iml" beforeDir="false" />
@@ -215,10 +220,13 @@
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/pushNotifications.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/revenuecat.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.tar.gz/utils/themePersistence.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/friends/cheerButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/friends/cheerButton.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context/PremiumContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/context/PremiumContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/context/ThemeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/context/ThemeContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/functions/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/functions/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inspect" beforeDir="false" afterPath="$PROJECT_DIR$/inspect" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/src/passwordResetEmail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/functions/src/passwordResetEmail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/src/verificationEmail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/functions/src/verificationEmail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/src/welcomeEmail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/functions/src/welcomeEmail.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/.firebaserc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/.idea/MyBaseBallPassport.iml" beforeDir="false" />
@@ -419,8 +427,6 @@
       <change beforePath="$PROJECT_DIR$/inspect/utils/pushNotifications.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/utils/revenuecat.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/inspect/utils/themePersistence.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

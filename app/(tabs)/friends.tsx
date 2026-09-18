@@ -17,9 +17,16 @@ import ChirpBox from '@/components/friends/chirpBox';
 import type { ActivityItem, Checkin, Chirp, Profile } from '@/types/friends';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
+const bannerAdUnitId = __DEV__
+  ? TestIds.BANNER
+  : Platform.select({
+      ios: 'ca-app-pub-9072339875136281/7636725087',
+      android: 'ca-app-pub-9072339875136281/1375549001',
+    }) ?? TestIds.BANNER;
 import { loadArenas } from '@/utils/loadArenas';
 import { loadArenaHistory } from '@/utils/loadArenaHistory';
 import { loadHistoricalTeams } from '@/utils/loadHistoricalTeams';
@@ -111,6 +118,9 @@ export default function FriendsTab() {
       const arenas = await loadArenas();
       setArenasData(arenas);
 
+      const history = await loadArenaHistory();
+      setArenaHistory(history);
+
       const historical = await loadHistoricalTeams();
       setHistoricalTeams(historical);
     };
@@ -126,6 +136,21 @@ export default function FriendsTab() {
         const friendsSnap = await getDocs(friendsRef);
         const friendIds = friendsSnap.docs.map((d) => d.id);
         setFriends(friendIds);
+
+        const mutualMap: { [uid: string]: string[] } = {};
+        await Promise.all(
+          friendIds.map(async (fid) => {
+            try {
+              const snap = await getDocs(collection(db, 'profiles', fid, 'friends'));
+              snap.docs.forEach((d) => {
+                const otherId = d.id;
+                if (!mutualMap[otherId]) mutualMap[otherId] = [];
+                mutualMap[otherId].push(fid);
+              });
+            } catch {}
+          })
+        );
+        setUserFriendsMap(mutualMap);
 
         const requestsRef = collection(db, 'profiles', currentUser.uid, 'friendRequests');
         const requestsSnap = await getDocs(requestsRef);
@@ -622,6 +647,7 @@ export default function FriendsTab() {
     activityCard:{borderLeftWidth:4,borderBottomWidth:1,borderBottomColor:colorScheme==='dark'?'#4A6FA5':'#D1D5DB',paddingVertical:14,paddingHorizontal:12,marginBottom:12,borderRadius:10},
     activityItemText: { fontSize: 15, color: colorScheme === 'dark' ? '#FFFFFF' : "#1D3557", flex: 1 },
     activityUserText: { fontSize: 14, fontWeight: '600', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557' },
+    adContainer: { alignItems: 'center', marginTop: -12, marginBottom: 12 },
     alertOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
     alertContainer: { backgroundColor: colorScheme === 'dark' ? '#16213E' : '#FFFFFF', borderRadius: 20, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center', borderWidth: 2, borderColor: colorScheme === 'dark' ? '#4A6FA5' : '#D1D5DB', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 14, elevation: 14, },
     alertTitle: { fontSize: 19, fontWeight: '700', color: colorScheme === 'dark' ? '#FFFFFF' : '#1D3557', textAlign: 'center', marginBottom: 16 },
@@ -1028,6 +1054,8 @@ export default function FriendsTab() {
               </TouchableOpacity>
             </View>
           )}
+
+          <View style={styles.adContainer}><BannerAd unitId={bannerAdUnitId} size={BannerAdSize.BANNER} requestOptions={{ requestNonPersonalizedAdsOnly: false }} /></View>
 
           {/* Friends Activity */}
           {feed.length > 0 && (

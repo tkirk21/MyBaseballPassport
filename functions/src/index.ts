@@ -508,36 +508,77 @@ export const onFriendCheckin = onDocumentCreated(
 );
 
 /* ============================
-   REFERRAL FRIEND
+   REFERRAL
 ============================ */
-
 export const onProfileCreated = onDocumentWritten(
   "profiles/{userId}",
   async (event) => {
     const after = event.data?.after.data();
     if (!after) return;
 
+    const updates: Record<string, any> = {};
+
+    if (!after.referralCode) {
+      const userRecord = await admin.auth()
+        .getUser(event.params.userId)
+        .catch(() => null);
+
+      const base = String(
+        after.name || userRecord?.displayName || "USER"
+      )
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .toUpperCase()
+        .substring(0, 8);
+
+      updates.referralCode =
+        base + Math.floor(1000 + Math.random() * 9000);
+    }
+
     const referralCode = after.referredBy;
-    if (!referralCode) return;
-    if (after.referralCredited === true) return;
 
-    const referrerSnap = await db
-      .collection("profiles")
-      .where("referralCode", "==", referralCode)
-      .limit(1)
-      .get();
+    if (referralCode && after.referralCredited !== true) {
+      const referrerSnap = await db
+        .collection("profiles")
+        .where("referralCode", "==", referralCode)
+        .limit(1)
+        .get();
 
-    if (referrerSnap.empty) return;
+      if (
+        !referrerSnap.empty &&
+        referrerSnap.docs[0].id !== event.params.userId
+      ) {
+        const referrerRef = referrerSnap.docs[0].ref;
 
-    const referrerDoc = referrerSnap.docs[0];
-    if (referrerDoc.id === event.params.userId) return;
+        await db.runTransaction(async (tx) => {
+          const freshAfter = await tx.get(event.data!.after.ref);
 
-    await referrerDoc.ref.set({
-      successfulReferrals: (referrerDoc.data().successfulReferrals || 0) + 1,
-      freeMonthsEarned: (referrerDoc.data().freeMonthsEarned || 0) + 1,
-    }, { merge: true });
+          if (freshAfter.data()?.referralCredited === true) return;
 
-    await event.data!.after.ref.set({ referralCredited: true }, { merge: true });
+          const referrerFresh = await tx.get(referrerRef);
+
+          tx.set(
+            referrerRef,
+            {
+              successfulReferrals:
+                (referrerFresh.data()?.successfulReferrals || 0) + 1,
+              freeMonthsEarned:
+                (referrerFresh.data()?.freeMonthsEarned || 0) + 1,
+            },
+            { merge: true }
+          );
+
+          tx.set(
+            event.data!.after.ref,
+            { referralCredited: true },
+            { merge: true }
+          );
+        });
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await event.data!.after.ref.set(updates, { merge: true });
+    }
   }
 );
 

@@ -199,7 +199,6 @@ export default function LiveCheckInScreen() {
             const url = await getDownloadURL(photoRef);
             return url;
           } catch (uploadErr) {
-            console.error(`Upload failed for photo ${index}:`, uploadErr);
             throw uploadErr; // let outer catch handle it
           }
         });

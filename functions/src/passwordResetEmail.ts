@@ -1,3 +1,4 @@
+//baseball/functions/src/passwordResetEmail.ts
 export const passwordResetEmailHtml = (name: string, resetLink: string) => `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #000;">
   <div style="text-align: center;">

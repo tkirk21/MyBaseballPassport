@@ -6,7 +6,7 @@ import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 
 export default function ReferralsScreen() {
@@ -20,16 +20,16 @@ export default function ReferralsScreen() {
   const [freeMonthStartDate, setFreeMonthStartDate] = React.useState<any>(null);
   const [subscriptionExpirationDate, setSubscriptionExpirationDate] = React.useState<string | null>(null);
 
-  useEffect(() => {
-    const loadReferralCode = async () => {
-      if (!auth.currentUser) return;
+   useEffect(() => {
+    if (!auth.currentUser) return;
 
-      const userRef = doc(db, 'profiles', auth.currentUser.uid);
-      const userSnap = await getDoc(userRef);
+    const userRef = doc(db, 'profiles', auth.currentUser.uid);
 
+    const unsubscribe = onSnapshot(userRef, async (userSnap) => {
       if (!userSnap.exists()) return;
 
       const data = userSnap.data();
+
       setSuccessfulReferrals(data.successfulReferrals || 0);
       setFreeMonthsEarned(data.freeMonthsEarned || 0);
       setPremiumUntil(data.premiumUntil || null);
@@ -62,9 +62,9 @@ export default function ReferralsScreen() {
       );
 
       setReferralCode(newReferralCode);
-    };
+    });
 
-    loadReferralCode();
+    return () => unsubscribe();
   }, []);
 
   const shareReferralLink = async () => {

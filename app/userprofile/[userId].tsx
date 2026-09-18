@@ -1,4 +1,4 @@
-//footy//baseball// app/userprofile/[userId].tsx
+//baseball// app/userprofile/[userId].tsx
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View,  } from 'react-native';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
@@ -480,10 +480,10 @@ export default function UserProfileScreen() {
                               </View>
                             )}
 
-                            <View style={[styles.pinCircle,{backgroundColor:colorCode,borderColor:colorCode2}]}>
+                            <View style={[styles.pinCircle,{backgroundColor:colorCode2.toUpperCase()==='#FFFFFF'?colorCode2:colorCode,borderColor:colorCode2.toUpperCase()==='#FFFFFF'?colorCode:colorCode2||colorCode}]}>
                               <Image
                                 source={require('@/assets/images/pin_template.png')}
-                                style={[styles.markerImage,{tintColor:colorCode2}]}
+                                style={[styles.markerImage,{tintColor:colorCode2.toUpperCase()==='#FFFFFF'?colorCode:colorCode2||colorCode}]}
                                 resizeMode="contain"
                               />
                               <Text style={styles.markerText}>

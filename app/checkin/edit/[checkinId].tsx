@@ -14,8 +14,6 @@ const db = getFirestore(firebaseApp);
 export default function editCheckinScreen() {
   const { checkinId, userId } = useLocalSearchParams();
   const auth = getAuth(firebaseApp);
-  const user = auth.currentUser;
-  if (!user) return null;
   const [checkin, setCheckin] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -23,9 +21,13 @@ export default function editCheckinScreen() {
   const [alertMessage, setAlertMessage] = useState('');
   const router = useRouter();
   const colorScheme = useColorScheme();
-  const auth2 = getAuth(firebaseApp);
 
-  useEffect(() => { const unsub = onAuthStateChanged(auth, (u) => { if (!u) { router.replace('/auth/login'); } }); return () => unsub(); }, []);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (!u) router.replace('/auth/login');
+    });
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     if (!checkinId || !userId) {

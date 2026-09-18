@@ -1,3 +1,4 @@
+//baseball/context/ThemeContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Appearance } from 'react-native';
 import { getThemePreference, saveThemePreference, type ThemePreference } from '../utils/themePersistence';

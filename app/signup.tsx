@@ -197,11 +197,11 @@ export default function Signup() {
 
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await ensureTrialStart(cred.user.uid);
+
       const functions = getFunctions(firebaseApp);
       const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmail');
       await sendVerificationEmail();
-
-      await ensureTrialStart(cred.user.uid);
       const profileRef = doc(db, 'profiles', cred.user.uid);
 
       setAlertTitle('Verify Email');

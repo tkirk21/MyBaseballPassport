@@ -8,12 +8,21 @@ import { doc, getDoc, onSnapshot, setDoc, serverTimestamp } from 'firebase/fires
 import { db } from '@/firebaseConfig';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { usePremium } from '@/context/PremiumContext';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { Platform } from 'react-native';
 
 import LoadingPuck from '@/components/loadingPuck';
 import { loadArenas } from '@/utils/loadArenas';
 import { loadSchedule } from '@/utils/loadSchedule';
 
 const auth = getAuth();
+
+const bannerAdUnitId = __DEV__
+  ? TestIds.BANNER
+  : Platform.select({
+      ios: 'ca-app-pub-9072339875136281/7636725087',
+      android: 'ca-app-pub-9072339875136281/1375549001',
+    });
 
 export default function CheckInScreen() {
   const router = useRouter();
@@ -65,6 +74,7 @@ export default function CheckInScreen() {
         kbo,
         cpbl,
         lmb,
+        cbl,
         abl,
       ] = await Promise.all([
         loadSchedule('mlbSchedule.json'),
@@ -90,6 +100,7 @@ export default function CheckInScreen() {
         loadSchedule('kboSchedule.json'),
         loadSchedule('cpblSchedule.json'),
         loadSchedule('lmbSchedule.json'),
+        loadSchedule('cblSchedule.json'),
         loadSchedule('ablSchedule.json'),
       ]);
 
@@ -117,6 +128,7 @@ export default function CheckInScreen() {
         ...kbo,
         ...cpbl,
         ...lmb,
+        ...cbl,
         ...abl,
       ]);
       setScheduleLoading(false);
@@ -255,6 +267,7 @@ export default function CheckInScreen() {
   const deg2rad = (deg: number) => deg * (Math.PI / 180);
 
   const styles = StyleSheet.create({
+    adContainer:{position:'absolute',bottom:0,width:Dimensions.get('window').width-20,alignSelf:'center',alignItems:'center',marginBottom:16},
     alertOverlay:{flex:1,backgroundColor:'rgba(0,0,0,0.6)',justifyContent:'center',alignItems:'center',padding:20},
     alertContainer:{backgroundColor:colorScheme==='dark'?'#132F4F':'#FFFFFF',borderRadius:16,padding:24,width:'100%',maxWidth:340,alignItems:'center',borderWidth:3,borderColor:colorScheme==='dark'?'#B22222':'#B22222',shadowColor:'#000',shadowOffset:{width:0,height:8},shadowOpacity:0.3,shadowRadius:16,elevation:16},
     alertTitle:{fontSize:18,fontWeight:'700',color:colorScheme==='dark'?'#FFFFFF':'#0A2940',textAlign:'center',marginBottom:12},
@@ -270,8 +283,15 @@ export default function CheckInScreen() {
     header:{position:"absolute",top:50,left:0,right:0,fontSize:34,fontWeight:"bold",color:colorScheme==='dark'?'#F5F1E6':'#1D3557',textAlign:"center",textShadowColor:colorScheme==='dark'?'#000000':'#ffffff',textShadowOffset:{width:1,height:1},textShadowRadius:2},
     loadingOverlay:{position:"absolute",top:0,left:0,right:0,bottom:0,backgroundColor:"rgba(0,0,0,0.4)",zIndex:999,alignItems:"center",justifyContent:"center"},
     overlay:{...StyleSheet.absoluteFillObject,backgroundColor:"rgba(30,30,30,0.1)"},
-    subHeader:{position:"absolute",top:100,left:0,right:0,fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:"center"}
+    subHeader:{position:"absolute",top:100,left:0,right:0,fontSize:16,color:colorScheme==='dark'?'#AFC7E6':'#0A2940',textAlign:"center"},
   });
+
+  const bannerAdUnitId = __DEV__
+    ? TestIds.BANNER
+    : Platform.select({
+        ios: 'ca-app-pub-9072339875136281/7636725087',
+        android: 'ca-app-pub-9072339875136281/1375549001',
+      });
 
   return (
     <View style={{ flex: 1 }}>
@@ -291,6 +311,16 @@ export default function CheckInScreen() {
         <Text style={styles.header}>Check In</Text>
         <Text style={styles.subHeader}>Log your game experience</Text>
         <Image source={require('@/assets/images/checkin_icon.png')} style={styles.heroImage} resizeMode="contain" />
+
+        <View style={styles.adContainer}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: false,
+            }}
+          />
+        </View>
 
         <View style={styles.buttons}>
           <TouchableOpacity

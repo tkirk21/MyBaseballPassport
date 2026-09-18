@@ -1388,7 +1388,7 @@ const ManualCheckIn = () => {
 
               <View style={styles.checkboxRow}>
                 <Checkbox value={shareParkingTip} onValueChange={setShareParkingTip} />
-                <Text style={styles.checkboxLabel}>Share this parking/travel tip on the arena page</Text>
+                <Text style={styles.checkboxLabel}>Share this parking/travel tip on the ballpark page</Text>
               </View>
 
               <TextInput
@@ -1402,7 +1402,7 @@ const ManualCheckIn = () => {
 
               <View style={styles.checkboxRow}>
                 <Checkbox value={sharePregameBar} onValueChange={setSharePregameBar} />
-                <Text style={styles.checkboxLabel}>Share this pregame Bar tip on the arena page</Text>
+                <Text style={styles.checkboxLabel}>Share this pregame Bar tip on the ballpark page</Text>
               </View>
             </>
           ) : (

@@ -24,6 +24,7 @@ export const leagueLogos: Record<string, any> = {
   "ball_logo_sal.png": require("./ball_logo_sal.png"),
   "ball_logo_sl.png": require("./ball_logo_sl.png"),
   "ball_logo_tl.png": require("./ball_logo_tl.png"),
+  "ball_logo_cbl.png": require("./ball_logo_cbl.png"),
   "placeholder.png": require("./placeholder.png")
 };
 

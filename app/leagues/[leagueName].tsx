@@ -1,9 +1,8 @@
 //baseball//app/leagues/[leagueName].tsx
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Modal } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Image, Linking, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router, useLocalSearchParams  } from 'expo-router';
 import { leagueLogos } from '@/assets/images/leagueLogos';
-import { loadLeagues } from '@/utils/loadLeagues';
 import { loadArenas } from '@/utils/loadArenas';
 import MapView, { Marker, UrlTile } from 'react-native-maps';
 import LoadingPuck from '@/components/loadingPuck';
@@ -11,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useColorScheme } from '../../hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { loadLeagues } from '@/utils/loadLeagues';
 
 export default function LeagueDetails() {
   const [loading, setLoading] = React.useState(true);
@@ -221,10 +221,10 @@ export default function LeagueDetails() {
                         anchor={{ x: 0.5, y: 0.5 }}
                         onPress={() => setSelectedArena(a)}
                       >
-                        <View style={[styles.pinCircle,{backgroundColor:a.colorCode,borderColor:a.colorCode2 || a.colorCode}]}>
+                        <View style={[styles.pinCircle,{backgroundColor:a.colorCode2?.toUpperCase()==='#FFFFFF'?a.colorCode2:a.colorCode,borderColor:a.colorCode2?.toUpperCase()==='#FFFFFF'?a.colorCode:a.colorCode2||a.colorCode}]}>
                           <Image
                             source={require('../../assets/images/pin_template.png')}
-                            style={[styles.markerImage,{tintColor:a.colorCode2 || a.colorCode}]}
+                            style={[styles.markerImage,{tintColor:a.colorCode2?.toUpperCase()==='#FFFFFF'?a.colorCode:a.colorCode2||a.colorCode}]}
                             resizeMode="contain"
                           />
                           <Text style={styles.markerText}>

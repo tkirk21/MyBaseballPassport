@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { auth, db } from '@/firebaseConfig';
-import { doc, getDoc, onSnapshot, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc, serverTimestamp, runTransaction, } from 'firebase/firestore';
 import Purchases from 'react-native-purchases';
 
 type PremiumContextType = {
@@ -127,14 +127,57 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
         const today = new Date().toLocaleDateString('en-CA');
         setCheckInCount(data?.[`dailyCheckInCounts.${today}`] ?? 0);
 
-        unsubscribeProfile = onSnapshot(profileRef, (snap) => {
-          if (snap.exists()) {
-            const liveData = snap.data();
-            const today = new Date().toLocaleDateString('en-CA');
-            setCheckInCount(liveData?.[`dailyCheckInCounts.${today}`] ?? 0);
+        unsubscribeProfile = onSnapshot(profileRef, async (snap) => {
+          if (!snap.exists()) return;
+
+          const liveData = snap.data();
+          const today = new Date().toLocaleDateString('en-CA');
+
+          setCheckInCount(liveData?.[`dailyCheckInCounts.${today}`] ?? 0);
+
+          if (
+            !liveData?.freeMonthStartDate &&
+            (liveData?.freeMonthsEarned || 0) > 0
+          ) {
+            try {
+              const customerInfo = await Purchases.getCustomerInfo();
+
+              const entitlement =
+                customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'];
+
+              if (entitlement) return;
+
+              const activated = await runTransaction(db, async (transaction) => {
+                const freshSnap = await transaction.get(profileRef);
+                const freshData = freshSnap.data();
+
+                if (
+                  !freshData ||
+                  freshData.freeMonthStartDate ||
+                  (freshData.freeMonthsEarned || 0) <= 0
+                ) {
+                  return false;
+                }
+
+                transaction.update(profileRef, {
+                  freeMonthStartDate: serverTimestamp(),
+                  freeMonthsEarned: freshData.freeMonthsEarned - 1,
+                });
+
+                return true;
+              });
+
+              if (activated) {
+                setHasFullAccess(true);
+                setIsInTrial(false);
+                setIsSubscribed(false);
+                setIsLoadingPremium(false);
+              }
+            } catch (error) {
+              console.error('Free month activation failed:', error);
+            }
           }
         });
-        // unsubscribeProfile now handles live updates
 
         let expirationDate: Date | null = null;
 
@@ -174,40 +217,88 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
           setIsSubscribed(false);
         }
 
-        removeRcListener = Purchases.addCustomerInfoUpdateListener((customerInfo) => {
+        removeRcListener = Purchases.addCustomerInfoUpdateListener(async (customerInfo) => {
           setCustomerInfo(customerInfo);
 
           const entitlement =
             customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'];
 
+          const hasPremium = entitlement !== undefined;
+
           setSubscriptionExpirationDate(
             entitlement?.expirationDate ?? null
           );
 
-          const hasPremium =
-            customerInfo.entitlements.active['MY_BASEBALL_PASSPORT_PRO'] !== undefined;
-
           setIsSubscribed(hasPremium);
-          setHasFullAccess(hasPremium);
+
+          if (hasPremium) {
+            setHasFullAccess(true);
+            return;
+          }
+
+          const latestProfile = await getDoc(profileRef);
+
+          if (!latestProfile.exists()) return;
+
+          const latestData = latestProfile.data();
+
+          if (
+            !latestData?.freeMonthStartDate &&
+            (latestData?.freeMonthsEarned || 0) > 0
+          ) {
+            const activated = await runTransaction(db, async (transaction) => {
+              const freshSnap = await transaction.get(profileRef);
+              const freshData = freshSnap.data();
+
+              if (
+                !freshData ||
+                freshData.freeMonthStartDate ||
+                (freshData.freeMonthsEarned || 0) <= 0
+              ) {
+                return false;
+              }
+
+              transaction.update(profileRef, {
+                freeMonthStartDate: serverTimestamp(),
+                freeMonthsEarned: freshData.freeMonthsEarned - 1,
+              });
+
+              return true;
+            });
+
+            if (activated) {
+              setHasFullAccess(true);
+              setIsInTrial(false);
+              setIsSubscribed(false);
+              setIsLoadingPremium(false);
+            }
+
+            return;
+          }
         });
 
-        if (
-          !data?.freeMonthStartDate &&
-          (data?.freeMonthsEarned || 0) > 0 &&
-          (
-            expirationDate === null ||
-            expirationDate <= new Date()
-          )
-        ) {
-          await updateDoc(profileRef, {
-            freeMonthStartDate: serverTimestamp(),
-            freeMonthsEarned: (data.freeMonthsEarned || 0) - 1,
+        if (!data?.freeMonthStartDate && (data?.freeMonthsEarned || 0) > 0 && (expirationDate === null || expirationDate <= new Date())) {
+          const activated = await runTransaction(db, async (transaction) => {
+            const freshSnap = await transaction.get(profileRef);
+            const freshData = freshSnap.data();
+
+            if (!freshData || freshData.freeMonthStartDate || (freshData.freeMonthsEarned || 0) <= 0) return false;
+
+            transaction.update(profileRef, {
+              freeMonthStartDate: serverTimestamp(),
+              freeMonthsEarned: freshData.freeMonthsEarned - 1,
+            });
+
+            return true;
           });
 
-          setHasFullAccess(true);
-          setIsInTrial(false);
-          setIsSubscribed(false);
-          setIsLoadingPremium(false);
+          if (activated) {
+            setHasFullAccess(true);
+            setIsInTrial(false);
+            setIsSubscribed(false);
+            setIsLoadingPremium(false);
+          }
+
           return;
         }
 
@@ -229,15 +320,27 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
           }
 
           if ((data?.freeMonthsEarned || 0) > 0) {
-            await updateDoc(profileRef, {
-              freeMonthsEarned: (data.freeMonthsEarned || 0) - 1,
-              freeMonthStartDate: serverTimestamp(),
+            const activated = await runTransaction(db, async (transaction) => {
+              const freshSnap = await transaction.get(profileRef);
+              const freshData = freshSnap.data();
+
+              if (!freshData || (freshData.freeMonthsEarned || 0) <= 0) return false;
+
+              transaction.update(profileRef, {
+                freeMonthsEarned: freshData.freeMonthsEarned - 1,
+                freeMonthStartDate: serverTimestamp(),
+              });
+
+              return true;
             });
 
-            setHasFullAccess(true);
-            setIsInTrial(false);
-            setIsSubscribed(false);
-            setIsLoadingPremium(false);
+            if (activated) {
+              setHasFullAccess(true);
+              setIsInTrial(false);
+              setIsSubscribed(false);
+              setIsLoadingPremium(false);
+            }
+
             return;
           }
         }

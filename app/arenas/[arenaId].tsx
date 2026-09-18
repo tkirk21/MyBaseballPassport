@@ -101,6 +101,7 @@ export default function ArenaScreen() {
         kbo,
         cpbl,
         lmb,
+        cbl,
         abl,
       ] = await Promise.all([
         loadSchedule('mlbSchedule.json'),
@@ -126,6 +127,7 @@ export default function ArenaScreen() {
         loadSchedule('kboSchedule.json'),
         loadSchedule('cpblSchedule.json'),
         loadSchedule('lmbSchedule.json'),
+        loadSchedule('cblSchedule.json'),
         loadSchedule('ablSchedule.json'),
       ]);
 
@@ -155,6 +157,7 @@ export default function ArenaScreen() {
         ...kbo,
         ...cpbl,
         ...lmb,
+        ...cbl,
         ...abl,
       ].filter((game) => {
         const gameTime = new Date(game.date).getTime();
